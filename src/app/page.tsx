@@ -1,28 +1,117 @@
-import Image from "next/image";
+// app/page.tsx
+import { Suspense } from "react";
+
 import Header from "@/components/header";
 import Hero from "@/components/hero";
 import LatestSection from "@/components/latest";
 import BestNewMusic from "@/components/bestNewMusic";
+import TechSection from "@/components/TechSection";
 import NewsSection from "@/components/newsection";
-import SongsSection from "@/components/song";
+import BrandsSection from "@/components/brand";
+import AllPostsIndex from "@/components/mobile-headline";
+import HeadlineIndex from "@/components/headline-layout";
+import { SubscribeModalTrigger } from "@/components/subscribepopup"; // your path
 import Footer from "@/components/footer";
-import { Rocket } from "lucide-react";
+
+// Hero Skeleton (unchanged – it's already excellent)
+function HeroSkeleton() {
+  return (
+    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20 animate-pulse">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
+        {/* Left — Featured Carousel area */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="flex items-center justify-between gap-4">
+            <div className="h-10 w-56 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="hidden sm:flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+          </div>
+
+          <div className="space-y-5">
+            <div className="h-16 md:h-20 lg:h-24 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-5 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-5 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+
+          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10" />
+        </div>
+
+        {/* Center — Recent Thoughts list */}
+        <div className="lg:col-span-5 flex flex-col space-y-8">
+          <div className="flex items-center justify-between">
+            <div className="h-10 w-48 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-1 w-24 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="flex gap-5">
+              <div className="h-24 w-24 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="h-4 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-6 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Right — Editor’s Pick card */}
+        <div className="lg:col-span-2 space-y-4">
+          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
+          <div className="space-y-3 px-2">
+            <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function SectionSkeleton({ height = "h-96" }: { height?: string }) {
+  return (
+    <div
+      className={`mx-5 my-10 rounded-xl ${height} animate-pulse bg-zinc-100 dark:bg-zinc-900 shadow-sm`}
+    />
+  );
+}
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-zinc-50 font-sans dark:bg-black">
-      {/* HEADER — full width, top */}
+    <div className="relative min-h-screen bg-zinc-50 font-sans antialiased dark:bg-black">
+      {/* Fast/static – appear immediately */}
       <Header />
-      <Hero />
-      <LatestSection />
-      <BestNewMusic />
-      <NewsSection />
-      <SongsSection />
+      <AllPostsIndex />
+
+      <Suspense fallback={<HeroSkeleton />}>
+        <Hero />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton height="h-[500px]" />}>
+        <LatestSection />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton height="h-[450px]" />}>
+        <BestNewMusic />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton height="h-[600px]" />}>
+        <TechSection />
+      </Suspense>
+
+      <Suspense fallback={<SectionSkeleton height="h-80" />}>
+        <NewsSection />
+      </Suspense>
+
+      <BrandsSection />
+      <HeadlineIndex />
+
+      {/* Modal trigger – renders portal when needed */}
+      <SubscribeModalTrigger />
+
       <Footer />
-
-
-      {/* PAGE CONTENT */}
-     
     </div>
   );
 }
