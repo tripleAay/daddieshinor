@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useGlobalLoader } from "@/components/global-loader";
 
 type HeadlinePost = {
   title: string;
   href: string;
 };
 
+/* ------------------ Text utilities ------------------ */
+
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
   if (typeof document === "undefined") return input;
+
   const el = document.createElement("textarea");
   el.innerHTML = input;
   return el.value;
@@ -28,40 +32,67 @@ function cleanWpText(input: unknown): string {
   text = decodeHtmlEntities(text);
   text = text.replace(/\[[^\]]*\]/g, " ");
   text = text.replace(/([.!?])([A-Za-z])/g, "$1 $2");
+
   return text.replace(/\s+/g, " ").trim();
 }
+
+/* ------------------ Component ------------------ */
 
 export default function MobileAllPosts() {
   const [posts, setPosts] = useState<HeadlinePost[]>([]);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const PER_PAGE = 15; // good balance for mobile scrolling
-
+  const PER_PAGE = 15;
   const WP = process.env.NEXT_PUBLIC_WP_URL;
 
+  const { start, stop } = useGlobalLoader();
+
+  // Prevent duplicate first-load fetch in Strict Mode
+  const firstLoadRef = useRef(false);
+
   useEffect(() => {
+    if (!WP) {
+      setError("WordPress API URL is not configured.");
+      setHasMore(false);
+      return;
+    }
+
+    if (!hasMore) return;
+
+    // React Strict Mode protection
+    if (page === 1 && firstLoadRef.current) return;
+    firstLoadRef.current = true;
+
     let cancelled = false;
 
     async function fetchPosts() {
-      if (!hasMore || !WP) return;
-
       try {
         setLoading(true);
         setError(null);
 
-        const url = `${WP}/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
+        if (page === 1) start();
 
-        const res = await fetch(url, { cache: "no-store" });
+        const url =
+          `${WP.replace(/\/$/, "")}` +
+          `/wp-json/wp/v2/posts` +
+          `?per_page=${PER_PAGE}` +
+          `&page=${page}` +
+          `&orderby=date&order=desc&status=publish`;
+
+        const res = await fetch(url, {
+          method: "GET",
+          cache: "no-store",
+        });
 
         if (!res.ok) {
-          if (res.status === 400) {
+          if (res.status === 400 || res.status === 404) {
             setHasMore(false);
             return;
           }
-          throw new Error(`API error: ${res.status}`);
+          throw new Error(`WP API error: ${res.status}`);
         }
 
         const data = await res.json();
@@ -83,13 +114,20 @@ export default function MobileAllPosts() {
             return [...prev, ...unique];
           });
 
-          if (newPosts.length < PER_PAGE) setHasMore(false);
+          if (newPosts.length < PER_PAGE) {
+            setHasMore(false);
+          }
         }
       } catch (err) {
         console.error(err);
-        if (!cancelled) setError("Failed to load posts. Try again later.");
+        if (!cancelled) {
+          setError("Failed to load essays. Please try again later.");
+        }
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          if (page === 1) stop();
+        }
       }
     }
 
@@ -98,22 +136,32 @@ export default function MobileAllPosts() {
     return () => {
       cancelled = true;
     };
-  }, [page, WP, hasMore]);
+  }, [page, WP, hasMore, start, stop]);
 
   return (
     <section className="lg:hidden mx-auto max-w-[1400px] px-5 py-12 md:py-16">
+      {/* Error */}
       {error && (
         <div className="mb-8 rounded-xl border border-red-200/50 bg-red-50/60 p-5 text-center text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-300">
           {error}
         </div>
       )}
 
-      {/* Posts List – centered titles */}
+      {/* Posts List */}
       <div className="space-y-2">
-        {posts.length === 0 && !loading ? (
-          <div className="py-20 text-center text-zinc-500 dark:text-zinc-400">
-            No essays found yet.
-          </div>
+        {posts.length === 0 ? (
+          loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div
+                key={i}
+                className="h-20 rounded-lg bg-zinc-100 animate-pulse dark:bg-zinc-800"
+              />
+            ))
+          ) : (
+            <div className="py-20 text-center text-zinc-500 dark:text-zinc-400">
+              No essays found yet.
+            </div>
+          )
         ) : (
           posts.map((post) => (
             <Link
@@ -124,8 +172,7 @@ export default function MobileAllPosts() {
                 border-b border-zinc-200/60 last:border-b-0
                 dark:border-zinc-800/60
                 hover:bg-zinc-50/70 dark:hover:bg-zinc-900/30
-                active:bg-zinc-100 dark:active:bg-zinc-800/50
-                transition-colors duration-200
+                transition-colors
               "
             >
               <h3
@@ -141,33 +188,24 @@ export default function MobileAllPosts() {
             </Link>
           ))
         )}
-
-        {loading && (
-          <div className="py-12 text-center text-zinc-500 dark:text-zinc-400">
-            Loading essays…
-          </div>
-        )}
       </div>
 
-      {/* Load More – centered & mobile-friendly */}
-      {hasMore && !loading && posts.length > 0 && (
+      {/* Load More */}
+      {hasMore && posts.length > 0 && (
         <div className="mt-10 flex justify-center">
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={loading}
             className="
-              inline-flex items-center justify-center rounded-full
-              border border-zinc-300 bg-white px-8 py-3.5
-              text-sm font-semibold text-black
-              hover:border-zinc-400 hover:bg-zinc-50 hover:shadow-sm
-              active:scale-95 transition-all duration-200
+              rounded-full border border-zinc-300 bg-white
+              px-8 py-3.5 text-sm font-semibold
+              hover:bg-zinc-50 hover:shadow-sm
+              active:scale-95 transition-all
               dark:border-zinc-700 dark:bg-zinc-900 dark:text-white
-              dark:hover:border-zinc-600 dark:hover:bg-zinc-800
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60
-              disabled:opacity-50 disabled:cursor-not-allowed
+              disabled:opacity-50
             "
           >
-            Load More
+            {loading ? "Loading more..." : "Load More"}
           </button>
         </div>
       )}

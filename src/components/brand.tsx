@@ -3,13 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState, useMemo } from "react";
+import { useGlobalLoader } from "@/components/global-loader";
 
 /* ────────────────────────────────────────────────
    CONFIG
 ──────────────────────────────────────────────── */
-const WP_BASE_URL =
-  process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
-
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 const BRANDS_CATEGORY_ID = 13;
 
 /* ────────────────────────────────────────────────
@@ -50,9 +49,12 @@ function cleanWpText(input: unknown): string {
 }
 
 function truncate(text: string, max = 140) {
-  if (text.length <= max) return text;
-  const cut = text.slice(0, max);
-  return cut.slice(0, cut.lastIndexOf(" ")) + "…";
+  const t = (text || "").trim();
+  if (!t) return "";
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  const lastSpace = cut.lastIndexOf(" ");
+  return (lastSpace > 60 ? cut.slice(0, lastSpace) : cut).trim() + "…";
 }
 
 function getFeaturedImage(post: any): string {
@@ -83,10 +85,13 @@ export default function BrandsSection() {
   const [posts, setPosts] = useState<BrandPost[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const { start, stop } = useGlobalLoader();
+
   useEffect(() => {
     let cancelled = false;
 
     async function fetchBrands() {
+      start(); // ✅ global loader begins
       try {
         setLoading(true);
 
@@ -101,33 +106,30 @@ export default function BrandsSection() {
 
         if (cancelled) return;
 
-        const mapped: BrandPost[] = data.map((post: any) => {
-          const title = cleanWpText(post.title?.rendered);
-          const excerpt = truncate(
-            cleanWpText(post.excerpt?.rendered)
-          );
+        const mapped: BrandPost[] = (Array.isArray(data) ? data : []).map((post: any) => {
+          const title = cleanWpText(post.title?.rendered) || "Untitled";
+          const excerpt = truncate(cleanWpText(post.excerpt?.rendered) || "");
 
           return {
             slug: `/brands/${post.slug}`,
             title,
-            excerpt,
+            excerpt: excerpt || "Read the full breakdown →",
             image: getFeaturedImage(post),
             alt: title,
-            brand:
-              post.acf?.brand_name ||
-              "Brand Analysis",
-            lane:
-              post.acf?.brand_lane ||
-              "Strategy",
+            brand: post?.acf?.brand_name || "Brand Analysis",
+            lane: post?.acf?.brand_lane || "Strategy",
           };
         });
 
         setPosts(mapped);
       } catch (err) {
         console.error(err);
-        setPosts([]);
+        if (!cancelled) setPosts([]);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) {
+          setLoading(false);
+          stop(); // ✅ global loader ends
+        }
       }
     }
 
@@ -135,17 +137,12 @@ export default function BrandsSection() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [start, stop]);
 
-  const featured = useMemo(
-    () => posts[0],
-    [posts]
-  );
-  const rest = useMemo(
-    () => posts.slice(1),
-    [posts]
-  );
+  const featured = useMemo(() => posts[0], [posts]);
+  const rest = useMemo(() => posts.slice(1), [posts]);
 
+  // With global loader overlay, it's okay to render nothing while waiting.
   if (loading || !featured) return null;
 
   return (
@@ -154,12 +151,9 @@ export default function BrandsSection() {
         {/* Header */}
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <h2 className="text-4xl font-black md:text-5xl">
-              Brands
-            </h2>
+            <h2 className="text-4xl font-black md:text-5xl">Brands</h2>
             <p className="mt-2 max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
-              Brand moves, design decisions, and
-              strategy shifts — explained without fluff.
+              Brand moves, design decisions, and strategy shifts — explained without fluff.
             </p>
           </div>
 
@@ -194,13 +188,9 @@ export default function BrandsSection() {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-extrabold">
-                  {featured.title}
-                </h3>
+                <h3 className="text-2xl font-extrabold">{featured.title}</h3>
 
-                <p className="mt-3 text-sm opacity-90">
-                  {featured.excerpt}
-                </p>
+                <p className="mt-3 text-sm opacity-90">{featured.excerpt}</p>
               </div>
             </Link>
           </article>
@@ -214,9 +204,7 @@ export default function BrandsSection() {
               >
                 <Link href={post.slug}>
                   <LanePill lane={post.lane} />
-                  <h4 className="mt-3 text-lg font-extrabold">
-                    {post.title}
-                  </h4>
+                  <h4 className="mt-3 text-lg font-extrabold">{post.title}</h4>
                   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                     {post.excerpt}
                   </p>

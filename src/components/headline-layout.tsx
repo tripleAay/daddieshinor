@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useGlobalLoader } from "@/components/global-loader";
 
 type WpPost = {
   id: number;
@@ -47,7 +48,11 @@ function cleanWpText(input: unknown): string {
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "2-digit" });
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  });
 }
 
 export default function HeadlineIndex() {
@@ -61,13 +66,23 @@ export default function HeadlineIndex() {
 
   const WP = process.env.NEXT_PUBLIC_WP_URL;
 
+  const { start, stop } = useGlobalLoader();
+
+  // track "first load" so global loader only covers initial fetch
+  const didFirstLoadRef = useRef(false);
+
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
+      const isFirstLoad = !didFirstLoadRef.current && page === 1;
+
       try {
         setLoading(true);
         setError(null);
+
+        // ✅ Only block the whole site for the initial mount load
+        if (isFirstLoad) start();
 
         if (!WP) throw new Error("NEXT_PUBLIC_WP_URL not configured");
 
@@ -101,11 +116,14 @@ export default function HeadlineIndex() {
             return [...prev, ...next];
           });
         }
+
+        if (isFirstLoad) didFirstLoadRef.current = true;
       } catch (e) {
         console.error(e);
         if (!cancelled) setError("Couldn’t load posts right now.");
       } finally {
         if (!cancelled) setLoading(false);
+        if (isFirstLoad && !cancelled) stop();
       }
     }
 
@@ -113,7 +131,7 @@ export default function HeadlineIndex() {
     return () => {
       cancelled = true;
     };
-  }, [WP, page]);
+  }, [WP, page, start, stop]);
 
   const hasAny = useMemo(() => items.length > 0, [items.length]);
 
@@ -168,7 +186,8 @@ export default function HeadlineIndex() {
           </div>
         )}
 
-        {loading && (
+        {/* ✅ keep this for "Load more" (nice UX) */}
+        {loading && didFirstLoadRef.current && (
           <div className="px-5 py-6 text-sm text-zinc-600 dark:text-zinc-400">
             Loading headlines…
           </div>

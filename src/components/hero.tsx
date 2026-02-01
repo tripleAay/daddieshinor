@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useGlobalLoader } from "@/components/global-loader"; // adjust path if needed
 
 // ────────────────────────────────────────────────
 // Types
@@ -33,8 +34,8 @@ const fallbackSlides: Slide[] = [
     title: "Why AI will reward thinkers, not hustlers",
     excerpt:
       "The era of loud hustle is fading. The winners will be the ones who can think clearly, synthesize fast, and ship with depth.",
-    href: "/why-ai-will-reward-thinkers-not-hustlers",
-    image: "/hero/tech-ai-thinkers.jpg",
+    href: "/essays/why-ai-will-reward-thinkers-not-hustlers",
+    image: "/fallback-image.jpg",
     alt: "Abstract AI visual representing deep thinking",
     featured: true,
   },
@@ -44,13 +45,13 @@ const fallbackThoughts: Thought[] = [
   {
     tag: "Tech",
     title: "Why most African tech products don’t fail because of technology",
-    image: "/story-1.jpg",
-    href: "/why-most-african-tech-products-dont-fail-because-of-technology",
+    image: "/fallback-image.jpg",
+    href: "/essays/why-most-african-tech-products-dont-fail-because-of-technology",
   },
 ];
 
 // ────────────────────────────────────────────────
-// Utilities
+// Utilities (unchanged)
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -59,33 +60,19 @@ function decodeHtmlEntities(input: string): string {
   return el.value;
 }
 
-/**
- * Cleans WP rendered HTML (title/excerpt/category name) into readable plain text:
- * - converts <br>, </p>, </div>, </li> into spaces BEFORE stripping
- * - strips remaining tags
- * - decodes entities (&amp; &#8230; etc)
- * - removes shortcodes ([caption] etc)
- * - ensures space after punctuation: "importance.Fast" -> "importance. Fast"
- * - collapses whitespace
- */
 function cleanWpText(input: unknown): string {
   if (typeof input !== "string") return "";
 
   const withSpaces = input
-    // turn block closings into spaces
     .replace(/<\/(p|div|h\d|li|blockquote|section|article)>/gi, " ")
-    // br -> space
     .replace(/<(br|br\/)\s*\/?>/gi, " ")
-    // opening p tags -> space (some themes do weird concatenation)
     .replace(/<\/?p[^>]*>/gi, " ")
-    // common WP ellipsis entity sometimes appears as a literal token in content
     .replace(/&#8230;/g, "…");
 
   const noTags = withSpaces.replace(/<[^>]*>/g, " ");
   const decoded = decodeHtmlEntities(noTags);
   const noShortcodes = decoded.replace(/\[[^\]]*\]/g, " ");
 
-  // Add a space after sentence punctuation when followed immediately by a letter or quote
   const spacedPunctuation = noShortcodes
     .replace(/([.!?])([A-Za-z])/g, "$1 $2")
     .replace(/([.!?])(["'“”‘’])([A-Za-z])/g, "$1 $2$3");
@@ -122,14 +109,15 @@ function getFeaturedImage(
   size: "large" | "medium" | "thumbnail" = "large"
 ): string {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0];
-  if (!media) return "/fallback-image.jpg";
+ if (!media) return "/fallback-image.jpg";
 
   return (
     media.media_details?.sizes?.[size]?.source_url ||
     media.media_details?.sizes?.large?.source_url ||
     media.media_details?.sizes?.medium?.source_url ||
     media.source_url ||
-    "/fallback-image.jpg"
+   "/fallback-image.jpg"
+
   );
 }
 
@@ -142,14 +130,19 @@ export default function Hero() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { start, stop } = useGlobalLoader();
+  const isMounted = useRef(true);
+
   const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 
   useEffect(() => {
+    isMounted.current = true;
+    start();
+
     let isCancelled = false;
 
     async function fetchPosts() {
       try {
-        setLoading(true);
         setError(null);
 
         const res = await fetch(
@@ -165,10 +158,8 @@ export default function Hero() {
           throw new Error("No posts found");
         }
 
-        // Limits (tune this freely)
         const FEATURED_EXCERPT_CHARS = 180;
 
-        // Map slides (first 4)
         const mappedSlides = posts.slice(0, 4).map((post: any, idx: number) => {
           const title = cleanWpText(post.title?.rendered) || "Untitled";
           const rawExcerpt = cleanWpText(post.excerpt?.rendered) || "";
@@ -185,7 +176,6 @@ export default function Hero() {
           };
         });
 
-        // Map thoughts (next 6)
         const mappedThoughts = posts.slice(4, 10).map((post: any) => {
           const title = cleanWpText(post.title?.rendered) || "Untitled";
           return {
@@ -196,19 +186,22 @@ export default function Hero() {
           };
         });
 
-        if (!isCancelled) {
+        if (!isCancelled && isMounted.current) {
           setSlides(mappedSlides.length ? mappedSlides : fallbackSlides);
           setThoughts(mappedThoughts.length ? mappedThoughts : fallbackThoughts);
         }
       } catch (err: any) {
         console.error(err);
-        if (!isCancelled) {
+        if (!isCancelled && isMounted.current) {
           setError("Failed to load latest content — using fallback data.");
           setSlides(fallbackSlides);
           setThoughts(fallbackThoughts);
         }
       } finally {
-        if (!isCancelled) setLoading(false);
+        if (!isCancelled && isMounted.current) {
+          setLoading(false);
+        }
+        stop();
       }
     }
 
@@ -216,8 +209,10 @@ export default function Hero() {
 
     return () => {
       isCancelled = true;
+      isMounted.current = false;
+      stop();
     };
-  }, [WP_BASE_URL]);
+  }, [WP_BASE_URL, start, stop]);
 
   const ordered = useMemo(() => {
     const featured = slides.find((s) => s.featured) ?? slides[0];
@@ -245,20 +240,13 @@ export default function Hero() {
     };
   }, [ordered.length]);
 
-  // Safety: reset index if array shrinks
   useEffect(() => {
     if (index >= ordered.length) setIndex(0);
   }, [ordered.length, index]);
 
   const active = ordered[index] ?? ordered[0];
 
-  if (loading) {
-    return (
-      <section className="mx-auto max-w-[1400px] px-5 py-20 text-center">
-        <div className="animate-pulse text-2xl font-semibold">Loading latest essays...</div>
-      </section>
-    );
-  }
+  if (loading) return <HeroSkeleton />;
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
@@ -317,7 +305,7 @@ export default function Hero() {
                   alt={active.alt}
                   fill
                   priority
-                  sizes="(max-width: 1024px) 100vw, 45vw"
+                  sizes="(max-width: 1024px) 100vw, (max-width: 1440px) 50vw, 45vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
@@ -350,7 +338,6 @@ export default function Hero() {
             </div>
           </Link>
 
-          {/* Mobile arrows */}
           <div className="mt-6 flex justify-between sm:hidden">
             <button
               onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
@@ -402,9 +389,11 @@ export default function Hero() {
             <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-black to-zinc-950 text-white shadow-2xl transition-all duration-300 group-hover:shadow-3xl group-hover:-translate-y-1">
               <div className="relative aspect-[3/4]">
                 <Image
-                  src="/editors-pick.jpg"
+                  src="https://daddieshinor.com/wp-content/uploads/2026/01/editors-pick.jpg"
                   alt="Your true size"
                   fill
+                  priority
+                  sizes="(max-width: 768px) 100vw, 360px"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
@@ -428,6 +417,9 @@ export default function Hero() {
   );
 }
 
+// ────────────────────────────────────────────────
+// Sub-components
+// ────────────────────────────────────────────────
 function ThoughtItem({ tag, title, image, href }: Thought) {
   return (
     <Link href={href} className="group flex gap-5 hover:cursor-pointer">
@@ -450,12 +442,10 @@ function Divider() {
   return <div className="h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70" />;
 }
 
-
 function HeroSkeleton() {
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
-        {/* Left — Featured area skeleton */}
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between">
             <div className="h-10 w-44 rounded-full bg-zinc-200 dark:bg-zinc-800" />
@@ -472,7 +462,6 @@ function HeroSkeleton() {
           <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
         </div>
 
-        {/* Center — Recent Thoughts skeleton */}
         <div className="lg:col-span-5 space-y-8">
           <div className="h-12 w-64 rounded bg-zinc-200 dark:bg-zinc-800" />
           {Array.from({ length: 4 }).map((_, i) => (
@@ -487,7 +476,6 @@ function HeroSkeleton() {
           ))}
         </div>
 
-        {/* Right — Editor’s Pick skeleton */}
         <div className="lg:col-span-2">
           <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
           <div className="mt-4 space-y-3">

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useGlobalLoader } from "@/components/global-loader";
 
 // ────────────────────────────────────────────────
 // Types
@@ -79,7 +80,7 @@ function formatDate(dateStr: string): string {
 // Badge (with optional ring for special categories like Editor’s Pick)
 // ────────────────────────────────────────────────
 function Badge({ text }: { text: string }) {
-  const isSpecial = text === "Editor’s Pick"; // extend logic if needed
+  const isSpecial = text === "Editor’s Pick";
   return (
     <span
       className={[
@@ -101,8 +102,13 @@ export default function LatestCultureSection() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const { start, stop } = useGlobalLoader();
+
   useEffect(() => {
+    let cancelled = false;
+
     async function load() {
+      start(); // ✅ global loader begins
       try {
         setLoading(true);
         setError(null);
@@ -117,12 +123,15 @@ export default function LatestCultureSection() {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
         const data = await res.json();
+
+        if (cancelled) return;
+
         if (!Array.isArray(data) || data.length === 0) {
           setPosts([]);
           return;
         }
 
-        const mapped = data.map((post: any, index: number) => {
+        const mapped: CulturePost[] = data.map((post: any, index: number) => {
           const title = cleanWpText(post?.title?.rendered) || "Untitled";
           const excerptRaw = cleanWpText(post?.excerpt?.rendered) || "";
           const excerpt = truncateText(excerptRaw, 110);
@@ -134,7 +143,7 @@ export default function LatestCultureSection() {
             excerpt,
             image,
             alt,
-            category: CULTURE_CATEGORY.label,
+            category: CULTURE_CATEGORY.label as "Culture",
             meta: formatDate(post.date),
             featured: index === 0,
           };
@@ -143,14 +152,19 @@ export default function LatestCultureSection() {
         setPosts(mapped);
       } catch (err) {
         console.error(err);
-        setError("Couldn't load latest culture stories.");
+        if (!cancelled) setError("Couldn't load latest culture stories.");
       } finally {
-        setLoading(false);
+        if (!cancelled) setLoading(false);
+        if (!cancelled) stop(); // ✅ global loader ends
       }
     }
 
     load();
-  }, []);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [start, stop]);
 
   const featured = posts.find((p) => p.featured) ?? posts[0];
   const rest = posts.filter((p) => p.slug !== featured?.slug);
@@ -178,7 +192,7 @@ export default function LatestCultureSection() {
           </div>
 
           <Link
-            href="/culture" // adjust if your path is different
+            href="/culture"
             className="
               inline-flex items-center justify-center gap-2 rounded-full border border-zinc-200 bg-white px-5 py-2 text-sm font-bold text-black transition
               hover:border-zinc-300 hover:bg-zinc-50
@@ -187,8 +201,7 @@ export default function LatestCultureSection() {
               dark:focus-visible:ring-offset-black
             "
           >
-            More
-            <span aria-hidden>→</span>
+            More <span aria-hidden>→</span>
           </Link>
         </div>
 
@@ -207,7 +220,7 @@ export default function LatestCultureSection() {
           <p className="text-center text-zinc-500">No culture stories found yet.</p>
         ) : (
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-            {/* Featured Story - exact structure & classes */}
+            {/* Featured Story */}
             {featured && (
               <article className="group relative overflow-hidden rounded-2xl border border-zinc-200 bg-zinc-50 shadow-[0_12px_40px_rgba(0,0,0,0.10)] transition hover:shadow-[0_18px_55px_rgba(0,0,0,0.14)] dark:border-zinc-800 dark:bg-zinc-950 dark:shadow-[0_12px_40px_rgba(0,0,0,0.35)]">
                 <Link
@@ -224,11 +237,7 @@ export default function LatestCultureSection() {
                       sizes="(max-width: 1024px) 100vw, 50vw"
                       className="object-cover transition-transform duration-700 motion-reduce:transition-none group-hover:scale-[1.04]"
                     />
-
-                    {/* Readability overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-
-                    {/* Subtle top sheen on hover */}
                     <div className="pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-700 motion-reduce:transition-none group-hover:opacity-100">
                       <div className="absolute -top-24 left-1/2 h-48 w-[140%] -translate-x-1/2 rotate-6 bg-white/10 blur-2xl" />
                     </div>
@@ -247,7 +256,7 @@ export default function LatestCultureSection() {
               </article>
             )}
 
-            {/* Right Column: Cards - exact match */}
+            {/* Right Column: Cards */}
             <div className="grid grid-cols-1 gap-6">
               {rest.map((item) => (
                 <article
@@ -274,7 +283,7 @@ export default function LatestCultureSection() {
                       <div className="flex items-center justify-between gap-3">
                         <Badge text={item.category} />
                         <span className="hidden text-xs font-semibold text-zinc-500 dark:text-zinc-500 sm:inline">
-                          {item.meta.split(",")[0].trim()} {/* e.g. "January 2026" */}
+                          {item.meta.split(",")[0].trim()}
                         </span>
                       </div>
 
@@ -282,7 +291,6 @@ export default function LatestCultureSection() {
                         {item.title}
                       </h4>
 
-                      {/* Optional: excerpt – remove if you want exact match to example */}
                       <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
                         {item.excerpt}
                       </p>
