@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useGlobalLoader } from "@/components/global-loader"; // adjust path if needed
+import { useGlobalLoader } from "@/components/global-loader";
 
 // ────────────────────────────────────────────────
 // Types
@@ -51,7 +51,7 @@ const fallbackThoughts: Thought[] = [
 ];
 
 // ────────────────────────────────────────────────
-// Utilities (unchanged)
+// Utilities
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -109,15 +109,14 @@ function getFeaturedImage(
   size: "large" | "medium" | "thumbnail" = "large"
 ): string {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0];
- if (!media) return "/fallback-image.jpg";
+  if (!media) return "/fallback-image.jpg";
 
   return (
     media.media_details?.sizes?.[size]?.source_url ||
     media.media_details?.sizes?.large?.source_url ||
     media.media_details?.sizes?.medium?.source_url ||
     media.source_url ||
-   "/fallback-image.jpg"
-
+    "/fallback-image.jpg"
   );
 }
 
@@ -262,21 +261,21 @@ export default function Hero() {
           <div className="flex items-center justify-between gap-4 mb-6">
             <span className="inline-flex items-center gap-3 rounded-full border border-black/30 bg-white/90 px-5 py-2 text-sm font-extrabold tracking-wider text-black shadow-sm dark:bg-black/80 dark:text-white dark:border-white/20">
               FEATURED ESSAY
-              <span className="inline-block h-2 w-2 rounded-full bg-orange-500 animate-pulse" />
-              <span className="font-bold text-orange-600">{active.tag.toUpperCase()}</span>
+              <span className="inline-block h-2 w-2 rounded-full bg-[#968e68] animate-pulse" />
+              <span className="font-bold text-[#968e68]">{active.tag.toUpperCase()}</span>
             </span>
 
             <div className="hidden sm:flex items-center gap-3">
               <button
                 onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Previous"
               >
                 ←
               </button>
               <button
                 onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Next"
               >
                 →
@@ -290,7 +289,7 @@ export default function Hero() {
             onMouseEnter={() => (hoveringRef.current = true)}
             onMouseLeave={() => (hoveringRef.current = false)}
           >
-            <h3 className="text-2xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-black dark:text-white">
+            <h3 className="text-2xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
               {active.title}
             </h3>
 
@@ -328,7 +327,7 @@ export default function Hero() {
                         setIndex(i);
                       }}
                       className={`h-2 rounded-full transition-all ${
-                        i === index ? "w-8 bg-orange-500" : "w-2 bg-white/50"
+                        i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/50"
                       }`}
                       aria-label={`Go to slide ${i + 1}`}
                     />
@@ -341,13 +340,13 @@ export default function Hero() {
           <div className="mt-6 flex justify-between sm:hidden">
             <button
               onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               ← Prev
             </button>
             <button
               onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               Next →
             </button>
@@ -360,7 +359,7 @@ export default function Hero() {
             <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-black dark:text-white">
               Recent Thoughts
             </h2>
-            <div className="h-1 w-24 rounded-full bg-gradient-to-r from-black to-zinc-500 dark:from-white dark:to-zinc-400" />
+            <div className="h-1 w-24 rounded-full bg-gradient-to-r from-black to-[#968e68] dark:from-white dark:to-[#968e68]" />
           </div>
 
           <div
@@ -383,8 +382,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — Editor’s Pick */}
-        <div className="lg:col-span-2">
+        {/* RIGHT — Editor’s Pick + Partnership Tile */}
+        <div className="lg:col-span-2 flex flex-col gap-6">
+          {/* Editor’s Pick */}
           <Link href="/essays/your-true-size" className="group block">
             <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-black to-zinc-950 text-white shadow-2xl transition-all duration-300 group-hover:shadow-3xl group-hover:-translate-y-1">
               <div className="relative aspect-[3/4]">
@@ -402,7 +402,7 @@ export default function Hero() {
                 <span className="inline-block rounded-full border border-white/40 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white/90">
                   Editor’s Pick
                 </span>
-                <h3 className="mt-4 text-2xl font-extrabold leading-tight group-hover:text-zinc-100 transition">
+                <h3 className="mt-4 text-2xl font-extrabold leading-tight group-hover:text-[#968e68] transition">
                   How big you really are (and why you forgot)
                 </h3>
                 <p className="mt-3 text-sm text-zinc-300">
@@ -411,6 +411,25 @@ export default function Hero() {
               </div>
             </div>
           </Link>
+
+          {/* Partnership / Ad Tile */}
+          <div className="rounded-2xl border border-[#968e68]/30 bg-gradient-to-br from-[#968e68]/5 to-white/50 p-6 shadow-md dark:from-[#968e68]/10 dark:to-zinc-950/50 dark:border-[#968e68]/20">
+            <div className="flex items-center gap-3 mb-3">
+              <span className="text-[#968e68] font-black text-lg">✦</span>
+              <h4 className="text-lg font-extrabold text-[#968e68] tracking-tight">
+                Partnership with Daddieshinor
+              </h4>
+            </div>
+            <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
+              Collaborate with us to reach thoughtful readers across Africa and beyond. Sponsored insights, brand stories, and meaningful visibility — done with integrity.
+            </p>
+            <Link
+              href="/partnerships"
+              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#968e68] hover:text-[#968e68]/80 transition"
+            >
+              Learn more →
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -418,7 +437,7 @@ export default function Hero() {
 }
 
 // ────────────────────────────────────────────────
-// Sub-components
+// Sub-components (unchanged)
 // ────────────────────────────────────────────────
 function ThoughtItem({ tag, title, image, href }: Thought) {
   return (
@@ -430,7 +449,7 @@ function ThoughtItem({ tag, title, image, href }: Thought) {
         <span className="text-xs font-extrabold uppercase tracking-wider text-black/70 dark:text-white/60">
           {tag}
         </span>
-        <h4 className="mt-2 text-lg font-bold leading-tight text-black dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition">
+        <h4 className="mt-2 text-lg font-bold leading-tight text-black dark:text-white group-hover:text-[#968e68] transition">
           {title}
         </h4>
       </div>
@@ -476,13 +495,15 @@ function HeroSkeleton() {
           ))}
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-2 space-y-6">
           <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-          <div className="mt-4 space-y-3">
+          <div className="space-y-3">
             <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
           </div>
+          {/* Partnership tile skeleton */}
+          <div className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         </div>
       </div>
     </section>

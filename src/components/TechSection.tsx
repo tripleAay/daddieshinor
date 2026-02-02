@@ -1,17 +1,21 @@
-// components/TechSection.tsx
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 /* ────────────────────────────────────────────────
    CONFIG
 ──────────────────────────────────────────────── */
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 
-// ✅ Change this to your REAL Tech category ID in WordPress
+// Your real Tech category ID
 const TECH_CATEGORY_ID = 4;
+
+// Brand accent color
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a"; // lighter variant for hover states
+const ACCENT_DARK = "#7a744f"; // darker variant for backgrounds if needed
 
 /* ────────────────────────────────────────────────
    TYPES
@@ -22,12 +26,12 @@ type TechPost = {
   excerpt: string;
   image: string;
   alt: string;
-  label: string; // e.g. "Tech"
-  tag: string;   // e.g. "AI", "Product", "Design" (optional)
+  label: string;
+  tag: string;
 };
 
 /* ────────────────────────────────────────────────
-   TEXT UTILITIES (SAME STANDARD AS HERO)
+   UTILITIES (unchanged)
 ──────────────────────────────────────────────── */
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -39,16 +43,15 @@ function decodeHtmlEntities(input: string): string {
 function cleanWpText(input: unknown): string {
   if (typeof input !== "string") return "";
 
-  // keep spacing sane + decode entities
   const cleaned = input
     .replace(/<\/(p|div|h\d|li|blockquote|section|article)>/gi, " ")
     .replace(/<(br|br\/)\s*\/?>/gi, " ")
+    .replace(/<\/?p[^>]*>/gi, " ")
     .replace(/<[^>]*>/g, " ")
     .replace(/\[[^\]]*\]/g, " ")
     .replace(/\s+/g, " ")
     .trim();
 
-  // fix: "importance.Fast" → "importance. Fast"
   const spacedPunctuation = cleaned.replace(/([.!?])([A-Za-z])/g, "$1 $2");
 
   return decodeHtmlEntities(spacedPunctuation);
@@ -65,8 +68,6 @@ function truncate(text: string, max = 140) {
 
 function getFeaturedImage(post: any): string {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0];
-
-  // ✅ Make sure this exists in /public
   const FALLBACK = "/fallback-image.jpg";
 
   const url =
@@ -83,7 +84,7 @@ function getFeaturedImage(post: any): string {
 ──────────────────────────────────────────────── */
 function LanePill({ lane }: { lane: string }) {
   return (
-    <span className="inline-flex rounded-full bg-black/70 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-white">
+    <span className="inline-flex rounded-full bg-[#968e68]/10 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-[#968e68] dark:bg-[#968e68]/20 dark:text-[#a8a07a]">
       {lane}
     </span>
   );
@@ -116,12 +117,10 @@ export default function TechSection() {
         const mapped: TechPost[] = (Array.isArray(data) ? data : []).map((post: any) => {
           const title = cleanWpText(post?.title?.rendered) || "Untitled";
           const excerpt = truncate(cleanWpText(post?.excerpt?.rendered) || "", 140);
-
-          // Optional: use ACF fields if you have them
           const tag = cleanWpText(post?.acf?.tech_tag) || "Tech";
 
           return {
-            slug: `/essays/${post.slug}`, // keep your main essays route
+            slug: `/essays/${post.slug}`,
             title,
             excerpt,
             image: getFeaturedImage(post),
@@ -167,8 +166,7 @@ export default function TechSection() {
 
           <Link
             href="/tech"
-            className="rounded-full border border-zinc-200 px-5 py-2 text-sm font-bold hover:bg-zinc-50 transition
-                       dark:border-zinc-800 dark:hover:bg-zinc-900 dark:text-white"
+            className="rounded-full border border-zinc-200 px-5 py-2 text-sm font-bold hover:bg-[#968e68]/10 hover:border-[#968e68] hover:text-[#968e68] transition dark:border-zinc-800 dark:hover:bg-[#968e68]/10 dark:hover:border-[#968e68] dark:hover:text-[#a8a07a]"
           >
             More →
           </Link>
@@ -176,7 +174,7 @@ export default function TechSection() {
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* FEATURED */}
-          <article className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800">
+          <article className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 group">
             <Link href={featured.slug}>
               <div className="relative aspect-[4/5]">
                 <Image
@@ -185,7 +183,7 @@ export default function TechSection() {
                   fill
                   priority
                   sizes="(max-width: 1024px) 100vw, 50vw"
-                  className="object-cover"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
               </div>
@@ -196,11 +194,13 @@ export default function TechSection() {
                   <span className="text-xs font-bold uppercase opacity-90">{featured.label}</span>
                 </div>
 
-                <h3 className="text-2xl font-extrabold">{featured.title}</h3>
+                <h3 className="text-2xl font-extrabold group-hover:text-[#968e68] transition-colors">
+                  {featured.title}
+                </h3>
 
                 <p className="mt-3 text-sm opacity-90">{featured.excerpt}</p>
 
-                <p className="mt-4 text-sm font-bold text-white/90">
+                <p className="mt-4 text-sm font-bold text-white/90 group-hover:text-[#968e68] transition-colors">
                   Read full story <span aria-hidden>→</span>
                 </p>
               </div>
@@ -212,8 +212,7 @@ export default function TechSection() {
             {rest.map((post) => (
               <article
                 key={post.slug}
-                className="rounded-xl border border-zinc-200 p-5 hover:shadow-md transition
-                           dark:border-zinc-800 dark:bg-zinc-950"
+                className="rounded-xl border border-zinc-200 p-5 hover:shadow-md hover:border-[#968e68]/40 transition dark:border-zinc-800 dark:bg-zinc-950 dark:hover:border-[#968e68]/40"
               >
                 <Link href={post.slug}>
                   <div className="flex items-center justify-between gap-3">
@@ -223,14 +222,14 @@ export default function TechSection() {
                     </span>
                   </div>
 
-                  <h4 className="mt-3 text-lg font-extrabold text-black dark:text-white">
+                  <h4 className="mt-3 text-lg font-extrabold text-black dark:text-white group-hover:text-[#968e68] transition-colors">
                     {post.title}
                   </h4>
                   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                     {post.excerpt}
                   </p>
 
-                  <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-zinc-700 transition hover:text-black dark:text-zinc-300 dark:hover:text-white">
+                  <div className="mt-4 inline-flex items-center gap-2 text-sm font-bold text-zinc-700 transition hover:text-[#968e68] dark:text-zinc-300 dark:hover:text-[#a8a07a]">
                     Read <span aria-hidden>→</span>
                   </div>
                 </Link>

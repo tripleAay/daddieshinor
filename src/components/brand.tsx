@@ -2,18 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
 
-/* ────────────────────────────────────────────────
-   CONFIG
-──────────────────────────────────────────────── */
+// ────────────────────────────────────────────────
+// CONFIG
+// ────────────────────────────────────────────────
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 const BRANDS_CATEGORY_ID = 13;
 
-/* ────────────────────────────────────────────────
-   TYPES
-──────────────────────────────────────────────── */
+// Brand accent color
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a"; // lighter variant for hover states
+const ACCENT_GLOW = "rgba(150, 142, 104, 0.25)"; // for subtle shadow/glow
+
+// ────────────────────────────────────────────────
+// TYPES
+// ────────────────────────────────────────────────
 type BrandPost = {
   slug: string;
   title: string;
@@ -24,9 +29,9 @@ type BrandPost = {
   lane: string;
 };
 
-/* ────────────────────────────────────────────────
-   TEXT UTILITIES (SAME STANDARD AS HERO)
-──────────────────────────────────────────────── */
+// ────────────────────────────────────────────────
+// TEXT UTILITIES
+// ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
   const el = document.createElement("textarea");
@@ -67,20 +72,26 @@ function getFeaturedImage(post: any): string {
   );
 }
 
-/* ────────────────────────────────────────────────
-   UI BITS
-──────────────────────────────────────────────── */
+// ────────────────────────────────────────────────
+// UI BITS
+// ────────────────────────────────────────────────
 function LanePill({ lane }: { lane: string }) {
   return (
-    <span className="inline-flex rounded-full bg-black/70 px-3 py-1 text-[11px] font-black uppercase tracking-wider text-white">
+    <span
+      className={`
+        inline-flex rounded-full px-3 py-1 text-[11px] font-black uppercase tracking-wider
+        bg-[#968e68]/10 text-[#968e68] border border-[#968e68]/20
+        dark:bg-[#968e68]/20 dark:text-[#a8a07a] dark:border-[#968e68]/30
+      `}
+    >
       {lane}
     </span>
   );
 }
 
-/* ────────────────────────────────────────────────
-   MAIN COMPONENT
-──────────────────────────────────────────────── */
+// ────────────────────────────────────────────────
+// MAIN COMPONENT
+// ────────────────────────────────────────────────
 export default function BrandsSection() {
   const [posts, setPosts] = useState<BrandPost[]>([]);
   const [loading, setLoading] = useState(true);
@@ -91,7 +102,7 @@ export default function BrandsSection() {
     let cancelled = false;
 
     async function fetchBrands() {
-      start(); // ✅ global loader begins
+      start();
       try {
         setLoading(true);
 
@@ -128,7 +139,7 @@ export default function BrandsSection() {
       } finally {
         if (!cancelled) {
           setLoading(false);
-          stop(); // ✅ global loader ends
+          stop();
         }
       }
     }
@@ -142,7 +153,6 @@ export default function BrandsSection() {
   const featured = useMemo(() => posts[0], [posts]);
   const rest = useMemo(() => posts.slice(1), [posts]);
 
-  // With global loader overlay, it's okay to render nothing while waiting.
   if (loading || !featured) return null;
 
   return (
@@ -151,7 +161,9 @@ export default function BrandsSection() {
         {/* Header */}
         <div className="mb-10 flex items-end justify-between">
           <div>
-            <h2 className="text-4xl font-black md:text-5xl">Brands</h2>
+            <h2 className="text-4xl font-black md:text-5xl text-black dark:text-white">
+              Brands
+            </h2>
             <p className="mt-2 max-w-xl text-sm text-zinc-600 dark:text-zinc-400">
               Brand moves, design decisions, and strategy shifts — explained without fluff.
             </p>
@@ -159,7 +171,12 @@ export default function BrandsSection() {
 
           <Link
             href="/brands"
-            className="rounded-full border px-5 py-2 text-sm font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900"
+            className={`
+              rounded-full border border-zinc-200 px-5 py-2 text-sm font-bold
+              hover:bg-[#968e68]/10 hover:border-[#968e68] hover:text-[#968e68]
+              transition dark:border-zinc-800 dark:hover:bg-[#968e68]/10
+              dark:hover:border-[#968e68] dark:hover:text-[#a8a07a]
+            `}
           >
             More →
           </Link>
@@ -167,7 +184,7 @@ export default function BrandsSection() {
 
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-2">
           {/* FEATURED */}
-          <article className="relative overflow-hidden rounded-2xl border">
+          <article className="relative overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 group">
             <Link href={featured.slug}>
               <div className="relative aspect-[4/5]">
                 <Image
@@ -175,20 +192,23 @@ export default function BrandsSection() {
                   alt={featured.alt}
                   fill
                   priority
-                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
               </div>
 
               <div className="absolute bottom-0 p-6 text-white">
-                <div className="flex gap-2 mb-3">
+                <div className="flex gap-2 mb-3 items-center">
                   <LanePill lane={featured.lane} />
                   <span className="text-xs font-bold uppercase opacity-90">
                     {featured.brand}
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-extrabold">{featured.title}</h3>
+                <h3 className="text-2xl font-extrabold group-hover:text-[#968e68] transition-colors">
+                  {featured.title}
+                </h3>
 
                 <p className="mt-3 text-sm opacity-90">{featured.excerpt}</p>
               </div>
@@ -200,11 +220,18 @@ export default function BrandsSection() {
             {rest.map((post) => (
               <article
                 key={post.slug}
-                className="rounded-xl border p-5 hover:shadow-md transition"
+                className={`
+                  rounded-xl border border-zinc-200 p-5
+                  hover:shadow-md hover:border-[#968e68]/40 hover:bg-[#968e68]/5
+                  transition dark:border-zinc-800 dark:bg-zinc-950
+                  dark:hover:border-[#968e68]/40 dark:hover:bg-[#968e68]/10
+                `}
               >
                 <Link href={post.slug}>
                   <LanePill lane={post.lane} />
-                  <h4 className="mt-3 text-lg font-extrabold">{post.title}</h4>
+                  <h4 className="mt-3 text-lg font-extrabold text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+                    {post.title}
+                  </h4>
                   <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                     {post.excerpt}
                   </p>

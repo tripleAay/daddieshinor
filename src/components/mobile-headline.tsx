@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
 
 type HeadlinePost = {
@@ -50,8 +50,12 @@ export default function MobileAllPosts() {
 
   const { start, stop } = useGlobalLoader();
 
-  // Prevent duplicate first-load fetch in Strict Mode
   const firstLoadRef = useRef(false);
+
+  // Brand accent color
+  const ACCENT = "#968e68";
+  const ACCENT_HOVER = "#a8a07a";
+  const ACCENT_BG = "rgba(150, 142, 104, 0.08)";
 
   useEffect(() => {
     if (!WP) {
@@ -62,7 +66,6 @@ export default function MobileAllPosts() {
 
     if (!hasMore) return;
 
-    // React Strict Mode protection
     if (page === 1 && firstLoadRef.current) return;
     firstLoadRef.current = true;
 
@@ -163,28 +166,41 @@ export default function MobileAllPosts() {
             </div>
           )
         ) : (
-          posts.map((post) => (
+          posts.map((post, idx) => (
             <Link
               key={post.href}
               href={post.href}
-              className="
+              className={`
                 group block px-4 py-5 sm:px-6 sm:py-6
                 border-b border-zinc-200/60 last:border-b-0
                 dark:border-zinc-800/60
-                hover:bg-zinc-50/70 dark:hover:bg-zinc-900/30
-                transition-colors
-              "
+                hover:bg-[${ACCENT_BG}] hover:text-[${ACCENT}]
+                transition-colors duration-200
+                dark:hover:bg-[rgba(150,142,104,0.12)] dark:hover:text-[${ACCENT_HOVER}]
+              `}
             >
-              <h3
-                className="
-                  text-center text-lg sm:text-xl font-semibold leading-tight
-                  text-black dark:text-white
-                  group-hover:text-orange-600 dark:group-hover:text-orange-400
-                  transition-colors
-                "
-              >
-                {post.title}
-              </h3>
+              <div className="flex items-center gap-4">
+                {/* Optional numbering with accent */}
+                <span
+                  className={`
+                    w-8 shrink-0 text-sm font-semibold text-zinc-400
+                    group-hover:text-[${ACCENT}] transition-colors
+                  `}
+                >
+                  {String(idx + 1).padStart(2, "0")}
+                </span>
+
+                <h3
+                  className={`
+                    flex-1 text-center text-lg sm:text-xl font-semibold leading-tight
+                    text-black dark:text-white
+                    group-hover:text-[${ACCENT}] dark:group-hover:text-[${ACCENT_HOVER}]
+                    transition-colors
+                  `}
+                >
+                  {post.title}
+                </h3>
+              </div>
             </Link>
           ))
         )}
@@ -196,14 +212,15 @@ export default function MobileAllPosts() {
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={loading}
-            className="
+            className={`
               rounded-full border border-zinc-300 bg-white
-              px-8 py-3.5 text-sm font-semibold
-              hover:bg-zinc-50 hover:shadow-sm
-              active:scale-95 transition-all
+              px-8 py-3.5 text-sm font-semibold text-black
+              hover:bg-[${ACCENT_BG}] hover:border-[${ACCENT}] hover:text-[${ACCENT}]
+              active:scale-95 transition-all duration-200
               dark:border-zinc-700 dark:bg-zinc-900 dark:text-white
-              disabled:opacity-50
-            "
+              dark:hover:bg-[rgba(150,142,104,0.12)] dark:hover:border-[${ACCENT}] dark:hover:text-[${ACCENT_HOVER}]
+              disabled:opacity-50 disabled:cursor-not-allowed
+            `}
           >
             {loading ? "Loading more..." : "Load More"}
           </button>

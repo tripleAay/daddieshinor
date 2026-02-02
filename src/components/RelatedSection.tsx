@@ -1,3 +1,4 @@
+// components/RelatedSection.tsx
 import Image from "next/image";
 import Link from "next/link";
 
@@ -34,6 +35,10 @@ type RelatedSectionProps = {
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
+// Brand accent color
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a";
+
 function stripHtml(input: string) {
   return (input || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
@@ -41,11 +46,11 @@ function stripHtml(input: string) {
 function getFeaturedImage(post: WPPost): string {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0] as any;
   const url =
-    media?.media_details?.sizes?.thumbnail?.source_url ||
+    media?.media_details?.sizes?.medium_large?.source_url ||
     media?.media_details?.sizes?.medium?.source_url ||
     media?.source_url;
 
-  return url || "/fallback.jpg"; // ensure /public/fallback.jpg exists
+  return url || "/fallback.jpg";
 }
 
 async function fetchRelated(categoryId: number, currentSlug: string): Promise<RelatedPost[]> {
@@ -58,7 +63,7 @@ async function fetchRelated(categoryId: number, currentSlug: string): Promise<Re
 
   const posts: WPPost[] = await res.json();
 
-  // remove current post + map
+  // Remove current post + limit to 5
   const filtered = posts.filter((p) => p.slug !== currentSlug).slice(0, 5);
 
   return filtered.map((p, idx) => ({
@@ -66,8 +71,7 @@ async function fetchRelated(categoryId: number, currentSlug: string): Promise<Re
     title: stripHtml(p.title?.rendered || "Untitled"),
     image: getFeaturedImage(p),
     href: `/essays/${p.slug}`,
-    // optional: first 2 as “Editor’s Pick”
-    editorsPick: idx < 2,
+    editorsPick: idx < 2, // first 2 as Editor’s Pick
   }));
 }
 
@@ -76,54 +80,51 @@ export default async function RelatedSection({
   categoryId,
   categoryName = "Related",
 }: RelatedSectionProps) {
-  // No category found → don’t show empty section
   if (!categoryId) return null;
 
   const relatedPosts = await fetchRelated(categoryId, currentSlug);
 
-  // Nothing found → don’t show section
   if (!relatedPosts.length) return null;
 
   return (
-    <section className="mx-auto max-w-6xl px-4 py-12">
-      <div>
-        <h2 className="mb-4 border-b border-black pb-2 text-2xl font-extrabold uppercase">
-          Related in {categoryName}
+    <section className="mx-auto max-w-6xl px-5 py-16 md:py-20">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
+          More in {categoryName}
         </h2>
+        <div className="mt-4 h-1.5 w-32 mx-auto rounded-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
+      </div>
 
-        <ul className="space-y-6">
-          {relatedPosts.map((post) => (
-            <li
-              key={post.id}
-              className="flex gap-4 border-b border-black pb-6 last:border-none"
-            >
-              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded">
-                <Image
-                  src={post.image}
-                  alt={post.title}
-                  fill
-                  sizes="80px"
-                  className="object-cover"
-                />
-              </div>
-
-              <div>
-                {post.editorsPick && (
-                  <span className="mb-1 inline-block rounded border border-black px-2 py-[2px] text-[10px] font-semibold uppercase">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
+        {relatedPosts.map((post) => (
+          <Link
+            key={post.id}
+            href={post.href}
+            className="group block overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-[#968e68]/50 transition-all hover:shadow-2xl hover:-translate-y-1 duration-300"
+          >
+            <div className="relative aspect-[4/3] overflow-hidden">
+              <Image
+                src={post.image}
+                alt={post.title}
+                fill
+                className="object-cover transition-transform group-hover:scale-105 duration-500"
+              />
+              {post.editorsPick && (
+                <div className="absolute top-3 left-3">
+                  <span className="inline-flex rounded-full bg-[#968e68]/90 px-3 py-1 text-xs font-extrabold uppercase tracking-wider text-white shadow-md backdrop-blur">
                     Editor’s Pick
                   </span>
-                )}
+                </div>
+              )}
+            </div>
 
-                <Link
-                  href={post.href}
-                  className="block text-sm font-semibold leading-snug hover:underline"
-                >
-                  {post.title}
-                </Link>
-              </div>
-            </li>
-          ))}
-        </ul>
+            <div className="p-5">
+              <h3 className="text-lg md:text-xl font-bold leading-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors line-clamp-2">
+                {post.title}
+              </h3>
+            </div>
+          </Link>
+        ))}
       </div>
     </section>
   );

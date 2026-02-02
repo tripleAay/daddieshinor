@@ -4,6 +4,9 @@ import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
 
+// ────────────────────────────────────────────────
+// CONFIG & TYPES
+// ────────────────────────────────────────────────
 type WpPost = {
   id: number;
   slug: string;
@@ -18,6 +21,14 @@ type HeadlinePost = {
   href: string;
   meta: string;
 };
+
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
+const PER_PAGE = 30;
+
+// Brand accent color
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a"; // lighter for hover
+const ACCENT_BG = "rgba(150, 142, 104, 0.08)"; // very subtle background tint
 
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -62,13 +73,11 @@ export default function HeadlineIndex() {
 
   // Pagination
   const [page, setPage] = useState(1);
-  const PER_PAGE = 30;
 
   const WP = process.env.NEXT_PUBLIC_WP_URL;
 
   const { start, stop } = useGlobalLoader();
 
-  // track "first load" so global loader only covers initial fetch
   const didFirstLoadRef = useRef(false);
 
   useEffect(() => {
@@ -81,7 +90,6 @@ export default function HeadlineIndex() {
         setLoading(true);
         setError(null);
 
-        // ✅ Only block the whole site for the initial mount load
         if (isFirstLoad) start();
 
         if (!WP) throw new Error("NEXT_PUBLIC_WP_URL not configured");
@@ -90,9 +98,8 @@ export default function HeadlineIndex() {
 
         const res = await fetch(url, { cache: "no-store" });
 
-        // WP uses 400 for "page out of range"
         if (!res.ok) {
-          if (res.status === 400) return;
+          if (res.status === 400) return; // page out of range
           throw new Error(`WP API error: ${res.status}`);
         }
 
@@ -110,7 +117,6 @@ export default function HeadlineIndex() {
 
         if (!cancelled) {
           setItems((prev) => {
-            // de-dupe by href
             const seen = new Set(prev.map((p) => p.href));
             const next = mapped.filter((m) => !seen.has(m.href));
             return [...prev, ...next];
@@ -142,7 +148,7 @@ export default function HeadlineIndex() {
         <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
           All Posts
         </h2>
-        <div className="mt-4 h-1.5 w-28 bg-black dark:bg-white" />
+        <div className="mt-4 h-1.5 w-28 bg-black dark:bg-white rounded-full" />
         <p className="mt-4 text-sm text-zinc-600 dark:text-zinc-400 max-w-2xl">
           A headline-driven index — scan fast, click what pulls you in.
         </p>
@@ -155,26 +161,31 @@ export default function HeadlineIndex() {
       )}
 
       {/* List */}
-      <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 overflow-hidden">
+      <div className="rounded-2xl border border-zinc-200/70 dark:border-zinc-800/70 overflow-hidden divide-y divide-zinc-200/70 dark:divide-zinc-800/70">
         {items.map((p, idx) => (
           <Link
             key={p.href}
             href={p.href}
-            className="group flex items-center justify-between gap-4 px-5 py-4 hover:bg-zinc-50 dark:hover:bg-zinc-900/40 transition"
+            className={`
+              group flex items-center justify-between gap-4 px-5 py-4
+              hover:bg-[#968e68]/5 hover:text-[#968e68]
+              transition-colors
+              dark:hover:bg-[#968e68]/10 dark:hover:text-[#a8a07a]
+            `}
           >
-            <div className="flex items-start gap-4">
-              <span className="mt-0.5 w-10 shrink-0 text-sm font-semibold text-zinc-400 dark:text-zinc-600">
+            <div className="flex items-start gap-4 flex-1">
+              <span className="mt-0.5 w-10 shrink-0 text-sm font-semibold text-zinc-400 dark:text-zinc-600 group-hover:text-[#968e68] transition-colors">
                 {String(idx + 1).padStart(2, "0")}
               </span>
 
-              <div>
-                <h3 className="text-base md:text-lg font-semibold text-black dark:text-white group-hover:underline underline-offset-4">
+              <div className="flex-1">
+                <h3 className="text-base md:text-lg font-semibold text-black dark:text-white group-hover:underline underline-offset-4 decoration-[#968e68]/60">
                   {p.title}
                 </h3>
               </div>
             </div>
 
-            <time className="shrink-0 text-xs md:text-sm text-zinc-500 dark:text-zinc-400">
+            <time className="shrink-0 text-xs md:text-sm text-zinc-500 dark:text-zinc-400 group-hover:text-[#968e68] transition-colors">
               {p.meta}
             </time>
           </Link>
@@ -186,7 +197,6 @@ export default function HeadlineIndex() {
           </div>
         )}
 
-        {/* ✅ keep this for "Load more" (nice UX) */}
         {loading && didFirstLoadRef.current && (
           <div className="px-5 py-6 text-sm text-zinc-600 dark:text-zinc-400">
             Loading headlines…
@@ -195,11 +205,17 @@ export default function HeadlineIndex() {
       </div>
 
       {/* Actions */}
-      <div className="mt-8 flex items-center gap-4">
+      <div className="mt-8 flex flex-col sm:flex-row items-center gap-4">
         <button
           onClick={() => setPage((p) => p + 1)}
-          className="rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-black hover:bg-zinc-100 transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
           disabled={loading}
+          className={`
+            rounded-full border border-zinc-300 bg-white px-6 py-3 text-sm font-semibold text-black
+            hover:bg-[#968e68]/10 hover:border-[#968e68] hover:text-[#968e68]
+            disabled:opacity-50 disabled:cursor-not-allowed transition
+            dark:border-zinc-700 dark:bg-zinc-900 dark:text-white
+            dark:hover:bg-[#968e68]/10 dark:hover:border-[#968e68] dark:hover:text-[#a8a07a]
+          `}
         >
           Load more
         </button>

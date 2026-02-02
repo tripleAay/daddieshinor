@@ -21,7 +21,7 @@ const cardVariants = {
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: i * 0.1, duration: 0.6, ease: "easeOut" },
+    transition: { delay: i * 0.12, duration: 0.7, ease: "easeOut" },
   }),
 };
 
@@ -43,12 +43,15 @@ export default function LatestSection() {
   const [error, setError] = useState<string | null>(null);
 
   const { start, stop } = useGlobalLoader();
-  const isMounted = useRef(true); // ← added to safely avoid setState after unmount
+  const isMounted = useRef(true);
+
+  // Brand color (muted olive-gold)
+  const accentColor = "#968e68";
+  const accentHover = "#a8a07a"; // lighter variant for hover
 
   useEffect(() => {
     isMounted.current = true;
-
-    start(); // Start immediately on mount
+    start();
 
     let cancelled = false;
 
@@ -111,7 +114,6 @@ export default function LatestSection() {
           setError("Couldn't load latest posts. Try again later.");
         }
       } finally {
-        // ALWAYS stop - even if cancelled or errored
         if (!cancelled) {
           stop();
         }
@@ -123,14 +125,31 @@ export default function LatestSection() {
     return () => {
       cancelled = true;
       isMounted.current = false;
-      stop();           // ← Critical: force stop on unmount
+      stop();
     };
-  }, [start, stop]); // dependencies ok
+  }, [start, stop]);
+
+  // Scroll function (FIXED)
+  const scroll = (direction: "left" | "right") => {
+    if (!scrollRef.current) return;
+
+    // Dynamically calculate card width + gap (more reliable)
+    const card = scrollRef.current.querySelector("div.min-w-\\38 0px");
+    const cardWidth = card ? card.offsetWidth : 380;
+    const gap = 24; // matches gap-6 = 1.5rem = 24px
+
+    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel
+
+    scrollRef.current.scrollBy({
+      left: direction === "left" ? -scrollAmount : scrollAmount,
+      behavior: "smooth",
+    });
+  };
 
   if (error) {
     return (
       <section className="mx-auto max-w-[1400px] px-5 py-12 text-center">
-        <p className="text-red-600">{error}</p>
+        <p className="text-red-600 dark:text-red-400">{error}</p>
       </section>
     );
   }
@@ -140,19 +159,27 @@ export default function LatestSection() {
       {/* Header */}
       <div className="mb-10 flex items-end justify-between">
         <div>
-          <h2 className="text-4xl md:text-5xl font-black tracking-tight">
+          <h2 className="text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
             Latest
           </h2>
-          <div className="mt-4 h-1.5 w-28 bg-black dark:bg-white" />
+          <div className="mt-4 h-1.5 w-28 bg-black dark:bg-white rounded-full" />
         </div>
 
         {posts.length > 0 && (
           <div className="hidden sm:flex gap-4">
-            <button onClick={() => scroll("left")} aria-label="Scroll left">
-              <ChevronLeft />
+            <button
+              onClick={() => scroll("left")}
+              aria-label="Scroll left"
+              className="p-3 rounded-full border border-zinc-300 hover:border-[#968e68] hover:bg-[#968e68]/10 transition dark:border-zinc-700 dark:hover:border-[#968e68] dark:hover:bg-[#968e68]/10"
+            >
+              <ChevronLeft className="h-6 w-6" />
             </button>
-            <button onClick={() => scroll("right")} aria-label="Scroll right">
-              <ChevronRight />
+            <button
+              onClick={() => scroll("right")}
+              aria-label="Scroll right"
+              className="p-3 rounded-full border border-zinc-300 hover:border-[#968e68] hover:bg-[#968e68]/10 transition dark:border-zinc-700 dark:hover:border-[#968e68] dark:hover:bg-[#968e68]/10"
+            >
+              <ChevronRight className="h-6 w-6" />
             </button>
           </div>
         )}
@@ -161,7 +188,7 @@ export default function LatestSection() {
       {/* Carousel */}
       <div
         ref={scrollRef}
-        className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide"
+        className="flex gap-6 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 -mx-5 px-5 md:-mx-8 md:px-8 lg:-mx-12 lg:px-12"
       >
         {posts.map((post, i) => (
           <motion.div
@@ -169,19 +196,34 @@ export default function LatestSection() {
             custom={i}
             initial="hidden"
             whileInView="visible"
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-100px" }}
             variants={cardVariants}
-            className="min-w-[380px] snap-start"
+            className="min-w-[340px] sm:min-w-[380px] snap-start group"
           >
-            <Link href={post.href}>
-              <div className="relative aspect-[4/3] rounded-xl overflow-hidden">
-                <Image src={post.image} alt={post.title} fill className="object-cover" />
+            <Link href={post.href} className="block">
+              <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-md ring-1 ring-black/5 group-hover:ring-[#968e68]/40 transition-all duration-300 dark:ring-white/5 dark:group-hover:ring-[#968e68]/30">
+                <Image
+                  src={post.image}
+                  alt={post.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
 
-              <p className="mt-4 text-sm uppercase font-semibold">{post.category}</p>
-              <h3 className="mt-1 text-xl font-bold line-clamp-2">{post.title}</h3>
-              <p className="mt-2 text-gray-600 line-clamp-2">{post.excerpt}</p>
-              <time className="mt-3 block text-sm text-gray-500">{post.meta}</time>
+              <div className="mt-5">
+                <p className="text-xs md:text-sm uppercase font-semibold tracking-wide text-zinc-600 dark:text-zinc-400 group-hover:text-[#968e68] transition-colors">
+                  {post.category}
+                </p>
+                <h3 className="mt-2 text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">
+                  {post.title}
+                </h3>
+                <p className="mt-3 text-sm md:text-base text-zinc-600 dark:text-zinc-400 line-clamp-2">
+                  {post.excerpt}
+                </p>
+                <time className="mt-4 block text-xs md:text-sm text-zinc-500 dark:text-zinc-500">
+                  {post.meta}
+                </time>
+              </div>
             </Link>
           </motion.div>
         ))}

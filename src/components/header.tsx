@@ -15,6 +15,11 @@ const nav = [
 
 type Theme = "light" | "dark";
 
+// Brand accent color
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a";
+const ACCENT_GLOW = "rgba(150, 142, 104, 0.3)";
+
 function applyTheme(next: Theme) {
   const root = document.documentElement;
   if (next === "dark") root.classList.add("dark");
@@ -33,18 +38,16 @@ export default function Header() {
     setMounted(true);
 
     const stored = localStorage.getItem("theme") as Theme | null;
-    const prefersDark =
-      window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
     const initial: Theme = stored ?? (prefersDark ? "dark" : "light");
 
     setTheme(initial);
     applyTheme(initial);
   }, []);
 
-  // Optional: if user didn't choose a theme, follow system changes
   useEffect(() => {
     const stored = localStorage.getItem("theme");
-    if (stored) return; // user has preference
+    if (stored) return;
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -53,8 +56,8 @@ export default function Header() {
       applyTheme(next);
     };
 
-    media.addEventListener?.("change", onChange);
-    return () => media.removeEventListener?.("change", onChange);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
   }, []);
 
   const toggleTheme = () => {
@@ -66,7 +69,7 @@ export default function Header() {
 
   const [q, setQ] = useState("");
   const searchHref = useMemo(
-    () => `/search?q=${encodeURIComponent(q.trim())}`,
+    () => (q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"),
     [q]
   );
 
@@ -78,7 +81,7 @@ export default function Header() {
           <button
             type="button"
             aria-label="Open menu"
-            className="lg:hidden rounded-full p-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60"
+            className="lg:hidden rounded-full p-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60"
           >
             <Menu className="h-5 w-5 text-black/80 dark:text-white/80" />
           </button>
@@ -89,21 +92,16 @@ export default function Header() {
             aria-label="Daddieshinor Home"
           >
             <span className="relative h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900">
-              <div className="relative h-12 w-12 overflow-hidden rounded-full">
-                <Image
-                  src="/ds.jpg"
-                  alt="Daddieshinor"
-                  fill
-                  sizes="48px"
-                  className="object-cover"
-                  priority
-                />
-              </div>
-
-
+              <Image
+                src="/ds.jpg"
+                alt="Daddieshinor"
+                fill
+                sizes="(max-width: 768px) 100vw, 1200px"
+                className="object-cover"
+              />
             </span>
 
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-black dark:text-white hover:text-orange-600 dark:hover:text-orange-400 transition-colors">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-black dark:text-white hover:text-[#968e68] dark:hover:text-[#a8a07a] transition-colors">
               Daddieshinor
             </span>
           </Link>
@@ -117,14 +115,15 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-5 py-2 text-sm font-semibold tracking-tight transition-all ${active
-                  ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
-                  : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60`}
+                className={`relative rounded-full px-5 py-2 text-sm font-semibold tracking-tight transition-all ${
+                  active
+                    ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
+                    : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
+                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
               >
                 {item.label}
                 {active && (
-                  <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-t bg-orange-500" />
+                  <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-t bg-[#968e68]" />
                 )}
               </Link>
             );
@@ -134,18 +133,19 @@ export default function Header() {
 
           <Link
             href="/about"
-            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${isActive("/about")
-              ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
-              : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60`}
+            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+              isActive("/about")
+                ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
+                : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
           >
             About
           </Link>
         </nav>
 
-        {/* Long search bar */}
+        {/* Longer search bar */}
         <div className="flex-1 hidden md:flex justify-center">
-          <div className="w-full max-w-[720px] lg:max-w-[860px]">
+          <div className="w-full max-w-[720px] lg:max-w-[900px] xl:max-w-[1000px]">
             <form
               action="/search"
               className="relative"
@@ -153,16 +153,21 @@ export default function Header() {
                 if (!q.trim()) e.preventDefault();
               }}
             >
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
+              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
               <input
                 suppressHydrationWarning
                 name="q"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search essays, ideas, culture, tech..."
+                placeholder="Search essays, thoughts, culture, tech..."
                 autoComplete="off"
                 spellCheck={false}
-                className="h-11 w-full rounded-full border border-black/10 bg-white/80 pl-12 pr-4 text-sm font-medium text-black placeholder:text-black/45 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/25 focus:border-orange-500/30 dark:border-white/10 dark:bg-black/60 dark:text-white dark:placeholder:text-white/40"
+                className={`
+                  h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
+                  placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
+                  transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
+                  dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
+                `}
               />
             </form>
           </div>
@@ -173,7 +178,7 @@ export default function Header() {
           <Link
             href={q.trim() ? searchHref : "/search"}
             aria-label="Search"
-            className="md:hidden h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60 grid place-items-center"
+            className="md:hidden h-10 w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60 grid place-items-center"
           >
             <Search className="h-5 w-5" />
           </Link>
@@ -181,7 +186,12 @@ export default function Header() {
           <button
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            className="h-9 w-9 sm:h-10 sm:w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-500/60"
+            className={`
+              h-10 w-10 rounded-full border border-black/10 bg-white/80
+              hover:bg-black/5 hover:border-[#968e68]/40 hover:shadow-sm
+              transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60
+            `}
           >
             {mounted ? (
               theme === "dark" ? (
@@ -195,7 +205,7 @@ export default function Header() {
       </div>
 
       {/* Mobile search row */}
-      <div className="md:hidden border-t border-black/5 dark:border-white/10 px-4 pb-3 pt-3">
+      <div className="md:hidden border-t border-black/5 dark:border-white/10 px-4 pb-4 pt-3">
         <form
           action="/search"
           className="relative"
@@ -203,16 +213,21 @@ export default function Header() {
             if (!q.trim()) e.preventDefault();
           }}
         >
-          <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
+          <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
           <input
             suppressHydrationWarning
             name="q"
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search Daddieshinor..."
+            placeholder="Search Daddieshinor essays..."
             autoComplete="off"
             spellCheck={false}
-            className="h-11 w-full rounded-full border border-black/10 bg-white/80 pl-12 pr-4 text-sm font-medium text-black placeholder:text-black/45 shadow-sm focus:outline-none focus:ring-2 focus:ring-orange-500/25 focus:border-orange-500/30 dark:border-white/10 dark:bg-black/60 dark:text-white dark:placeholder:text-white/40"
+            className={`
+              h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
+              placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
+              transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
+              dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
+            `}
           />
         </form>
       </div>

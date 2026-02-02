@@ -1,6 +1,5 @@
 "use client";
 
-// components/BestNewReads.tsx
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
@@ -23,6 +22,10 @@ type WpPost = {
 };
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
+
+// Brand color
+const ACCENT_COLOR = "#968e68";
+const ACCENT_HOVER = "#a8a07a"; // slightly lighter for hover
 
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -85,7 +88,7 @@ export default function BestNewReads() {
     let cancelled = false;
 
     async function load() {
-      start(); // ✅ global loader begins
+      start();
       try {
         setError(null);
 
@@ -117,7 +120,7 @@ export default function BestNewReads() {
         console.error(e);
         if (!cancelled) setError("Couldn’t load Best New Reads right now.");
       } finally {
-        if (!cancelled) stop(); // ✅ global loader ends
+        if (!cancelled) stop();
       }
     }
 
@@ -128,8 +131,6 @@ export default function BestNewReads() {
   }, [start, stop]);
 
   const weekLabel = useMemo(() => {
-    // “Week of …” based on newest entry date is more honest than hardcoding
-    // If you want ISO-week logic later, we can do that.
     return entries.length ? "Week of " + formatWeekLabel(new Date().toISOString()) : "";
   }, [entries.length]);
 
@@ -143,7 +144,6 @@ export default function BestNewReads() {
     );
   }
 
-  // With global loader overlay, it's okay to render nothing until entries are in.
   if (!entries.length) return null;
 
   return (
@@ -160,7 +160,7 @@ export default function BestNewReads() {
           <p className="mt-1 text-sm uppercase tracking-widest text-zinc-500">
             {weekLabel || "This week"}
           </p>
-          <div className="mt-6 h-[2px] w-full bg-white/90" />
+          <div className="mt-6 h-[2px] w-full bg-gradient-to-r from-white via-[#968e68] to-white" />
         </header>
 
         {/* Horizontal list */}
@@ -170,28 +170,28 @@ export default function BestNewReads() {
               <Link
                 key={entry.rank}
                 href={entry.link}
-                className="group w-[280px] md:w-[320px] flex-shrink-0"
+                className="group w-[280px] md:w-[320px] flex-shrink-0 transition-transform hover:scale-[1.02] duration-300"
               >
                 {/* Visual */}
-                <div className="relative aspect-square overflow-hidden rounded-full border-4 border-zinc-800 transition-all duration-300 group-hover:border-orange-500">
+                <div className="relative aspect-square overflow-hidden rounded-full border-4 border-zinc-800 transition-all duration-300 group-hover:border-[#968e68] group-hover:shadow-[0_0_20px_rgba(150,142,104,0.3)]">
                   <Image
                     src={entry.image}
                     alt={entry.title}
                     fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                     sizes="(max-width: 768px) 280px, 320px"
                   />
                 </div>
 
                 {/* Meta */}
                 <div className="mt-6 text-center">
-                  <div className="text-6xl font-black leading-none text-zinc-700 transition-colors duration-300 group-hover:text-orange-500">
+                  <div className="text-6xl md:text-7xl font-black leading-none text-zinc-700 transition-colors duration-300 group-hover:text-[#968e68]">
                     {entry.rank}
                   </div>
-                  <h3 className="mt-2 text-xl md:text-2xl font-bold">
+                  <h3 className="mt-2 text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">
                     {entry.title}
                   </h3>
-                  <p className="mt-1 text-base text-zinc-400">
+                  <p className="mt-1 text-base text-zinc-400 group-hover:text-[#968e68]/80 transition-colors">
                     {entry.subtitle}
                   </p>
                 </div>
