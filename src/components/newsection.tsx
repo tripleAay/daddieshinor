@@ -157,7 +157,7 @@ export default function TechSection() {
   if (loading || !featured) return null;
 
   return (
-    <section className="bg-white dark:bg-black">
+    <section className="dark:bg-black">
       <div className="mx-auto max-w-[1400px] px-5 py-14">
         {/* Header */}
         <div className="mb-10 flex items-end justify-between">

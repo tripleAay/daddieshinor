@@ -86,3 +86,24 @@ video {
 .animate-loader-slide {
   animation: loader-slide 1.6s ease-in-out infinite;
 }
+
+
+
+@keyframes ds-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee {
+  animation: ds-marquee 28s linear infinite;
+}
+
+@media (hover: hover) {
+  .marquee:hover {
+    animation-play-state: paused;
+  }
+}

@@ -3,12 +3,14 @@
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useState } from "react";
-import { useGlobalLoader } from "@/components/global-loader";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 
 type Entry = {
   rank: number;
   title: string;
-  subtitle: string; // category name
+  subtitle: string;
   image: string;
   link: string;
 };
@@ -20,12 +22,6 @@ type WpPost = {
   title: { rendered?: string };
   _embedded?: any;
 };
-
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
-
-// Brand color
-const ACCENT_COLOR = "#968e68";
-const ACCENT_HOVER = "#a8a07a"; // slightly lighter for hover
 
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -48,47 +44,27 @@ function cleanWpText(input: unknown): string {
   );
 }
 
-function getFeaturedImage(post: any, size: "large" | "medium" | "medium_large" | "thumbnail" = "large") {
+function getFeaturedImage(post: any): string {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0];
-  if (!media) return "/fallback.jpg";
+  const FALLBACK = "/fallback.jpg";
 
-  return (
-    media?.media_details?.sizes?.[size]?.source_url ||
+  const url =
     media?.media_details?.sizes?.large?.source_url ||
     media?.media_details?.sizes?.medium_large?.source_url ||
     media?.media_details?.sizes?.medium?.source_url ||
-    media?.source_url ||
-    "/fallback.jpg"
-  );
-}
+    media?.source_url;
 
-function getPrimaryCategoryName(post: any) {
-  const terms = post?._embedded?.["wp:term"];
-  const cats = Array.isArray(terms) ? terms.flat() : [];
-  const raw =
-    cats.find((t: any) => t?.taxonomy === "category")?.name ||
-    post?._embedded?.["wp:term"]?.[0]?.[0]?.name ||
-    "Essay";
-  return cleanWpText(raw) || "Essay";
-}
-
-function formatWeekLabel(dateStr: string) {
-  const d = new Date(dateStr);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return typeof url === "string" && url.length > 0 ? url : FALLBACK;
 }
 
 export default function BestNewReads() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  const { start, stop } = useGlobalLoader();
-
   useEffect(() => {
     let cancelled = false;
 
     async function load() {
-      start();
       try {
         setError(null);
 
@@ -104,13 +80,11 @@ export default function BestNewReads() {
 
         const mapped: Entry[] = data.map((post, idx) => {
           const title = cleanWpText(post?.title?.rendered) || "Untitled";
-          const subtitle = getPrimaryCategoryName(post);
-
           return {
             rank: idx + 1,
             title,
-            subtitle,
-            image: getFeaturedImage(post, "medium_large"),
+            subtitle: "Essay", // You can pull real category later
+            image: getFeaturedImage(post),
             link: `/essays/${post.slug}`,
           };
         });
@@ -119,25 +93,17 @@ export default function BestNewReads() {
       } catch (e) {
         console.error(e);
         if (!cancelled) setError("Couldn’t load Best New Reads right now.");
-      } finally {
-        if (!cancelled) stop();
       }
     }
 
     load();
-    return () => {
-      cancelled = true;
-    };
-  }, [start, stop]);
-
-  const weekLabel = useMemo(() => {
-    return entries.length ? "Week of " + formatWeekLabel(new Date().toISOString()) : "";
-  }, [entries.length]);
+    return () => { cancelled = true; };
+  }, []);
 
   if (error) {
     return (
       <section className="bg-black text-white py-12 md:py-16">
-        <div className="mx-auto max-w-[1440px] px-5">
+        <div className="mx-auto max-w-[1440px] px-5 text-center">
           <p className="text-zinc-300">{error}</p>
         </div>
       </section>
@@ -150,54 +116,68 @@ export default function BestNewReads() {
     <section className="bg-black text-white py-12 md:py-16">
       <div className="mx-auto max-w-[1440px] px-5">
         {/* Header */}
-        <header className="mb-10">
+        <header className="mb-10 md:mb-14 text-center md:text-left">
           <h2 className="text-4xl md:text-6xl font-black tracking-tight uppercase">
             Best New Reads
           </h2>
-          <p className="mt-3 max-w-xl text-lg md:text-xl text-zinc-400">
+          <p className="mt-3 text-lg md:text-xl text-zinc-400">
             A weekly curation of essays shaping thought, not trends.
           </p>
-          <p className="mt-1 text-sm uppercase tracking-widest text-zinc-500">
-            {weekLabel || "This week"}
-          </p>
-          <div className="mt-6 h-[2px] w-full bg-gradient-to-r from-white via-[#968e68] to-white" />
+          <div className="mt-6 h-[2px] w-24 mx-auto md:mx-0 bg-gradient-to-r from-white via-[#968e68] to-white" />
         </header>
 
-        {/* Horizontal list */}
-        <div className="overflow-x-auto pb-6 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-zinc-900">
-          <div className="flex gap-8 min-w-max">
-            {entries.map((entry) => (
-              <Link
-                key={entry.rank}
-                href={entry.link}
-                className="group w-[280px] md:w-[320px] flex-shrink-0 transition-transform hover:scale-[1.02] duration-300"
-              >
-                {/* Visual */}
-                <div className="relative aspect-square overflow-hidden rounded-full border-4 border-zinc-800 transition-all duration-300 group-hover:border-[#968e68] group-hover:shadow-[0_0_20px_rgba(150,142,104,0.3)]">
-                  <Image
-                    src={entry.image}
-                    alt={entry.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    sizes="(max-width: 768px) 280px, 320px"
-                  />
-                </div>
+        {/* Entries Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
+          {entries.map((entry) => (
+            <Link
+              key={entry.rank}
+              href={entry.link}
+              className="group flex flex-col transition-transform hover:scale-[1.02] duration-300"
+            >
+              {/* Circular Image */}
+              <div className="relative aspect-square overflow-hidden rounded-full border-4 border-zinc-800 group-hover:border-[#968e68] transition-all duration-300 shadow-lg group-hover:shadow-[0_0_25px_rgba(150,142,104,0.3)]">
+                <Image
+                  src={entry.image}
+                  alt={entry.title}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
+                />
+              </div>
 
-                {/* Meta */}
-                <div className="mt-6 text-center">
-                  <div className="text-6xl md:text-7xl font-black leading-none text-zinc-700 transition-colors duration-300 group-hover:text-[#968e68]">
-                    {entry.rank}
-                  </div>
-                  <h3 className="mt-2 text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">
-                    {entry.title}
-                  </h3>
-                  <p className="mt-1 text-base text-zinc-400 group-hover:text-[#968e68]/80 transition-colors">
-                    {entry.subtitle}
-                  </p>
+              {/* Content */}
+              <div className="mt-6 text-center">
+                <div className="text-6xl md:text-7xl font-black leading-none text-zinc-700 group-hover:text-[#968e68] transition-colors">
+                  {entry.rank}
                 </div>
-              </Link>
-            ))}
-          </div>
+                <h3 className="mt-3 text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">
+                  {entry.title}
+                </h3>
+                <p className="mt-2 text-base text-zinc-400 group-hover:text-[#968e68]/80 transition-colors">
+                  {entry.subtitle}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        {/* Angular Navigation */}
+        <div className="mt-12 flex items-center justify-center gap-8">
+          <button
+            disabled
+            className="flex items-center gap-3 px-6 py-3 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed transition"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            <span className="font-medium">Previous</span>
+          </button>
+
+          <button
+            disabled
+            className="flex items-center gap-3 px-6 py-3 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed transition"
+          >
+            <span className="font-medium">Next</span>
+            <ChevronRight className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </section>

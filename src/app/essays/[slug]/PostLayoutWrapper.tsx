@@ -88,10 +88,8 @@ export default function PostLayout({
       <div className="h-[var(--header-height,80px)]" />
 
       {/* Brand bar (Daddieshinor accent) */}
-      <div className="h-3 w-full bg-gradient-to-r from-black via-orange-600 to-black dark:from-white dark:via-orange-500 dark:to-white" />
-      <div className="mx-auto max-w-[1320px] px-6">
-        <div className="border-t border-black/70 dark:border-white/25" />
-      </div>
+      
+      
 
       {/* Main content */}
       <div className="mx-auto max-w-[1320px] px-6 pb-16 pt-10">

@@ -9,7 +9,10 @@ type HeadlinePost = {
   href: string;
 };
 
-/* ------------------ Text utilities ------------------ */
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
+const ACCENT = "#968e68";
+const ACCENT_HOVER = "#a8a07a";
+const ACCENT_BG = "rgba(150, 142, 104, 0.08)";
 
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -36,8 +39,6 @@ function cleanWpText(input: unknown): string {
   return text.replace(/\s+/g, " ").trim();
 }
 
-/* ------------------ Component ------------------ */
-
 export default function MobileAllPosts() {
   const [posts, setPosts] = useState<HeadlinePost[]>([]);
   const [page, setPage] = useState(1);
@@ -51,11 +52,6 @@ export default function MobileAllPosts() {
   const { start, stop } = useGlobalLoader();
 
   const firstLoadRef = useRef(false);
-
-  // Brand accent color
-  const ACCENT = "#968e68";
-  const ACCENT_HOVER = "#a8a07a";
-  const ACCENT_BG = "rgba(150, 142, 104, 0.08)";
 
   useEffect(() => {
     if (!WP) {
@@ -71,7 +67,7 @@ export default function MobileAllPosts() {
 
     let cancelled = false;
 
-    async function fetchPosts() {
+    async function fetchPosts(wpUrl: string) {
       try {
         setLoading(true);
         setError(null);
@@ -79,8 +75,7 @@ export default function MobileAllPosts() {
         if (page === 1) start();
 
         const url =
-          `${WP.replace(/\/$/, "")}` +
-          `/wp-json/wp/v2/posts` +
+          `${wpUrl.replace(/\/$/, "")}/wp-json/wp/v2/posts` +
           `?per_page=${PER_PAGE}` +
           `&page=${page}` +
           `&orderby=date&order=desc&status=publish`;
@@ -134,7 +129,7 @@ export default function MobileAllPosts() {
       }
     }
 
-    fetchPosts();
+    fetchPosts(WP);
 
     return () => {
       cancelled = true;
@@ -150,14 +145,14 @@ export default function MobileAllPosts() {
         </div>
       )}
 
-      {/* Posts List */}
-      <div className="space-y-2">
+      {/* Posts List – centered, no numbers, middle-aligned */}
+      <div className="space-y-4 max-w-3xl mx-auto">
         {posts.length === 0 ? (
           loading ? (
             Array.from({ length: 6 }).map((_, i) => (
               <div
                 key={i}
-                className="h-20 rounded-lg bg-zinc-100 animate-pulse dark:bg-zinc-800"
+                className="h-16 rounded-lg bg-zinc-100 animate-pulse dark:bg-zinc-800"
               />
             ))
           ) : (
@@ -166,55 +161,44 @@ export default function MobileAllPosts() {
             </div>
           )
         ) : (
-          posts.map((post, idx) => (
+          posts.map((post) => (
             <Link
               key={post.href}
               href={post.href}
               className={`
-                group block px-4 py-5 sm:px-6 sm:py-6
-                border-b border-zinc-200/60 last:border-b-0
+                group block px-6 py-6 rounded-xl
+                border border-zinc-200/60
                 dark:border-zinc-800/60
                 hover:bg-[${ACCENT_BG}] hover:text-[${ACCENT}]
-                transition-colors duration-200
+                transition-all duration-200 text-center
                 dark:hover:bg-[rgba(150,142,104,0.12)] dark:hover:text-[${ACCENT_HOVER}]
+                shadow-sm hover:shadow-md
               `}
             >
-              <div className="flex items-center gap-4">
-                {/* Optional numbering with accent */}
-                <span
-                  className={`
-                    w-8 shrink-0 text-sm font-semibold text-zinc-400
-                    group-hover:text-[${ACCENT}] transition-colors
-                  `}
-                >
-                  {String(idx + 1).padStart(2, "0")}
-                </span>
-
-                <h3
-                  className={`
-                    flex-1 text-center text-lg sm:text-xl font-semibold leading-tight
-                    text-black dark:text-white
-                    group-hover:text-[${ACCENT}] dark:group-hover:text-[${ACCENT_HOVER}]
-                    transition-colors
-                  `}
-                >
-                  {post.title}
-                </h3>
-              </div>
+              <h3
+                className={`
+                  text-lg sm:text-xl font-semibold leading-tight
+                  text-black dark:text-white
+                  group-hover:text-[${ACCENT}] dark:group-hover:text-[${ACCENT_HOVER}]
+                  transition-colors
+                `}
+              >
+                {post.title}
+              </h3>
             </Link>
           ))
         )}
       </div>
 
-      {/* Load More */}
+      {/* Load More – centered */}
       {hasMore && posts.length > 0 && (
-        <div className="mt-10 flex justify-center">
+        <div className="mt-12 flex justify-center">
           <button
             onClick={() => setPage((p) => p + 1)}
             disabled={loading}
             className={`
               rounded-full border border-zinc-300 bg-white
-              px-8 py-3.5 text-sm font-semibold text-black
+              px-10 py-4 text-base font-semibold text-black
               hover:bg-[${ACCENT_BG}] hover:border-[${ACCENT}] hover:text-[${ACCENT}]
               active:scale-95 transition-all duration-200
               dark:border-zinc-700 dark:bg-zinc-900 dark:text-white

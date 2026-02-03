@@ -12,8 +12,8 @@ import AllPostsIndex from "@/components/mobile-headline";
 import HeadlineIndex from "@/components/headline-layout";
 import { SubscribeModalTrigger } from "@/components/subscribepopup";
 import Footer from "@/components/footer";
+import MarqueeNote from "@/components/marqueeNote";
 
-// Only Hero gets a skeleton — everything else streams fast
 function HeroSkeleton() {
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20 animate-pulse">
@@ -67,23 +67,30 @@ function HeroSkeleton() {
 export default function Home() {
   return (
     <div className="relative min-h-screen bg-zinc-50 font-sans antialiased dark:bg-black">
-      {/* These appear almost instantly */}
       <Header />
+      <MarqueeNote/>
       <AllPostsIndex />
+      
 
-      {/* Only Hero is suspended — shows nice skeleton while fetching WP */}
-      <Suspense fallback={<HeroSkeleton />}>
-        <Hero />
-      </Suspense>
+      <main className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
+        <Suspense fallback={<HeroSkeleton />}>
+          <Hero />
+        </Suspense>
 
-      {/* Everything else loads progressively without waiting for Hero */}
-      <LatestSection />
-      <BestNewMusic />
-      <TechSection />
-      <NewsSection />
-      <BrandsSection />
-      <HeadlineIndex />
-      <SubscribeModalTrigger />
+        <div className="mt-10 md:mt-14 lg:mt-16 space-y-14 md:space-y-16 lg:space-y-20">
+          <LatestSection />
+          <BestNewMusic />
+          <TechSection />
+          <NewsSection />
+          <BrandsSection />
+          <HeadlineIndex />
+
+          <div className="pt-2">
+            <SubscribeModalTrigger />
+          </div>
+        </div>
+      </main>
+
       <Footer />
     </div>
   );

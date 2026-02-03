@@ -2,17 +2,11 @@ import Header from "@/components/header";
 import Footer from "@/components/footer";
 import CategoryIndexPage from "@/components/CategoryIndexPage";
 
-export default function TechPage() {
+export default function CulturePage() {
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-black">
       <Header />
-
-      <CategoryIndexPage
-        title="Tech"
-        description="Signals, shifts, and real implications — tech explained with human meaning."
-        categoryId={4}
-      />
-
+      <CategoryIndexPage title="Culture" categoryId={17} />
       <Footer />
     </div>
   );

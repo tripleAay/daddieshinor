@@ -1,10 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { Menu, Search, Sun, Moon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
+
+import MobileMenu from "@/components/mobileMenu"; // ✅ make sure file name matches
 
 const nav = [
   { label: "Tech", href: "/tech" },
@@ -15,10 +17,7 @@ const nav = [
 
 type Theme = "light" | "dark";
 
-// Brand accent color
 const ACCENT = "#968e68";
-const ACCENT_HOVER = "#a8a07a";
-const ACCENT_GLOW = "rgba(150, 142, 104, 0.3)";
 
 function applyTheme(next: Theme) {
   const root = document.documentElement;
@@ -30,6 +29,7 @@ export default function Header() {
   const pathname = usePathname();
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
@@ -46,8 +46,7 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const stored = localStorage.getItem("theme");
-    if (stored) return;
+    if (localStorage.getItem("theme")) return;
 
     const media = window.matchMedia("(prefers-color-scheme: dark)");
     const onChange = () => {
@@ -73,14 +72,17 @@ export default function Header() {
     [q]
   );
 
+  const handleCloseMenu = () => setIsMenuOpen(false);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-black/90">
       <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-3 px-4 sm:px-6 lg:h-16 lg:px-8">
-        {/* Left: menu + brand */}
+        {/* Left: menu button + brand */}
         <div className="flex items-center gap-3 sm:gap-5">
           <button
             type="button"
             aria-label="Open menu"
+            onClick={() => setIsMenuOpen(true)}
             className="lg:hidden rounded-full p-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60"
           >
             <Menu className="h-5 w-5 text-black/80 dark:text-white/80" />
@@ -101,13 +103,13 @@ export default function Header() {
               />
             </span>
 
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-black dark:text-white hover:text-[#968e68] dark:hover:text-[#a8a07a] transition-colors">
+            <span className="text-xl sm:text-2xl font-black tracking-tight text-black dark:text-white hover:text-[#968e68] transition-colors">
               Daddieshinor
             </span>
           </Link>
         </div>
 
-        {/* Center nav */}
+        {/* Center nav – desktop only */}
         <nav className="hidden lg:flex items-center gap-1.5 ml-2">
           {nav.map((item) => {
             const active = isActive(item.href);
@@ -143,7 +145,7 @@ export default function Header() {
           </Link>
         </nav>
 
-        {/* Longer search bar */}
+        {/* Desktop search */}
         <div className="flex-1 hidden md:flex justify-center">
           <div className="w-full max-w-[720px] lg:max-w-[900px] xl:max-w-[1000px]">
             <form
@@ -162,12 +164,12 @@ export default function Header() {
                 placeholder="Search essays, thoughts, culture, tech..."
                 autoComplete="off"
                 spellCheck={false}
-                className={`
+                className="
                   h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
                   placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
                   transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
                   dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
-                `}
+                "
               />
             </form>
           </div>
@@ -186,12 +188,12 @@ export default function Header() {
           <button
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            className={`
+            className="
               h-10 w-10 rounded-full border border-black/10 bg-white/80
               hover:bg-black/5 hover:border-[#968e68]/40 hover:shadow-sm
               transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60
-            `}
+            "
           >
             {mounted ? (
               theme === "dark" ? (
@@ -204,7 +206,7 @@ export default function Header() {
         </div>
       </div>
 
-      {/* Mobile search row */}
+      {/* Mobile inline search bar */}
       <div className="md:hidden border-t border-black/5 dark:border-white/10 px-4 pb-4 pt-3">
         <form
           action="/search"
@@ -222,15 +224,23 @@ export default function Header() {
             placeholder="Search Daddieshinor essays..."
             autoComplete="off"
             spellCheck={false}
-            className={`
+            className="
               h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
               placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
               transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
               dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
-            `}
+            "
           />
         </form>
       </div>
+
+      {/* Mobile menu */}
+      <MobileMenu
+        isOpen={isMenuOpen}
+        onClose={handleCloseMenu}
+        isActive={isActive}
+        theme={theme}
+      />
     </header>
   );
 }
