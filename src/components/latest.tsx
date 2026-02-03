@@ -142,16 +142,16 @@ export default function LatestSection() {
     const container = scrollRef.current;
     if (!container) return;
 
-    // Get the first visible card in the container
+    // Find first child that is an HTMLElement
     const card = Array.from(container.children).find(
-      (child) => child instanceof HTMLElement
-    ) as HTMLElement | undefined;
+      (child): child is HTMLElement => child instanceof HTMLElement
+    );
 
-    // Use optional chaining to fix TS error
+    // Now TS knows card is HTMLElement | undefined
     const cardWidth = card?.offsetWidth ?? 380;
 
-    const gap = 24; // matches gap-6 = 1.5rem = 24px
-    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel
+    const gap = 24; // matches gap-6
+    const scrollAmount = (cardWidth + gap) * 1.1;
 
     container.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
