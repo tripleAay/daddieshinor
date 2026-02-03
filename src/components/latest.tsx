@@ -140,14 +140,13 @@ export default function LatestSection() {
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
 
-    // Fix 1: Better selector syntax + type assertion (most common & clean)
-    const card = scrollRef.current.querySelector('div.min-w-[80px]') as HTMLElement | null;
+    // Better selector with type assertion
+    const card = scrollRef.current.querySelector('div.sm\\:min-w-\\[380px\\]') as HTMLElement | null;
 
-    // Fix 2: Safe access with nullish coalescing
+    // Safe width
     const cardWidth = card?.offsetWidth ?? 380;
 
-    const gap = 24; // matches gap-6 = 1.5rem = 24px
-
+    const gap = 24; // Tailwind gap-6
     const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll
 
     scrollRef.current.scrollBy({
