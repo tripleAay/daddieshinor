@@ -11,7 +11,7 @@ import Header from "@/components/header";
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
 // ────────────────────────────────────────────────
-// Types & helpers (unchanged)
+// Types & helpers
 // ────────────────────────────────────────────────
 
 type RawPost = {
@@ -67,9 +67,17 @@ async function searchPosts(query: string): Promise<RawPost[]> {
 }
 
 // ────────────────────────────────────────────────
+// Safe query reader component
+// ────────────────────────────────────────────────
+function QueryReader({ children }: { children: (query: string) => React.ReactNode }) {
+  const searchParams = useSearchParams();
+  const query = useMemo(() => (searchParams?.get("q") || "").trim(), [searchParams]);
+  return <>{children(query)}</>;
+}
+
+// ────────────────────────────────────────────────
 // Share section
 // ────────────────────────────────────────────────
-
 function ShareSection({ query }: { query: string }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -81,9 +89,7 @@ function ShareSection({ query }: { query: string }) {
   }, []);
 
   const shareText = useMemo(() => {
-    return query
-      ? `Search results for "${query}" on Daddieshinor`
-      : "Search Daddieshinor – Essays & Thoughts";
+    return query ? `Search results for "${query}" on Daddieshinor` : "Search Daddieshinor – Essays & Thoughts";
   }, [query]);
 
   const copyLink = async () => {
@@ -92,9 +98,7 @@ function ShareSection({ query }: { query: string }) {
       await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 1400);
-    } catch {
-      setCopied(false);
-    }
+    } catch {}
   };
 
   return (
@@ -102,7 +106,6 @@ function ShareSection({ query }: { query: string }) {
       <p className="text-xs font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-4">
         Share this search
       </p>
-
       <div className="flex flex-wrap gap-3">
         <a
           href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
@@ -113,7 +116,6 @@ function ShareSection({ query }: { query: string }) {
         >
           <Facebook className="h-5 w-5" />
         </a>
-
         <a
           href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`}
           target="_blank"
@@ -123,7 +125,6 @@ function ShareSection({ query }: { query: string }) {
         >
           <Twitter className="h-5 w-5" />
         </a>
-
         <button
           type="button"
           onClick={copyLink}
@@ -134,14 +135,13 @@ function ShareSection({ query }: { query: string }) {
           <Link2 className="h-5 w-5" />
         </button>
       </div>
-
       {copied && <p className="mt-3 text-xs font-semibold text-[#968e68]">Link copied.</p>}
     </div>
   );
 }
 
 // ────────────────────────────────────────────────
-// Page
+// Main page
 // ────────────────────────────────────────────────
 
 export default function SearchPage() {
@@ -155,23 +155,20 @@ export default function SearchPage() {
 
       <div className="h-3 w-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
 
-      <Suspense
-        fallback={
-          <div className="mx-auto max-w-[1320px] px-6 py-20 text-center text-zinc-500 dark:text-zinc-400">
-            Loading search results...
-          </div>
-        }
-      >
-        <SearchContent />
+      <Suspense fallback={
+        <div className="mx-auto max-w-[1320px] px-6 py-20 text-center text-zinc-500 dark:text-zinc-400">
+          Loading search results...
+        </div>
+      }>
+        <QueryReader>
+          {query => <SearchContent query={query} />}
+        </QueryReader>
       </Suspense>
     </div>
   );
 }
 
-function SearchContent() {
-  const searchParams = useSearchParams();
-  const query = useMemo(() => (searchParams?.get("q") || "").trim(), [searchParams]);
-
+function SearchContent({ query }: { query: string }) {
   const [results, setResults] = useState<MappedPost[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -190,10 +187,12 @@ function SearchContent() {
         const raw = await searchPosts(query);
         if (cancelled) return;
 
-        const mapped = raw.map((post) => {
+        const mapped = raw.map(post => {
           const title = stripHtml(post.title?.rendered || "Untitled");
           let excerpt = stripHtml(post.excerpt?.rendered || "");
-          if (excerpt.length > 160) excerpt = excerpt.slice(0, 157) + "...";
+          if (excerpt.length > 160) {
+            excerpt = excerpt.slice(0, 157) + "...";
+          }
           const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "/fallback.jpg";
           const date = formatDate(post.date);
 
@@ -218,7 +217,6 @@ function SearchContent() {
 
   const count = results.length;
 
-  // ─── The rest of the JSX is exactly the same as your original ───
   return (
     <div className="mx-auto max-w-[1320px] px-6 pb-16 pt-10">
       <div className="grid grid-cols-12 gap-10">
