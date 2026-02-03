@@ -153,6 +153,7 @@ export default async function EssayPage({ params }: PageProps) {
         dateLabel={date}
         heroImage={featured.url}
         heroAlt={featured.alt}
+        
       >
         <WpContentRenderer html={safeHtml} />
       </PostLayout>
@@ -163,7 +164,7 @@ export default async function EssayPage({ params }: PageProps) {
         categoryName={primaryCategory.name}
       />
 
-      
+
 
       <Footer />
     </>
