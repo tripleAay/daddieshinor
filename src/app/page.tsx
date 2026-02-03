@@ -6,7 +6,7 @@ import Hero from "@/components/hero";
 import LatestSection from "@/components/latest";
 import BestNewMusic from "@/components/bestNewMusic";
 import TechSection from "@/components/TechSection";
-import NewsSection from "@/components/newsection";
+import NewsSection from "@/components/culturesection";
 import BrandsSection from "@/components/brand";
 import AllPostsIndex from "@/components/mobile-headline";
 import HeadlineIndex from "@/components/headline-layout";
@@ -83,7 +83,8 @@ export default function Home() {
           <TechSection />
           <NewsSection />
           <BrandsSection />
-          <HeadlineIndex />
+          <HeadlineIndex title="All Posts" categoryId={0} description="Latest posts from all categories" />
+
 
           <div className="pt-2">
             <SubscribeModalTrigger />
