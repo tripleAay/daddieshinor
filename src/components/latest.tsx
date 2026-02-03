@@ -137,31 +137,28 @@ export default function LatestSection() {
   }, [start, stop]);
 
   // Scroll function (FIXED)
+  // Scroll function – fully dynamic
   const scroll = (direction: "left" | "right") => {
-    if (!scrollRef.current) return;
+    const container = scrollRef.current;
+    if (!container) return;
 
-    // Better selector with type assertion
-    const card = scrollRef.current.querySelector('div.sm\\:min-w-\\[380px\\]') as HTMLElement | null;
+    // Get the first visible card in the container
+    const card = Array.from(container.children).find(
+      (child) => child instanceof HTMLElement
+    ) as HTMLElement | undefined;
 
-    // Safe width
+    // If no card found, fallback to 380px
     const cardWidth = card?.offsetWidth ?? 380;
 
-    const gap = 24; // Tailwind gap-6
-    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll
+    const gap = 24; // matches gap-6 = 1.5rem = 24px
+    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel
 
-    scrollRef.current.scrollBy({
+    container.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
   };
 
-  if (error) {
-    return (
-      <section className="mx-auto max-w-[1400px] px-5 py-12 text-center">
-        <p className="text-red-600 dark:text-red-400">{error}</p>
-      </section>
-    );
-  }
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-16 md:py-24">

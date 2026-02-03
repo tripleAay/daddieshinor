@@ -40,11 +40,9 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
                   <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
                   Branding
                 </div>
-
                 <p className="mt-4 text-xs leading-relaxed text-black/60 dark:text-white/60">
                   Branding is trust with a design system — positioning, identity, and the story people remember.
                 </p>
-
                 <div className="mt-5 text-xs font-semibold text-black/70 dark:text-white/70">
                   {posts?.length ? `${posts.length} posts` : "No posts yet"}
                 </div>
@@ -63,7 +61,6 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
                   Not just logos. Meaning. Memory. Position.
                 </p>
               </div>
-
               <Link
                 href="/"
                 className="hidden sm:inline-flex rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-bold text-black hover:bg-zinc-50 transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
@@ -156,7 +153,7 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
           {/* RIGHT SIDEBAR */}
           <aside className="col-span-12 md:col-span-3 lg:col-span-3">
             <div className="sticky top-24 space-y-6">
-              <div className="rounded-2xl border border-zinc-300 bg-[#f4f3dc] p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70">
+              <div className="rounded-2xl border border-black/10 bg-[#f4f3dc] p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70">
                 <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/80 dark:border-white/10 dark:bg-zinc-950 dark:text-white/80">
                   Daddieshinor Letters
                 </div>

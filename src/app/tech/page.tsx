@@ -1,8 +1,7 @@
-// app/tech/page.tsx
 import { Metadata } from "next";
 import TechCategoryView from "./techCategoryView";
 
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
+const WP_BASE_URL = (process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com").replace(/\/+$/, "");
 
 // ✅ set your real Tech category ID
 const TECH_CATEGORY_ID = 4;
@@ -72,31 +71,39 @@ function getFeaturedImage(post: WPPost): { url: string; alt: string } {
 }
 
 async function fetchTechPosts(): Promise<CardPost[]> {
-  const url =
-    `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish` +
-    `&categories=${TECH_CATEGORY_ID}&per_page=12&orderby=date&order=desc`;
+  const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish&categories=${TECH_CATEGORY_ID}&per_page=12&orderby=date&order=desc`;
 
-  const res = await fetch(url, { next: { revalidate: 300 } });
-  if (!res.ok) return [];
+  console.log("Fetching Tech Posts from:", url);
 
-  const data: WPPost[] = await res.json();
-  if (!Array.isArray(data)) return [];
+  try {
+    const res = await fetch(url, { next: { revalidate: 300 } });
+    if (!res.ok) {
+      console.warn("Failed to fetch Tech posts:", res.status);
+      return [];
+    }
 
-  return data.map((post) => {
-    const title = stripHtml(post.title?.rendered || "Untitled");
-    const excerpt = stripHtml(post.excerpt?.rendered || "").slice(0, 180);
-    const img = getFeaturedImage(post);
+    const data: WPPost[] = await res.json();
+    if (!Array.isArray(data)) return [];
 
-    return {
-      id: post.id,
-      href: `/essays/${post.slug}`,
-      title,
-      excerpt: excerpt ? `${excerpt}…` : "",
-      dateLabel: formatDate(post.date),
-      image: img.url,
-      alt: img.alt,
-    };
-  });
+    return data.map((post) => {
+      const title = stripHtml(post.title?.rendered || "Untitled");
+      const excerpt = stripHtml(post.excerpt?.rendered || "").slice(0, 180);
+      const img = getFeaturedImage(post);
+
+      return {
+        id: post.id,
+        href: `/essays/${post.slug}`,
+        title,
+        excerpt: excerpt ? `${excerpt}…` : "",
+        dateLabel: formatDate(post.date),
+        image: img.url,
+        alt: img.alt,
+      };
+    });
+  } catch (err) {
+    console.error("Error fetching Tech posts:", err);
+    return [];
+  }
 }
 
 export const metadata: Metadata = {

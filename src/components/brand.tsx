@@ -8,7 +8,11 @@ import { useGlobalLoader } from "@/components/global-loader";
 // ────────────────────────────────────────────────
 // CONFIG
 // ────────────────────────────────────────────────
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
+
+// Correct:
+const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&categories=13&per_page=12&orderby=date&order=desc`;
+
 const BRANDS_CATEGORY_ID = 13;
 
 // Brand accent color
