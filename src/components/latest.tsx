@@ -147,7 +147,7 @@ export default function LatestSection() {
       (child) => child instanceof HTMLElement
     ) as HTMLElement | undefined;
 
-    // If no card found, fallback to 380px
+    // Use optional chaining to fix TS error
     const cardWidth = card?.offsetWidth ?? 380;
 
     const gap = 24; // matches gap-6 = 1.5rem = 24px
