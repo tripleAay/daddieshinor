@@ -1,20 +1,16 @@
 // app/search/page.tsx
+
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Link2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
-import Header from "@/components/header";
+import Header from "@/components/header"; // assuming this exists
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
-// ────────────────────────────────────────────────
-// Types & helpers (unchanged)
-// ────────────────────────────────────────────────
-
-type RawPost = {
+type SearchResult = {
   id: number;
   slug: string;
   title: { rendered: string };
@@ -51,10 +47,12 @@ function formatDate(dateStr: string): string {
   });
 }
 
-async function searchPosts(query: string): Promise<RawPost[]> {
+async function searchPosts(query: string): Promise<SearchResult[]> {
   if (!query.trim()) return [];
 
-  const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&search=${encodeURIComponent(query)}&per_page=12&status=publish`;
+  const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&search=${encodeURIComponent(
+    query
+  )}&per_page=12&status=publish`;
 
   try {
     const res = await fetch(url, { cache: "no-store" });
@@ -67,9 +65,8 @@ async function searchPosts(query: string): Promise<RawPost[]> {
 }
 
 // ────────────────────────────────────────────────
-// Share section
+// Share / Copy Component (extracted for clarity)
 // ────────────────────────────────────────────────
-
 function ShareSection({ query }: { query: string }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -135,33 +132,31 @@ function ShareSection({ query }: { query: string }) {
         </button>
       </div>
 
-      {copied && <p className="mt-3 text-xs font-semibold text-[#968e68]">Link copied.</p>}
+      {copied && (
+        <p className="mt-3 text-xs font-semibold text-[#968e68]">Link copied.</p>
+      )}
     </div>
   );
 }
 
 // ────────────────────────────────────────────────
-// Page
+// Main Page Component
 // ────────────────────────────────────────────────
-
 export default function SearchPage() {
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 text-black dark:text-white">
+      {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/90">
         <Header />
       </div>
 
+      {/* Spacer */}
       <div className="h-20 lg:h-24" />
 
+      {/* Accent bar */}
       <div className="h-3 w-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
 
-      <Suspense
-        fallback={
-          <div className="mx-auto max-w-[1320px] px-6 py-20 text-center text-zinc-500 dark:text-zinc-400">
-            Loading search results...
-          </div>
-        }
-      >
+      <Suspense fallback={<div className="text-center py-20 text-zinc-500">Loading search results...</div>}>
         <SearchContent />
       </Suspense>
     </div>
@@ -169,11 +164,14 @@ export default function SearchPage() {
 }
 
 function SearchContent() {
-  const searchParams = useSearchParams();
-  const query = useMemo(() => (searchParams?.get("q") || "").trim(), [searchParams]);
-
   const [results, setResults] = useState<MappedPost[]>([]);
   const [loading, setLoading] = useState(false);
+
+  // Get query from URL
+  const searchParams = new URLSearchParams(
+    typeof window !== "undefined" ? window.location.search : ""
+  );
+  const query = searchParams.get("q")?.trim() || "";
 
   useEffect(() => {
     let cancelled = false;
@@ -185,15 +183,13 @@ function SearchContent() {
       }
 
       setLoading(true);
-
       try {
         const raw = await searchPosts(query);
         if (cancelled) return;
 
         const mapped = raw.map((post) => {
           const title = stripHtml(post.title?.rendered || "Untitled");
-          let excerpt = stripHtml(post.excerpt?.rendered || "");
-          if (excerpt.length > 160) excerpt = excerpt.slice(0, 157) + "...";
+          const excerpt = stripHtml(post.excerpt?.rendered || "").slice(0, 160) + (post.excerpt?.rendered ? "..." : "");
           const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "/fallback.jpg";
           const date = formatDate(post.date);
 
@@ -216,14 +212,15 @@ function SearchContent() {
     };
   }, [query]);
 
-  const count = results.length;
+  const resultsCount = results.length;
 
-  // ─── The rest of the JSX is exactly the same as your original ───
   return (
     <div className="mx-auto max-w-[1320px] px-6 pb-16 pt-10">
       <div className="grid grid-cols-12 gap-10">
+        {/* LEFT RAIL – Search info + Share */}
         <aside className="col-span-12 hidden md:block md:col-span-3 lg:col-span-2">
           <div className="sticky top-24 space-y-8">
+            {/* Search Info Card */}
             <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <h3 className="text-lg font-black tracking-tight text-black dark:text-white">
                 Search Results
@@ -231,8 +228,8 @@ function SearchContent() {
               <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
                 {query ? (
                   <>
-                    Found <strong className="text-[#968e68]">{count}</strong>{" "}
-                    {count === 1 ? "post" : "posts"} for
+                    Found <strong className="text-[#968e68]">{resultsCount}</strong>{" "}
+                    {resultsCount === 1 ? "post" : "posts"} for
                     <br />
                     <span className="font-semibold text-black dark:text-white">"{query}"</span>
                   </>
@@ -246,6 +243,7 @@ function SearchContent() {
           </div>
         </aside>
 
+        {/* CENTER – Main content */}
         <main className="col-span-12 md:col-span-6 lg:col-span-7">
           <div className="mb-10">
             <h1 className="text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
@@ -261,15 +259,15 @@ function SearchContent() {
             <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
               {loading
                 ? "Searching..."
-                : count > 0
-                ? `${count} ${count === 1 ? "post" : "posts"} found`
+                : results.length > 0
+                ? `${results.length} ${results.length === 1 ? "post" : "posts"} found`
                 : query
                 ? "No results found."
                 : "Find essays, thoughts, culture, tech, branding & life insights."}
             </p>
           </div>
 
-          {(!query || (!loading && count === 0)) && (
+          {(!query || (!loading && results.length === 0)) && (
             <div className="mt-16 text-center">
               <div className="inline-block rounded-2xl bg-zinc-100/80 p-10 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
                 <h2 className="text-3xl font-black text-zinc-700 dark:text-zinc-300">
@@ -290,7 +288,7 @@ function SearchContent() {
             </div>
           )}
 
-          {count > 0 && (
+          {results.length > 0 && (
             <div className="space-y-10">
               {results.map((post) => (
                 <Link
@@ -325,6 +323,7 @@ function SearchContent() {
           )}
         </main>
 
+        {/* RIGHT SIDEBAR – Newsletter + Partnership */}
         <aside className="col-span-12 md:col-span-3 lg:col-span-3">
           <div className="sticky top-24 space-y-8">
             <div className="rounded-2xl border border-zinc-200 bg-white p-7 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
@@ -375,3 +374,6 @@ function SearchContent() {
     </div>
   );
 }
+
+// Important: Prevents static prerendering issues with useSearchParams + client features
+export const dynamic = "force-dynamic";

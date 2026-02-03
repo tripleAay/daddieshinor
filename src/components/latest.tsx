@@ -16,14 +16,21 @@ type LatestPost = {
   href: string;
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, x: 40 },
+import type { Variants } from "framer-motion";
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, x: 24 },
   visible: (i: number) => ({
     opacity: 1,
     x: 0,
-    transition: { delay: i * 0.12, duration: 0.7, ease: "easeOut" },
+    transition: {
+      delay: i * 0.08,
+      duration: 0.55,
+      ease: [0.22, 1, 0.36, 1], // ✅ instead of "easeOut"
+    },
   }),
 };
+
 
 const CATEGORY_SECTIONS = [
   { label: "Tech", id: 4 },
@@ -133,12 +140,15 @@ export default function LatestSection() {
   const scroll = (direction: "left" | "right") => {
     if (!scrollRef.current) return;
 
-    // Dynamically calculate card width + gap (more reliable)
-    const card = scrollRef.current.querySelector("div.min-w-\\38 0px");
-    const cardWidth = card ? card.offsetWidth : 380;
+    // Fix 1: Better selector syntax + type assertion (most common & clean)
+    const card = scrollRef.current.querySelector('div.min-w-[80px]') as HTMLElement | null;
+
+    // Fix 2: Safe access with nullish coalescing
+    const cardWidth = card?.offsetWidth ?? 380;
+
     const gap = 24; // matches gap-6 = 1.5rem = 24px
 
-    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel
+    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll
 
     scrollRef.current.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
