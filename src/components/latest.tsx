@@ -1,3 +1,4 @@
+// src/components/latest.tsx
 "use client";
 
 import Image from "next/image";
@@ -26,11 +27,10 @@ const cardVariants: Variants = {
     transition: {
       delay: i * 0.08,
       duration: 0.55,
-      ease: [0.22, 1, 0.36, 1], // ✅ instead of "easeOut"
+      ease: [0.22, 1, 0.36, 1],
     },
   }),
 };
-
 
 const CATEGORY_SECTIONS = [
   { label: "Tech", id: 4 },
@@ -54,7 +54,7 @@ export default function LatestSection() {
 
   // Brand color (muted olive-gold)
   const accentColor = "#968e68";
-  const accentHover = "#a8a07a"; // lighter variant for hover
+  const accentHover = "#a8a07a";
 
   useEffect(() => {
     isMounted.current = true;
@@ -136,29 +136,25 @@ export default function LatestSection() {
     };
   }, [start, stop]);
 
-  // Scroll function (FIXED)
-  // Scroll function – fully dynamic
+  // Scroll function – fixed & type-safe
   const scroll = (direction: "left" | "right") => {
     const container = scrollRef.current;
     if (!container) return;
 
-    // Find first child that is an HTMLElement
-    const card = Array.from(container.children).find(
-      (child): child is HTMLElement => child instanceof HTMLElement
-    );
+    // Safely query the first card (use HTMLElement type)
+    const card = container.querySelector<HTMLElement>("div.min-w-\\38 0px");
 
-    // Now TS knows card is HTMLElement | undefined
-    const cardWidth = card?.offsetWidth ?? 380;
+    // Now card is HTMLElement | null
+    const cardWidth = card?.offsetWidth ?? 380; // fallback to 380px if no card found
 
-    const gap = 24; // matches gap-6
-    const scrollAmount = (cardWidth + gap) * 1.1;
+    const gap = 24; // matches gap-6 = 1.5rem = 24px
+    const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel
 
     container.scrollBy({
       left: direction === "left" ? -scrollAmount : scrollAmount,
       behavior: "smooth",
     });
   };
-
 
   return (
     <section className="mx-auto max-w-[1400px] px-5 py-16 md:py-24">
