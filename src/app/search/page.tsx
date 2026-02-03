@@ -8,6 +8,8 @@ import { Facebook, Twitter, Link2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
 
+export const dynamic = 'force-dynamic'; // <--- THIS IS ALLOWED & NEEDED HERE
+
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
 // ────────────────────────────────────────────────
@@ -67,30 +69,27 @@ async function searchPosts(query: string): Promise<RawPost[]> {
 }
 
 // ────────────────────────────────────────────────
-// Safe query reader component
+// Ultra-safe query hook isolator
 // ────────────────────────────────────────────────
-function QueryReader({ children }: { children: (query: string) => React.ReactNode }) {
-  const searchParams = useSearchParams();
-  const query = useMemo(() => (searchParams?.get("q") || "").trim(), [searchParams]);
-  return <>{children(query)}</>;
+function SearchQueryProvider({ children }: { children: (q: string) => React.ReactNode }) {
+  const params = useSearchParams();
+  const q = useMemo(() => (params?.get("q") || "").trim(), [params]);
+  return <>{children(q)}</>;
 }
 
 // ────────────────────────────────────────────────
-// Share section
+// Share section (unchanged)
 // ────────────────────────────────────────────────
+
 function ShareSection({ query }: { query: string }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      setUrl(window.location.href);
-    }
+    if (typeof window !== "undefined") setUrl(window.location.href);
   }, []);
 
-  const shareText = useMemo(() => {
-    return query ? `Search results for "${query}" on Daddieshinor` : "Search Daddieshinor – Essays & Thoughts";
-  }, [query]);
+  const shareText = useMemo(() => query ? `Search results for "${query}" on Daddieshinor` : "Search Daddieshinor – Essays & Thoughts", [query]);
 
   const copyLink = async () => {
     try {
@@ -107,31 +106,13 @@ function ShareSection({ query }: { query: string }) {
         Share this search
       </p>
       <div className="flex flex-wrap gap-3">
-        <a
-          href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-          aria-label="Share on Facebook"
-        >
+        <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800" aria-label="Share on Facebook">
           <Facebook className="h-5 w-5" />
         </a>
-        <a
-          href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-          aria-label="Share on X"
-        >
+        <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`} target="_blank" rel="noopener noreferrer" className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800" aria-label="Share on X">
           <Twitter className="h-5 w-5" />
         </a>
-        <button
-          type="button"
-          onClick={copyLink}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-          aria-label="Copy link"
-          title={copied ? "Copied!" : "Copy link"}
-        >
+        <button type="button" onClick={copyLink} className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800" aria-label="Copy link" title={copied ? "Copied!" : "Copy link"}>
           <Link2 className="h-5 w-5" />
         </button>
       </div>
@@ -141,7 +122,7 @@ function ShareSection({ query }: { query: string }) {
 }
 
 // ────────────────────────────────────────────────
-// Main page
+// Page
 // ────────────────────────────────────────────────
 
 export default function SearchPage() {
@@ -160,15 +141,15 @@ export default function SearchPage() {
           Loading search results...
         </div>
       }>
-        <QueryReader>
-          {query => <SearchContent query={query} />}
-        </QueryReader>
+        <SearchQueryProvider>
+          {q => <SearchBody query={q} />}
+        </SearchQueryProvider>
       </Suspense>
     </div>
   );
 }
 
-function SearchContent({ query }: { query: string }) {
+function SearchBody({ query }: { query: string }) {
   const [results, setResults] = useState<MappedPost[]>([]);
   const [loading, setLoading] = useState(false);
 
@@ -190,9 +171,7 @@ function SearchContent({ query }: { query: string }) {
         const mapped = raw.map(post => {
           const title = stripHtml(post.title?.rendered || "Untitled");
           let excerpt = stripHtml(post.excerpt?.rendered || "");
-          if (excerpt.length > 160) {
-            excerpt = excerpt.slice(0, 157) + "...";
-          }
+          if (excerpt.length > 160) excerpt = excerpt.slice(0, 157) + "...";
           const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "/fallback.jpg";
           const date = formatDate(post.date);
 
@@ -210,9 +189,7 @@ function SearchContent({ query }: { query: string }) {
 
     run();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true };
   }, [query]);
 
   const count = results.length;
