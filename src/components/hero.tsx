@@ -416,7 +416,7 @@ export default function Hero() {
           <div className="rounded-2xl border border-[#968e68]/30 bg-gradient-to-br from-[#968e68]/5 to-white/50 p-6 shadow-md dark:from-[#968e68]/10 dark:to-zinc-950/50 dark:border-[#968e68]/20">
             <div className="flex items-center gap-3 mb-3">
               <span className="text-[#968e68] font-black text-lg">✦</span>
-              <h4 className="text-lg font-extrabold text-[#968e68] tracking-tight">
+              <h4 className="text-sm font-extrabold text-[#968e68] tracking-tight">
                 Partnership with Daddieshinor
               </h4>
             </div>

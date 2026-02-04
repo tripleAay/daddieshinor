@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 import { Sparkles } from "lucide-react";
 
 type CardPost = {
@@ -191,6 +192,9 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
             </div>
           </aside>
         </div>
+      </div>
+      <div>
+        <Footer />
       </div>
     </article>
   );

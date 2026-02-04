@@ -136,16 +136,16 @@ export default function LatestSection() {
     };
   }, [start, stop]);
 
-  // Scroll function – fixed & type-safe
+  // Fixed scroll function – type-safe & reliable
   const scroll = (direction: "left" | "right") => {
     const container = scrollRef.current;
     if (!container) return;
 
-    // Safely query the first card (use HTMLElement type)
-    const card = container.querySelector<HTMLElement>("div.min-w-\\38 0px");
+    // Use generic querySelector<HTMLElement> to tell TypeScript it's an HTML element
+    const card = container.querySelector<HTMLElement>(".min-w-[340px], .min-w-[380px]");
 
-    // Now card is HTMLElement | null
-    const cardWidth = card?.offsetWidth ?? 380; // fallback to 380px if no card found
+    // Safe access: offsetWidth only on HTMLElement, fallback to 380px
+    const cardWidth = card?.offsetWidth ?? 380;
 
     const gap = 24; // matches gap-6 = 1.5rem = 24px
     const scrollAmount = (cardWidth + gap) * 1.1; // slight overscroll for better feel

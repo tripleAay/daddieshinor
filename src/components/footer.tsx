@@ -75,10 +75,10 @@ export default function Footer() {
             </h3>
             <ul className="space-y-3 text-sm">
               <li><Link href="/latest" className="hover:text-white">Latest</Link></li>
-              <li><Link href="/essays" className="hover:text-white">Essays</Link></li>
+              <li><Link href="/brand" className="hover:text-white">Branding</Link></li>
               <li><Link href="/tech" className="hover:text-white">Tech</Link></li>
               <li><Link href="/culture" className="hover:text-white">Culture</Link></li>
-              <li><Link href="/thinking" className="hover:text-white">Thinking</Link></li>
+              <li><Link href="/life" className="hover:text-white">Thinking</Link></li>
             </ul>
           </div>
 

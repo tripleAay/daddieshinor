@@ -83,7 +83,7 @@ export default function Home() {
           <TechSection />
           <NewsSection />
           <BrandsSection />
-          <HeadlineIndex title="All Posts" categoryId={0} description="Latest posts from all categories" />
+         <HeadlineIndex title="All Posts" description="Latest posts from all categories" />
 
 
           <div className="pt-2">

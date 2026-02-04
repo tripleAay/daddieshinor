@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Facebook, Twitter, Link2 } from "lucide-react";
 import { useSearchParams } from "next/navigation";
 import Header from "@/components/header";
+import Footer from "@/components/footer";
 
 export const dynamic = 'force-dynamic'; // <--- THIS IS ALLOWED & NEEDED HERE
 
@@ -134,7 +135,7 @@ export default function SearchPage() {
 
       <div className="h-20 lg:h-24" />
 
-      <div className="h-3 w-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
+      
 
       <Suspense fallback={
         <div className="mx-auto max-w-[1320px] px-6 py-20 text-center text-zinc-500 dark:text-zinc-400">
@@ -145,6 +146,9 @@ export default function SearchPage() {
           {q => <SearchBody query={q} />}
         </SearchQueryProvider>
       </Suspense>
+      <div>
+        <Footer />
+      </div>
     </div>
   );
 }
