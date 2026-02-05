@@ -1,10 +1,10 @@
-// app/culture/cultureCategoryView.tsx
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import Header from "@/components/header";
+import { Breadcrumb } from "@/components/bedcrumb"; // assuming this is the correct path
 import Footer from "@/components/footer";
 import { Sparkles } from "lucide-react";
 
@@ -56,6 +56,9 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
 
           {/* CENTER */}
           <main className="col-span-12 md:col-span-6 lg:col-span-7">
+            {/* Breadcrumb for category page: Home → Culture */}
+            <Breadcrumb category="Culture" title="" />
+
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h1 className="text-[34px] leading-[1.12] font-black tracking-tight md:text-[44px]">
@@ -74,7 +77,7 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
               </Link>
             </div>
 
-            {/* Featured */}
+            {/* Featured Post */}
             {featured && (
               <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
                 <Link href={featured.href} className="block group">
@@ -109,7 +112,7 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
               </div>
             )}
 
-            {/* List */}
+            {/* Post List */}
             <div className="mt-10 space-y-6">
               {rest.map((p) => (
                 <Link
@@ -193,9 +196,8 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
           </aside>
         </div>
       </div>
-      <div>
-        <Footer />
-      </div>
+
+      <Footer />
     </article>
   );
 }

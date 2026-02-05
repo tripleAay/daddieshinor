@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
+import ThoughtItem from "@/components/thoughtItem"; 
 
 // ────────────────────────────────────────────────
 // Types
@@ -51,7 +52,7 @@ const fallbackThoughts: Thought[] = [
 ];
 
 // ────────────────────────────────────────────────
-// Utilities
+// Utilities (unchanged)
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -121,7 +122,65 @@ function getFeaturedImage(
 }
 
 // ────────────────────────────────────────────────
-// Main Component
+// Divider
+// ────────────────────────────────────────────────
+function Divider() {
+  return <div className="h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70" />;
+}
+
+// ────────────────────────────────────────────────
+// HeroSkeleton (unchanged)
+// ────────────────────────────────────────────────
+function HeroSkeleton() {
+  return (
+    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
+        <div className="lg:col-span-5 space-y-6">
+          <div className="flex items-center justify-between">
+            <div className="h-10 w-44 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="hidden sm:flex gap-3">
+              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            </div>
+          </div>
+          <div className="space-y-5">
+            <div className="h-20 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-6 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
+        </div>
+
+        <div className="lg:col-span-5 space-y-8">
+          <div className="h-12 w-64 rounded bg-zinc-200 dark:bg-zinc-800" />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex gap-5">
+              <div className="h-24 w-24 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-6 w-4/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="lg:col-span-2 space-y-6">
+          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+          <div className="space-y-3">
+            <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          <div className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ────────────────────────────────────────────────
+// Main Hero Component
 // ────────────────────────────────────────────────
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -326,9 +385,7 @@ export default function Hero() {
                         e.preventDefault();
                         setIndex(i);
                       }}
-                      className={`h-2 rounded-full transition-all ${
-                        i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/50"
-                      }`}
+                      className={`h-2 rounded-full transition-all ${i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/50"}`}
                       aria-label={`Go to slide ${i + 1}`}
                     />
                   ))}
@@ -354,29 +411,42 @@ export default function Hero() {
         </div>
 
         {/* CENTER — Recent Thoughts */}
-        <div className="lg:col-span-5 flex flex-col">
+        <div className="lg:col-span-5 flex flex-col overscroll-none">
           <div className="mb-6 flex items-center justify-between shrink-0">
-            <h2 className="text-3xl md:text-4xl font-extrabold tracking-tight text-black dark:text-white">
+            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-black dark:text-white">
               Recent Thoughts
             </h2>
-            <div className="h-1 w-24 rounded-full bg-gradient-to-r from-black to-[#968e68] dark:from-white dark:to-[#968e68]" />
+            <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#968e68] via-[#968e68]/80 to-transparent" />
           </div>
 
           <div
-            className="
-              flex-1 overflow-y-auto pr-3
+            className={`
+              relative flex-1 overflow-y-auto overscroll-contain overscroll-x-none
+              -mr-2 lg:-mr-4 pr-2 lg:pr-4
               max-h-[620px] lg:max-h-[720px] xl:max-h-[800px]
-              scrollbar-thin scrollbar-thumb-zinc-400 scrollbar-track-transparent
-              hover:scrollbar-thumb-zinc-500
-              dark:scrollbar-thumb-zinc-600 dark:hover:scrollbar-thumb-zinc-500
-            "
+              scrollbar-thin scrollbar-thumb-zinc-300/60 scrollbar-track-transparent
+              hover:scrollbar-thumb-zinc-400/90 scrollbar-thumb-rounded-full
+              dark:scrollbar-thumb-zinc-700/50 dark:hover:scrollbar-thumb-zinc-600/90
+              transition-all duration-200 ease-out
+              after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-16
+              after:pointer-events-none after:bg-gradient-to-t
+              after:from-white/70 after:via-white/40 after:to-transparent
+              dark:after:from-black/70 dark:after:via-black/40 dark:after:to-transparent
+            `}
           >
-            <div className="space-y-8 pb-6">
+            <div className="space-y-10 pb-12 lg:pb-14">
               {thoughts.map((t, i) => (
-                <React.Fragment key={t.href}>
-                  <ThoughtItem tag={t.tag} title={t.title} image={t.image} href={t.href} />
-                  {i < thoughts.length - 1 && <Divider />}
-                </React.Fragment>
+                <div key={t.href} className="group">
+                  <ThoughtItem
+                    tag={t.tag}
+                    title={t.title}
+                    image={t.image}
+                    href={t.href}
+                  />
+                  {i < thoughts.length - 1 && (
+                    <Divider className="opacity-50 group-hover:opacity-90 transition-opacity duration-300" />
+                  )}
+                </div>
               ))}
             </div>
           </div>
@@ -384,126 +454,84 @@ export default function Hero() {
 
         {/* RIGHT — Editor’s Pick + Partnership Tile */}
         <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Editor’s Pick */}
-          <Link href="/essays/your-true-size" className="group block">
-            <div className="overflow-hidden rounded-2xl bg-gradient-to-br from-black to-zinc-950 text-white shadow-2xl transition-all duration-300 group-hover:shadow-3xl group-hover:-translate-y-1">
-              <div className="relative aspect-[3/4]">
-                <Image
-                  src="https://daddieshinor.com/wp-content/uploads/2026/01/editors-pick.jpg"
-                  alt="Your true size"
-                  fill
-                  priority
-                  sizes="(max-width: 768px) 100vw, 360px"
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-              </div>
-              <div className="p-6">
-                <span className="inline-block rounded-full border border-white/40 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white/90">
-                  Editor’s Pick
-                </span>
-                <h3 className="mt-4 text-2xl font-extrabold leading-tight group-hover:text-[#968e68] transition">
-                  How big you really are (and why you forgot)
-                </h3>
-                <p className="mt-3 text-sm text-zinc-300">
-                  A quiet reminder about self-worth • Jan 2026
-                </p>
+          {/* Editorial Canvas */}
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Editorial canvas - a space for evolving ideas"
+            className="
+              group cursor-pointer select-none
+              overflow-hidden rounded-xl
+              bg-gradient-to-br from-zinc-950 to-black
+              text-white shadow-lg
+              transition-all duration-500 ease-out
+              hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#968e68]/10
+              active:translate-y-0 active:scale-[0.98]
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black
+            "
+            onClick={(e) => e.preventDefault()}
+          >
+            <div className="relative aspect-[3/4] overflow-hidden">
+              <Image
+                src="/images/premium_photo-1742995782977-ee4b53fecadb.jpg"
+                alt="Editorial canvas visual"
+                fill
+                sizes="(max-width: 1024px) 100vw, 20vw"
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
+            </div>
+
+            <div className="relative p-5 sm:p-6">
+              <span className="inline-block rounded-full border border-white/30 px-3 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-white/90">
+                Editorial Canvas
+              </span>
+
+              <h3 className="mt-3 text-xl sm:text-2xl font-extrabold leading-tight group-hover:text-[#968e68] transition-colors">
+                A space for ideas that don’t fit yet
+              </h3>
+
+              <p className="mt-2 text-sm text-zinc-300/90 leading-relaxed line-clamp-3">
+                This tile is intentional. It can become anything — a manifesto, a collaboration, a quiet announcement, or something we haven’t named yet.
+              </p>
+
+              <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/70">
+                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] animate-pulse" />
+                In progress
               </div>
             </div>
-          </Link>
+          </div>
 
-          {/* Partnership / Ad Tile */}
-          <div className="rounded-2xl border border-[#968e68]/30 bg-gradient-to-br from-[#968e68]/5 to-white/50 p-6 shadow-md dark:from-[#968e68]/10 dark:to-zinc-950/50 dark:border-[#968e68]/20">
+          {/* Partnership Tile */}
+          <div className="
+            rounded-xl border border-[#968e68]/25
+            bg-gradient-to-br from-[#968e68]/5 to-white/40
+            p-5 sm:p-6 shadow-md
+            transition-all duration-300 hover:shadow-lg hover:border-[#968e68]/40 hover:-translate-y-1
+            dark:from-[#968e68]/10 dark:to-zinc-950/60 dark:border-[#968e68]/20 dark:hover:border-[#968e68]/50
+          ">
             <div className="flex items-center gap-3 mb-3">
-              <span className="text-[#968e68] font-black text-lg">✦</span>
-              <h4 className="text-sm font-extrabold text-[#968e68] tracking-tight">
+              <span className="text-[#968e68] font-black text-xl">✦</span>
+              <h4 className="text-sm font-bold text-[#968e68] tracking-tight">
                 Partnership with Daddieshinor
               </h4>
             </div>
+
             <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
               Collaborate with us to reach thoughtful readers across Africa and beyond. Sponsored insights, brand stories, and meaningful visibility — done with integrity.
             </p>
+
             <Link
               href="/partnerships"
-              className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-[#968e68] hover:text-[#968e68]/80 transition"
+              className="
+                mt-4 inline-flex items-center gap-2 text-sm font-semibold
+                text-[#968e68] hover:text-[#968e68]/80 transition-colors
+              "
             >
               Learn more →
             </Link>
           </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-// ────────────────────────────────────────────────
-// Sub-components (unchanged)
-// ────────────────────────────────────────────────
-function ThoughtItem({ tag, title, image, href }: Thought) {
-  return (
-    <Link href={href} className="group flex gap-5 hover:cursor-pointer">
-      <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-xl shadow-md ring-1 ring-black/10 dark:ring-white/10 transition-transform group-hover:scale-105">
-        <Image src={image} alt={title} fill sizes="96px" className="object-cover" />
-      </div>
-      <div className="flex-1">
-        <span className="text-xs font-extrabold uppercase tracking-wider text-black/70 dark:text-white/60">
-          {tag}
-        </span>
-        <h4 className="mt-2 text-lg font-bold leading-tight text-black dark:text-white group-hover:text-[#968e68] transition">
-          {title}
-        </h4>
-      </div>
-    </Link>
-  );
-}
-
-function Divider() {
-  return <div className="h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70" />;
-}
-
-function HeroSkeleton() {
-  return (
-    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
-        <div className="lg:col-span-5 space-y-6">
-          <div className="flex items-center justify-between">
-            <div className="h-10 w-44 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-            <div className="hidden sm:flex gap-3">
-              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-            </div>
-          </div>
-          <div className="space-y-5">
-            <div className="h-20 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-6 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-          </div>
-          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
-        </div>
-
-        <div className="lg:col-span-5 space-y-8">
-          <div className="h-12 w-64 rounded bg-zinc-200 dark:bg-zinc-800" />
-          {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="flex gap-5">
-              <div className="h-24 w-24 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
-              <div className="flex-1 space-y-3">
-                <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-6 w-4/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-              </div>
-            </div>
-          ))}
-        </div>
-
-        <div className="lg:col-span-2 space-y-6">
-          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-          <div className="space-y-3">
-            <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-          </div>
-          {/* Partnership tile skeleton */}
-          <div className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         </div>
       </div>
     </section>

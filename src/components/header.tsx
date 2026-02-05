@@ -2,11 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Menu, Search, Sun, Moon } from "lucide-react";
+import { Menu, Search, Sun, Moon, Play, Pause } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
-import MobileMenu from "@/components/mobileMenu"; // ✅ make sure file name matches
+import MobileMenu from "@/components/mobileMenu";
+import { useAudio } from "../components/audioProvider";
 
 const nav = [
   { label: "Tech", href: "/tech" },
@@ -30,6 +31,8 @@ export default function Header() {
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const { isPlaying, togglePlay } = useAudio();
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
@@ -88,22 +91,41 @@ export default function Header() {
             <Menu className="h-5 w-5 text-black/80 dark:text-white/80" />
           </button>
 
+          {/* Brand with flip logo + accent hover */}
           <Link
             href="/"
-            className="flex items-center gap-2.5 hover:opacity-95 transition"
+            className="group flex items-center gap-2.5 transition-all duration-300"
             aria-label="Daddieshinor Home"
           >
-            <span className="relative h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-xl ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900">
+            {/* Logo with 3D flip effect */}
+            <span
+              className="
+                relative h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-xl
+                ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900
+                transition-all duration-700
+                group-hover:rotate-y-180 group-hover:scale-110 group-hover:ring-[#968e68]/50
+                preserve-3d
+              "
+              style={{ transformStyle: "preserve-3d" }}
+            >
               <Image
                 src="/ds.jpg"
                 alt="Daddieshinor"
                 fill
                 sizes="(max-width: 768px) 100vw, 1200px"
-                className="object-cover"
+                className="object-cover transition-all duration-700 group-hover:scale-110"
               />
             </span>
 
-            <span className="text-xl sm:text-2xl font-black tracking-tight text-black dark:text-white hover:text-[#968e68] transition-colors">
+            {/* Text changes to accent color on hover */}
+            <span
+              className="
+                text-xl sm:text-2xl font-black tracking-tight
+                text-black dark:text-white
+                group-hover:text-[#968e68]
+                transition-colors duration-300
+              "
+            >
               Daddieshinor
             </span>
           </Link>
@@ -185,6 +207,26 @@ export default function Header() {
             <Search className="h-5 w-5" />
           </Link>
 
+          {/* Audio Toggle */}
+          <button
+            onClick={togglePlay}
+            aria-label={isPlaying ? "Pause ambient music" : "Play ambient music"}
+            className={`
+              h-10 w-10 rounded-full border border-black/10 bg-white/80
+              hover:bg-black/5 hover:border-[#968e68]/40 hover:shadow-md hover:ring-1 hover:ring-[#968e68]/30
+              transition-all duration-300 dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60
+              ${isPlaying ? "text-[#968e68] shadow-sm" : "text-black/70 dark:text-white/70"}
+            `}
+          >
+            {isPlaying ? (
+              <Pause className="h-5 w-5 mx-auto" />
+            ) : (
+              <Play className="h-5 w-5 mx-auto" />
+            )}
+          </button>
+
+          {/* Theme Toggle */}
           <button
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
@@ -234,7 +276,6 @@ export default function Header() {
         </form>
       </div>
 
-      {/* Mobile menu */}
       <MobileMenu
         isOpen={isMenuOpen}
         onClose={handleCloseMenu}

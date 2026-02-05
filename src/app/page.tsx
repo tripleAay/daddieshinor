@@ -11,6 +11,7 @@ import BrandsSection from "@/components/brand";
 import AllPostsIndex from "@/components/mobile-headline";
 import HeadlineIndex from "@/components/headline-layout";
 import { SubscribeModalTrigger } from "@/components/subscribepopup";
+import YouTubeEmbed from "@/components/youtube";
 import Footer from "@/components/footer";
 import MarqueeNote from "@/components/marqueeNote";
 
@@ -68,9 +69,9 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-zinc-50 font-sans antialiased dark:bg-black">
       <Header />
-      <MarqueeNote/>
+      <MarqueeNote />
       <AllPostsIndex />
-      
+
 
       <main className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<HeroSkeleton />}>
@@ -83,7 +84,7 @@ export default function Home() {
           <TechSection />
           <NewsSection />
           <BrandsSection />
-         <HeadlineIndex title="All Posts" description="Latest posts from all categories" />
+          <HeadlineIndex title="All Posts" description="Latest posts from all categories" />
 
 
           <div className="pt-2">
@@ -92,6 +93,13 @@ export default function Home() {
         </div>
       </main>
 
+      <div className="mt-10 mb-12 md:mt-12 mx-auto w-full max-w-4xl px-4">
+        <YouTubeEmbed
+          urlOrId="https://youtu.be/-U5dEdWouDY?si=u1fyqkI14-SpGvNl"
+          className="w-full"
+        // Optional: start={30} if you want to skip intro
+        />
+      </div>
       <Footer />
     </div>
   );

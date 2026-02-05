@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useMemo } from "react";
 import Header from "@/components/header";
+import { Breadcrumb } from "@/components/bedcrumb";
 import Footer from "@/components/footer";
 import { Sparkles } from "lucide-react";
 
@@ -53,6 +54,7 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
 
                     {/* CENTER */}
                     <main className="col-span-12 md:col-span-6 lg:col-span-7">
+                          <Breadcrumb category="Branding" title="" />
                         <div className="flex items-end justify-between gap-4">
                             <div>
                                 <h1 className="text-[34px] leading-[1.12] font-black tracking-tight md:text-[44px]">

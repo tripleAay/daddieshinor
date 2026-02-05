@@ -10,8 +10,7 @@
   --foreground: #171717;
 
   /* 🎯 BRAND ACCENT (CHANGE THIS ONLY) */
-  /* Example shown — replace with your real brand */
-  --accent: 220 90% 56%;
+  --accent: 220 90% 56%;        /* example — you can keep or change */
 
   color-scheme: light;
 }
@@ -30,32 +29,41 @@ html.dark {
 }
 
 /* ================================
-   BASE LAYOUT
+   BASE LAYOUT & RESET
    ================================ */
 html,
 body {
   height: 100%;
-}
-
-body {
+  margin: 0;
+  padding: 0;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Prevent overscroll bounce (mobile) */
+html,
+body {
+  overscroll-behavior-y: contain;   /* better than none for natural feel */
+  overscroll-behavior-x: none;
 }
 
 /* ================================
    MEDIA NORMALIZATION
    ================================ */
 img,
-video {
+video,
+iframe {
   max-width: 100%;
   height: auto;
+  display: block;
 }
 
 /* ================================
-   UTILITIES
+   SCROLLBAR HIDE UTILITY
    ================================ */
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
@@ -69,41 +77,48 @@ video {
 }
 
 /* ================================
-   LOADER (OPTIONAL)
+   LOADER ANIMATION (OPTIONAL)
    ================================ */
 @keyframes loader-slide {
-  0% {
-    transform: translateX(-100%);
-  }
-  50% {
-    transform: translateX(150%);
-  }
-  100% {
-    transform: translateX(300%);
-  }
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(150%); }
+  100% { transform: translateX(300%); }
 }
 
 .animate-loader-slide {
   animation: loader-slide 1.6s ease-in-out infinite;
 }
 
-
-
+/* ================================
+   MARQUEE (ds-marquee) – FIXED & MOBILE-FRIENDLY
+   ================================ */
 @keyframes ds-marquee {
-  0% {
-    transform: translateX(0);
-  }
-  100% {
-    transform: translateX(-50%);
-  }
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
+/* Base marquee style */
 .marquee {
-  animation: ds-marquee 28s linear infinite;
+  display: flex;
+  animation: ds-marquee 70s linear infinite; /* slower = more readable */
+  will-change: transform;
 }
 
-@media (hover: hover) {
-  .marquee:hover {
-    animation-play-state: paused;
+/* Pause on hover/touch */
+.marquee:hover,
+.marquee:active {
+  animation-play-state: paused;
+}
+
+/* Mobile adjustments – slower & readable */
+@media (max-width: 640px) {
+  .marquee {
+    animation-duration: 100s; /* even slower on phones */
   }
+}
+
+/* Extra safety: force hardware acceleration */
+.marquee {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
