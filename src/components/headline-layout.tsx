@@ -1,7 +1,6 @@
-// components/HeadlineLayout.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";  // ← added useRef here
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { AlertCircle, ChevronRight } from "lucide-react";
 import { useGlobalLoader } from "@/components/global-loader";
@@ -14,18 +13,19 @@ type HeadlinePost = {
 type Props = {
   title: string;
   description?: string;
-  categoryId?: number; // optional
+  categoryId?: number; // optional category filter
 };
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 const ACCENT = "#968e68";
 const ACCENT_HOVER = "#a8a07a";
 const ACCENT_BG = "rgba(150, 142, 104, 0.08)";
+const PER_PAGE = 15;
 
 function cleanText(input: unknown): string {
   if (typeof input !== "string") return "";
   return input
-    .replace(/<[^>]+>/g, " ")
+    .replace(/<[^>]+>/g, "")
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -37,15 +37,13 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
   const [hasMore, setHasMore] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const PER_PAGE = 15;
-  const WP = process.env.NEXT_PUBLIC_WP_URL;
-
   const { start, stop } = useGlobalLoader();
 
   const firstLoadRef = useRef(false);
 
   useEffect(() => {
-    if (!WP) {
+    // Safety guard: bail out if WP_BASE_URL is missing
+    if (!WP_BASE_URL) {
       setError("WordPress API URL is not configured.");
       setHasMore(false);
       return;
@@ -53,6 +51,7 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
 
     if (!hasMore) return;
 
+    // Prevent duplicate first-page loads
     if (page === 1 && firstLoadRef.current) return;
     firstLoadRef.current = true;
 
@@ -65,7 +64,9 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
 
         if (page === 1) start();
 
-        let url = `${WP.replace(/\/$/, "")}/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
+        // Build URL safely without assuming WP is defined
+        let url = `${WP_BASE_URL.replace(/\/$/, "")}/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
+
         if (categoryId && categoryId > 0) {
           url += `&categories=${categoryId}`;
         }
@@ -124,10 +125,10 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
     return () => {
       cancelled = true;
     };
-  }, [page, WP, hasMore, start, stop, categoryId]);
+  }, [page, hasMore, start, stop, categoryId]);
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-16 md:py-24">
+    <section className="mx-auto max-w-[1440px] px-5 py-16 md:py-24">
       {/* Header */}
       <div className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-black dark:text-white">

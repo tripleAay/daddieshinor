@@ -52,7 +52,7 @@ const fallbackThoughts: Thought[] = [
 ];
 
 // ────────────────────────────────────────────────
-// Utilities (unchanged)
+// Utilities
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -122,10 +122,14 @@ function getFeaturedImage(
 }
 
 // ────────────────────────────────────────────────
-// Divider
+// Divider – now accepts className prop
 // ────────────────────────────────────────────────
-function Divider() {
-  return <div className="h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70" />;
+function Divider({ className = "" }: { className?: string }) {
+  return (
+    <div
+      className={`h-px w-full bg-zinc-200/70 dark:bg-zinc-800/70 ${className}`}
+    />
+  );
 }
 
 // ────────────────────────────────────────────────
@@ -137,42 +141,44 @@ function HeroSkeleton() {
       <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
         <div className="lg:col-span-5 space-y-6">
           <div className="flex items-center justify-between">
-            <div className="h-10 w-44 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-10 w-56 rounded-full bg-zinc-200 dark:bg-zinc-800" />
             <div className="hidden sm:flex gap-3">
               <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
               <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
             </div>
           </div>
           <div className="space-y-5">
-            <div className="h-20 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-6 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-16 md:h-20 lg:h-24 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-5 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-5 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
           </div>
-          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
+          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10" />
         </div>
 
-        <div className="lg:col-span-5 space-y-8">
-          <div className="h-12 w-64 rounded bg-zinc-200 dark:bg-zinc-800" />
-          {Array.from({ length: 4 }).map((_, i) => (
+        <div className="lg:col-span-5 flex flex-col space-y-8">
+          <div className="flex items-center justify-between">
+            <div className="h-10 w-48 rounded bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-1 w-24 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+          </div>
+          {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} className="flex gap-5">
               <div className="h-24 w-24 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
               <div className="flex-1 space-y-3">
-                <div className="h-4 w-20 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-4 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
                 <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-6 w-4/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-6 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
               </div>
             </div>
           ))}
         </div>
 
-        <div className="lg:col-span-2 space-y-6">
-          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
-          <div className="space-y-3">
+        <div className="lg:col-span-2 space-y-4">
+          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
+          <div className="space-y-3 px-2">
             <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
           </div>
-          <div className="h-32 rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         </div>
       </div>
     </section>

@@ -56,9 +56,9 @@ function getFeaturedImage(post: any): string {
   return typeof url === "string" && url.length > 0 ? url : FALLBACK;
 }
 
-// -------------------- Scroll Animation per card --------------------
+// -------------------- Scroll Fade-in Hook (fixed ref typing) --------------------
 function useScrollFadeInArray(length: number) {
-  const refs = useRef<(HTMLDivElement | null)[]>([]);
+  const refs = useRef<(HTMLAnchorElement | null)[]>([]); // ← Correct type: Anchor, not Div
   const [visible, setVisible] = useState<boolean[]>(Array(length).fill(false));
 
   useEffect(() => {
@@ -95,7 +95,12 @@ function useScrollFadeInArray(length: number) {
     transition: `all ${600 + idx * 100}ms ease-out`,
   }));
 
-  return { refs: refs.current, setRef: (el: HTMLDivElement | null, idx: number) => (refs.current[idx] = el), styles };
+  // No return value — just assign to ref array
+  const setRef = (el: HTMLAnchorElement | null, idx: number) => {
+    refs.current[idx] = el;
+  };
+
+  return { refs: refs.current, setRef, styles };
 }
 
 // -------------------- Typing on Scroll Hook --------------------
@@ -130,7 +135,7 @@ function useTypeOnScroll(text: string, speed = 50) {
   return { ref, displayText };
 }
 
-// -------------------- Component --------------------
+// -------------------- Main Component --------------------
 export default function BestNewReads() {
   const [entries, setEntries] = useState<Entry[]>([]);
   const [error, setError] = useState<string | null>(null);
@@ -140,7 +145,7 @@ export default function BestNewReads() {
     40
   );
 
-  const { refs: cardRefs, setRef: setCardRef, styles: cardStyles } = useScrollFadeInArray(entries.length);
+  const { setRef: setCardRef, styles: cardStyles } = useScrollFadeInArray(entries.length);
 
   useEffect(() => {
     let cancelled = false;
@@ -213,7 +218,7 @@ export default function BestNewReads() {
             <Link
               key={entry.rank}
               href={entry.link}
-              ref={(el) => setCardRef(el, idx)}
+              ref={(el) => setCardRef(el, idx)} // Now type-safe
               style={cardStyles[idx]}
               className="group flex flex-col transition-transform hover:scale-[1.02] duration-300"
             >
@@ -244,8 +249,23 @@ export default function BestNewReads() {
           ))}
         </div>
 
-        {/* Angular Navigation */}
-        
+        {/* Angular Navigation (placeholder – add real logic if needed) */}
+        <div className="mt-10 flex justify-center gap-6">
+          <button
+            disabled
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed"
+          >
+            <ChevronLeft className="h-5 w-5" />
+            Previous
+          </button>
+          <button
+            disabled
+            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed"
+          >
+            Next
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
       </div>
     </section>
   );
