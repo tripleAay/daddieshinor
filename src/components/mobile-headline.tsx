@@ -1,15 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useGlobalLoader } from "@/components/global-loader";
+import React, { useEffect, useRef, useState } from "react";
+const { useGlobalLoader } = require("@/components/global-loader"); // Use require if import fails
 
 type HeadlinePost = {
   title: string;
   href: string;
 };
 
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
 const ACCENT = "#968e68";
 const ACCENT_HOVER = "#a8a07a";
 const ACCENT_BG = "rgba(150, 142, 104, 0.08)";
@@ -47,19 +46,12 @@ export default function MobileAllPosts() {
   const [error, setError] = useState<string | null>(null);
 
   const PER_PAGE = 15;
-  const WP = process.env.NEXT_PUBLIC_WP_URL;
 
   const { start, stop } = useGlobalLoader();
 
   const firstLoadRef = useRef(false);
 
   useEffect(() => {
-    if (!WP) {
-      setError("WordPress API URL is not configured.");
-      setHasMore(false);
-      return;
-    }
-
     if (!hasMore) return;
 
     if (page === 1 && firstLoadRef.current) return;
@@ -67,20 +59,18 @@ export default function MobileAllPosts() {
 
     let cancelled = false;
 
-    async function fetchPosts(wpUrl: string) {
+    async function fetchPosts() {
       try {
         setLoading(true);
         setError(null);
 
         if (page === 1) start();
 
-        const url =
-          `${wpUrl.replace(/\/$/, "")}/wp-json/wp/v2/posts` +
-          `?per_page=${PER_PAGE}` +
-          `&page=${page}` +
-          `&orderby=date&order=desc&status=publish`;
+        // Construct the WP REST path
+        const wpPath = `/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
 
-        const res = await fetch(url, {
+        // Fetch through proxy to avoid CORS
+        const res = await fetch(`/api/wp-proxy?path=${encodeURIComponent(wpPath)}`, {
           method: "GET",
           cache: "no-store",
         });
@@ -90,7 +80,9 @@ export default function MobileAllPosts() {
             setHasMore(false);
             return;
           }
-          throw new Error(`WP API error: ${res.status}`);
+          const text = await res.text().catch(() => "No response");
+          console.error("[MobileAllPosts] Proxy error:", res.status, text);
+          throw new Error(`Proxy error: ${res.status}`);
         }
 
         const data = await res.json();
@@ -116,8 +108,8 @@ export default function MobileAllPosts() {
             setHasMore(false);
           }
         }
-      } catch (err) {
-        console.error(err);
+      } catch (err: any) {
+        console.error("[MobileAllPosts] Fetch failed:", err);
         if (!cancelled) {
           setError("Failed to load essays. Please try again later.");
         }
@@ -129,12 +121,12 @@ export default function MobileAllPosts() {
       }
     }
 
-    fetchPosts(WP);
+    fetchPosts();
 
     return () => {
       cancelled = true;
     };
-  }, [page, WP, hasMore, start, stop]);
+  }, [page, hasMore, start, stop]);
 
   return (
     <section className="lg:hidden mx-auto max-w-[1400px] px-5 py-12 md:py-16">

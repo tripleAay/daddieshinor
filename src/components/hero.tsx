@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
-import ThoughtItem from "@/components/thoughtItem"; 
+import ThoughtItem from "@/components/thoughtItem";
 
 // ────────────────────────────────────────────────
 // Types
@@ -122,7 +122,7 @@ function getFeaturedImage(
 }
 
 // ────────────────────────────────────────────────
-// Divider – now accepts className prop
+// Divider
 // ────────────────────────────────────────────────
 function Divider({ className = "" }: { className?: string }) {
   return (
@@ -133,7 +133,7 @@ function Divider({ className = "" }: { className?: string }) {
 }
 
 // ────────────────────────────────────────────────
-// HeroSkeleton (unchanged)
+// HeroSkeleton
 // ────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
@@ -209,17 +209,24 @@ export default function Hero() {
       try {
         setError(null);
 
-        const res = await fetch(
-          `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&per_page=10&status=publish&orderby=date&order=desc`,
-          { cache: "no-store" }
-        );
+        // Debug log – helps you see what is being requested
+        const proxyUrl = `/api/wp-proxy?path=/wp-json/wp/v2/posts?_embed&per_page=10&status=publish&orderby=date&order=desc`;
+        console.log("[Hero] Fetching via proxy:", proxyUrl);
+        console.log("[Hero] WP_BASE_URL used:", WP_BASE_URL);
 
-        if (!res.ok) throw new Error(`API responded with ${res.status}`);
+        const res = await fetch(proxyUrl, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text().catch(() => "No response body");
+          throw new Error(`Proxy / WP API error - status: ${res.status} - ${errorText}`);
+        }
 
         const posts = await res.json();
 
         if (!Array.isArray(posts) || posts.length === 0) {
-          throw new Error("No posts found");
+          throw new Error("No posts returned from API");
         }
 
         const FEATURED_EXCERPT_CHARS = 180;
@@ -255,9 +262,13 @@ export default function Hero() {
           setThoughts(mappedThoughts.length ? mappedThoughts : fallbackThoughts);
         }
       } catch (err: any) {
-        console.error(err);
+        console.error("[Hero] Fetch error:", err.message);
         if (!isCancelled && isMounted.current) {
-          setError("Failed to load latest content — using fallback data.");
+          setError(
+            err.message.includes("status: 0") || err.message.includes("Failed to fetch")
+              ? "Cannot reach WordPress (CORS, network or proxy issue) — showing fallback"
+              : `Failed to load latest content: ${err.message}`
+          );
           setSlides(fallbackSlides);
           setThoughts(fallbackThoughts);
         }

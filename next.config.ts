@@ -2,8 +2,7 @@
 const nextConfig = {
   images: {
     remotePatterns: [
-      // WordPress images
-      {
+     {
         protocol: "https",
         hostname: "daddieshinor.com",
         pathname: "/wp-content/uploads/**",
@@ -13,14 +12,20 @@ const nextConfig = {
         hostname: "www.daddieshinor.com",
         pathname: "/wp-content/uploads/**",
       },
-
-      // YouTube thumbnails
       {
         protocol: "https",
         hostname: "i.ytimg.com",
         pathname: "/vi/**",
       },
     ],
+  },
+  async rewrites() {
+    return [
+      {
+        source: '/api/wp-proxy/:path*',
+        destination: `${process.env.NEXT_PUBLIC_WP_URL}/:path*`, // ✅ point proxy to main WP domain
+      },
+    ];
   },
 };
 

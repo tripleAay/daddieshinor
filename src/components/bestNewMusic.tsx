@@ -58,12 +58,11 @@ function getFeaturedImage(post: any): string {
 
 // -------------------- Scroll Fade-in Hook (fixed ref typing) --------------------
 function useScrollFadeInArray(length: number) {
-  const refs = useRef<(HTMLAnchorElement | null)[]>([]); // ← Correct type: Anchor, not Div
+  const refs = useRef<(HTMLAnchorElement | null)[]>([]);
   const [visible, setVisible] = useState<boolean[]>(Array(length).fill(false));
 
   useEffect(() => {
     const observers: IntersectionObserver[] = [];
-
     refs.current.forEach((el, idx) => {
       if (!el) return;
       const observer = new IntersectionObserver(
@@ -83,19 +82,17 @@ function useScrollFadeInArray(length: number) {
       observer.observe(el);
       observers.push(observer);
     });
-
     return () => {
       observers.forEach((obs) => obs.disconnect());
     };
   }, [length]);
 
   const styles = visible.map((v, idx) => ({
-    transform: v ? "translate(0,0)" : `translateY(30px)`,
+    transform: v ? "translateY(0)" : "translateY(30px)",
     opacity: v ? 1 : 0,
     transition: `all ${600 + idx * 100}ms ease-out`,
   }));
 
-  // No return value — just assign to ref array
   const setRef = (el: HTMLAnchorElement | null, idx: number) => {
     refs.current[idx] = el;
   };
@@ -127,7 +124,6 @@ function useTypeOnScroll(text: string, speed = 50) {
       },
       { threshold: 0.5 }
     );
-
     observer.observe(element);
     return () => observer.unobserve(element);
   }, [text, speed]);
@@ -153,14 +149,23 @@ export default function BestNewReads() {
     async function load() {
       try {
         setError(null);
-        const res = await fetch(
-          `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&per_page=5&status=publish&orderby=date&order=desc`,
-          { cache: "no-store" }
-        );
-        if (!res.ok) throw new Error(`WP API error: ${res.status}`);
+
+        // Use proxy to bypass CORS
+        const proxyUrl = `/api/wp-proxy?path=/wp-json/wp/v2/posts?_embed&per_page=5&status=publish&orderby=date&order=desc`;
+        console.log("[BestNewReads] Fetching via proxy:", proxyUrl);
+
+        const res = await fetch(proxyUrl, {
+          cache: "no-store",
+        });
+
+        if (!res.ok) {
+          const errorText = await res.text().catch(() => "No response body");
+          throw new Error(`Proxy / WP API error - status: ${res.status} - ${errorText}`);
+        }
+
         const data: WpPost[] = await res.json();
-        if (!Array.isArray(data) || data.length === 0)
-          throw new Error("No posts found");
+
+        if (!Array.isArray(data) || data.length === 0) throw new Error("No posts found");
 
         const mapped: Entry[] = data.map((post, idx) => ({
           rank: idx + 1,
@@ -171,13 +176,14 @@ export default function BestNewReads() {
         }));
 
         if (!cancelled) setEntries(mapped);
-      } catch (e) {
-        console.error(e);
+      } catch (e: any) {
+        console.error("[BestNewReads] Fetch error:", e.message);
         if (!cancelled) setError("Couldn’t load Best New Reads right now.");
       }
     }
 
     load();
+
     return () => {
       cancelled = true;
     };
@@ -218,7 +224,7 @@ export default function BestNewReads() {
             <Link
               key={entry.rank}
               href={entry.link}
-              ref={(el) => setCardRef(el, idx)} // Now type-safe
+              ref={(el) => setCardRef(el, idx)}
               style={cardStyles[idx]}
               className="group flex flex-col transition-transform hover:scale-[1.02] duration-300"
             >

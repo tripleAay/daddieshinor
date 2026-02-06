@@ -64,17 +64,17 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
 
         if (page === 1) start();
 
-        // Build URL safely without assuming WP is defined
+        // Build URL safely
         let url = `${WP_BASE_URL.replace(/\/$/, "")}/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
 
         if (categoryId && categoryId > 0) {
           url += `&categories=${categoryId}`;
         }
 
-        const res = await fetch(url, {
-          method: "GET",
-          cache: "no-store",
-        });
+      const res = await fetch(
+  `/api/wp-proxy?path=/wp-json/wp/v2/posts?_embed&per_page=10&status=publish&orderby=date&order=desc`,
+  { cache: "no-store" }
+);
 
         if (!res.ok) {
           if (res.status === 400 || res.status === 404) {
@@ -149,7 +149,7 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
         </div>
       )}
 
-      {/* Posts List – centered, clean, no numbers, desktop-optimized */}
+      {/* Posts List */}
       <div className="space-y-5 max-w-3xl mx-auto">
         {posts.length === 0 ? (
           loading ? (
@@ -171,8 +171,7 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
               href={post.href}
               className={`
                 group block px-8 py-8 rounded-2xl
-                border border-zinc-200/70
-                dark:border-zinc-800/70
+                border border-zinc-200/70 dark:border-zinc-800/70
                 hover:bg-[${ACCENT_BG}] hover:text-[${ACCENT}]
                 transition-all duration-300 text-center
                 dark:hover:bg-[rgba(150,142,104,0.12)] dark:hover:text-[${ACCENT_HOVER}]
@@ -194,7 +193,7 @@ export default function HeadlineLayout({ title, description, categoryId }: Props
         )}
       </div>
 
-      {/* Load More – centered, larger on desktop */}
+      {/* Load More */}
       {hasMore && posts.length > 0 && (
         <div className="mt-16 flex justify-center">
           <button

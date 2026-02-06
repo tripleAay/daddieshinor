@@ -80,17 +80,15 @@ export default function LatestSection() {
       try {
         setError(null);
 
-        const WP = process.env.NEXT_PUBLIC_WP_URL;
-        if (!WP) throw new Error("WP URL not configured");
-
         const results = await Promise.all(
           CATEGORY_SECTIONS.map(async (cat) => {
-            const url =
-              `${WP}/wp-json/wp/v2/posts?_embed&status=publish` +
-              `&per_page=${PER_CATEGORY}&categories=${cat.id}&orderby=date&order=desc`;
+            const path = `/wp-json/wp/v2/posts?_embed&status=publish&per_page=${PER_CATEGORY}&categories=${cat.id}&orderby=date&order=desc`;
 
-            const res = await fetch(url, { next: { revalidate: 900 } });
-            if (!res.ok) throw new Error(`Failed to fetch ${cat.label}`);
+            const res = await fetch(`/api/wp-proxy?path=${encodeURIComponent(path)}`, {
+              cache: "no-store",
+            });
+
+            if (!res.ok) throw new Error(`Failed to fetch ${cat.label} - status: ${res.status}`);
 
             const data: WPPost[] = await res.json();
             if (!Array.isArray(data) || data.length === 0) return [];
