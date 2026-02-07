@@ -68,8 +68,10 @@ function HeroSkeleton() {
 export default function Home() {
   return (
     <div className="relative min-h-screen bg-zinc-50 font-sans antialiased dark:bg-black">
-      <Header />
-      <MarqueeNote />
+      <div className="sticky top-0 z-50 w-full">
+        <Header />
+        <MarqueeNote />
+      </div>
       <AllPostsIndex />
 
 

@@ -193,7 +193,9 @@ export default function PostLayout({
 
           {/* CENTER CONTENT */}
           <main className="col-span-12 md:col-span-6 lg:col-span-7 overscroll-x-none">
-            <Breadcrumb category={category} title={title} />
+            <div className="mt-10">
+              <Breadcrumb  category={category} title={title} />
+            </div>
             <div className="flex justify-end">
               <time className="text-sm font-medium text-black/60 dark:text-white/60">
                 {dateLabel}
