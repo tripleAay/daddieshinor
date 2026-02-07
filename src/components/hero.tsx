@@ -186,7 +186,7 @@ function HeroSkeleton() {
 }
 
 // ────────────────────────────────────────────────
-// Main Hero Component
+// Main Hero Component (FIXED)
 // ────────────────────────────────────────────────
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -197,7 +197,7 @@ export default function Hero() {
   const { start, stop } = useGlobalLoader();
   const isMounted = useRef(true);
 
-  const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://your-site.com";
+  const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://www.daddieshinor.com";
 
   useEffect(() => {
     isMounted.current = true;
@@ -209,18 +209,18 @@ export default function Hero() {
       try {
         setError(null);
 
-        // Debug log – helps you see what is being requested
-        const proxyUrl = `/api/wp-proxy?path=/wp-json/wp/v2/posts?_embed&per_page=10&status=publish&orderby=date&order=desc`;
+        const proxyUrl = `/api/wp-proxy?path=${encodeURIComponent(
+          "/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&_embed=1"
+        )}`;
         console.log("[Hero] Fetching via proxy:", proxyUrl);
-        console.log("[Hero] WP_BASE_URL used:", WP_BASE_URL);
 
-        const res = await fetch(proxyUrl, {
-          cache: "no-store",
-        });
+        const res = await fetch(proxyUrl, { cache: "no-store" });
 
         if (!res.ok) {
-          const errorText = await res.text().catch(() => "No response body");
-          throw new Error(`Proxy / WP API error - status: ${res.status} - ${errorText}`);
+          const errorText = await res.text().catch(() => "No response");
+          throw new Error(
+            `Proxy / WP API error - status: ${res.status} - ${errorText}`
+          );
         }
 
         const posts = await res.json();
@@ -262,12 +262,14 @@ export default function Hero() {
           setThoughts(mappedThoughts.length ? mappedThoughts : fallbackThoughts);
         }
       } catch (err: any) {
-        console.error("[Hero] Fetch error:", err.message);
+        console.error("[Hero] Fetch error:", err?.message || err);
+
         if (!isCancelled && isMounted.current) {
+          const msg = String(err?.message || "Unknown error");
           setError(
-            err.message.includes("status: 0") || err.message.includes("Failed to fetch")
-              ? "Cannot reach WordPress (CORS, network or proxy issue) — showing fallback"
-              : `Failed to load latest content: ${err.message}`
+            msg.includes("status: 0") || msg.includes("Failed to fetch")
+              ? "Cannot reach WordPress — showing fallback"
+              : `Failed to load latest content: ${msg}`
           );
           setSlides(fallbackSlides);
           setThoughts(fallbackThoughts);
@@ -287,7 +289,8 @@ export default function Hero() {
       isMounted.current = false;
       stop();
     };
-  }, [WP_BASE_URL, start, stop]);
+  }, [start, stop]);
+
 
   const ordered = useMemo(() => {
     const featured = slides.find((s) => s.featured) ?? slides[0];
@@ -388,7 +391,7 @@ export default function Hero() {
 
               <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-4 bg-black/70 px-6 py-4 text-white backdrop-blur-md">
                 <div className="flex items-center gap-4">
-                  <span className="rounded-full bg-white/20 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest">
+                  <span className="rounded-full bg-white/20 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-white/90">
                     {active.tag}
                   </span>
                   <span className="text-sm font-medium opacity-90">Read full essay →</span>

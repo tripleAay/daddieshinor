@@ -107,6 +107,7 @@ export default function TechSection() {
           { cache: "no-store" }
         );
 
+
         if (!res.ok) throw new Error("Failed to fetch tech posts");
 
         const data = await res.json();
@@ -263,7 +264,7 @@ export default function TechSection() {
         </div>
 
         {/* Navigation – subtle */}
-        
+
       </div>
     </section>
   );

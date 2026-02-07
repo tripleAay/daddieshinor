@@ -102,10 +102,12 @@ export default function CultureSection() {
       try {
         setLoading(true);
 
-        const res = await fetch(
-          `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish&categories=${CULTURE_CATEGORY_ID}&per_page=7&orderby=date&order=desc`,
-          { cache: "no-store" }
-        );
+        const path = `/wp-json/wp/v2/posts?_embed=1&status=publish&categories=${CULTURE_CATEGORY_ID}&per_page=7&orderby=date&order=desc`;
+
+        const res = await fetch(`/api/wp-proxy?path=${encodeURIComponent(path)}`, {
+          cache: "no-store",
+        });
+
 
         if (!res.ok) throw new Error("Failed to fetch culture posts");
 
