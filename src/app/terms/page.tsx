@@ -1,6 +1,7 @@
 // src/app/terms/page.tsx
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import Link from "next/link";
 
 export default function TermsOfUsePage() {
   return (
@@ -15,6 +16,23 @@ export default function TermsOfUsePage() {
 
       <main className="px-5 py-16 md:py-24">
         <div className="mx-auto max-w-[1100px]">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-10">
+            <ol className="flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              <li>
+                <Link href="/" className="hover:text-black dark:hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li aria-hidden="true" className="text-zinc-400 dark:text-zinc-600">
+                ›
+              </li>
+              <li aria-current="page" className="font-semibold text-black dark:text-white">
+                Terms of Use
+              </li>
+            </ol>
+          </nav>
+
           {/* Intro */}
           <header className="mb-20 max-w-[720px]">
             <div className="mb-6 h-1 w-20 rounded-full bg-black dark:bg-white" />

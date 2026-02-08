@@ -1,10 +1,10 @@
+// src/app/about/page.tsx
 import Header from "@/components/header";
-import Image from "next/image";
-import ProtectedImageWrapper from "@/components/protectedImageWrapper";
 import Footer from "@/components/footer";
-import type { Metadata } from "next";
+import ProtectedImageWrapper from "@/components/protectedImageWrapper";
 import Link from "next/link";
 import { Sparkles } from "lucide-react";
+import type { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "About Daddieshinor — Thinking Clearly in a Noisy World",
@@ -53,6 +53,23 @@ export default function AboutPage() {
 
       <main className="px-5 py-16 md:py-24">
         <div className="mx-auto max-w-[1000px]">
+          {/* Breadcrumb */}
+          <nav aria-label="Breadcrumb" className="mb-10">
+            <ol className="flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
+              <li>
+                <Link href="/" className="hover:text-black dark:hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li aria-hidden="true" className="text-zinc-400 dark:text-zinc-600">
+                ›
+              </li>
+              <li aria-current="page" className="font-semibold text-black dark:text-white">
+                About
+              </li>
+            </ol>
+          </nav>
+
           {/* Intro / Manifesto */}
           <header className="mb-20 max-w-[720px]">
             <div className="mb-6 h-1.5 w-24 rounded-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
