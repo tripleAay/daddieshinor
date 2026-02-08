@@ -5,19 +5,16 @@ import Footer from "@/components/footer";
 import PostLayout from "../[slug]/PostLayoutWrapper";
 import WpContentRenderer from "@/components/WpContentRenderer";
 
+const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
+
+// --------------------- Types ---------------------
 type WPMedia = {
   source_url?: string;
   alt_text?: string;
-  media_details?: {
-    sizes?: Record<string, { source_url: string }>;
-  };
+  media_details?: { sizes?: Record<string, { source_url: string }> };
 };
 
-type WPTerm = {
-  id: number;
-  name: string;
-  taxonomy: string;
-};
+type WPTerm = { id: number; name: string; taxonomy: string };
 
 type WPPost = {
   id: number;
@@ -32,16 +29,15 @@ type WPPost = {
   };
 };
 
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
-
-function decodeHtmlEntities(input: string): string {
+// --------------------- Helpers ---------------------
+function decodeHtmlEntities(input: string) {
   if (!input) return "";
   return input
     .replace(/&amp;/g, "&")
     .replace(/&#8217;/g, "'")
     .replace(/&#8220;/g, '"')
     .replace(/&#8221;/g, '"')
-    .replace(/&#8230;/g, "...");
+    .replace(/&#8230;/g, "…");
 }
 
 function stripHtml(input: string) {
@@ -50,18 +46,16 @@ function stripHtml(input: string) {
     .trim();
 }
 
-function sanitizeWpHtml(html: string): string {
+function sanitizeWpHtml(html: string) {
   if (!html) return "";
-  return (
-    html
-      .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
-      .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-      .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
-      .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
-      .replace(/<embed\b[^>]*>/gi, "")
-      .replace(/\son\w+="[^"]*"/gi, "")
-      .replace(/\son\w+='[^']*'/gi, "")
-  );
+  return html
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
+    .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
+    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
+    .replace(/<embed\b[^>]*>/gi, "")
+    .replace(/\son\w+="[^"]*"/gi, "")
+    .replace(/\son\w+='[^']*'/gi, "");
 }
 
 function getFeatured(post: WPPost) {
@@ -72,7 +66,7 @@ function getFeatured(post: WPPost) {
     media?.source_url;
 
   return {
-    url: url || "/fallback.jpg", // ensure /public/fallback.jpg exists
+    url: url || "/fallback.jpg",
     alt: media?.alt_text || stripHtml(post?.title?.rendered || "Daddieshinor"),
   };
 }
@@ -80,10 +74,8 @@ function getFeatured(post: WPPost) {
 function getPrimaryCategory(post: WPPost): { id: number | null; name: string } {
   const terms = post?._embedded?.["wp:term"];
   const flat: WPTerm[] = Array.isArray(terms) ? terms.flat() : [];
-
   const cat = flat.find((t) => t?.taxonomy === "category");
   if (!cat) return { id: null, name: "Uncategorized" };
-
   return { id: cat.id, name: stripHtml(cat.name || "Uncategorized") };
 }
 
@@ -93,20 +85,7 @@ function formatDate(dateStr: string) {
   return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 }
 
-export async function generateStaticParams() {
-  try {
-    const res = await fetch(
-      `${WP_BASE_URL}/wp-json/wp/v2/posts?per_page=30&status=publish&orderby=date&order=desc`,
-      { next: { revalidate: 3600 } }
-    );
-    if (!res.ok) return [];
-    const posts: WPPost[] = await res.json();
-    return posts.map((p) => ({ slug: p.slug }));
-  } catch {
-    return [];
-  }
-}
-
+// --------------------- Data Fetch ---------------------
 async function fetchPost(slug: string): Promise<WPPost | null> {
   const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish&slug=${encodeURIComponent(slug)}`;
   const res = await fetch(url, { next: { revalidate: 300 } });
@@ -115,9 +94,20 @@ async function fetchPost(slug: string): Promise<WPPost | null> {
   return data?.[0] || null;
 }
 
-type PageProps = {
-  params: Promise<{ slug: string }>;
-};
+// --------------------- Static Params ---------------------
+export async function generateStaticParams() {
+  try {
+    const res = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/posts?per_page=30&status=publish&orderby=date&order=desc`, { next: { revalidate: 3600 } });
+    if (!res.ok) return [];
+    const posts: WPPost[] = await res.json();
+    return posts.map((p) => ({ slug: p.slug }));
+  } catch {
+    return [];
+  }
+}
+
+// --------------------- Metadata ---------------------
+type PageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: PageProps) {
   const { slug } = await params;
@@ -128,13 +118,43 @@ export async function generateMetadata({ params }: PageProps) {
   const title = stripHtml(post.title?.rendered || "Daddieshinor");
   const desc = stripHtml(post.excerpt?.rendered || "").slice(0, 160);
 
-  return { title: `${title} - Daddieshinor`, description: desc };
+  
+  const featured = getFeatured(post);
+  const fallbackImage = "/ds.jpg"; 
+
+  const ogImage = featured.url || fallbackImage;
+
+  return {
+    title: `${title} - Daddieshinor`,
+    description: desc,
+    openGraph: {
+      title,
+      description: desc,
+      url: `${WP_BASE_URL}/essays/${slug}`,
+      siteName: "Daddieshinor",
+      type: "article",
+      images: [
+        {
+          url: ogImage,
+          width: 1200,
+          height: 630,
+          alt: featured.alt || "Daddieshinor",
+        },
+      ],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description: desc,
+      images: [ogImage],
+    },
+  };
 }
 
+// --------------------- Page Component ---------------------
 export default async function EssayPage({ params }: PageProps) {
   const { slug } = await params;
   const post = await fetchPost(slug);
-
   if (!post) return notFound();
 
   const title = stripHtml(post.title?.rendered || "Untitled");
@@ -153,7 +173,6 @@ export default async function EssayPage({ params }: PageProps) {
         dateLabel={date}
         heroImage={featured.url}
         heroAlt={featured.alt}
-        
       >
         <WpContentRenderer html={safeHtml} />
       </PostLayout>
@@ -163,8 +182,6 @@ export default async function EssayPage({ params }: PageProps) {
         categoryId={primaryCategory.id}
         categoryName={primaryCategory.name}
       />
-
-
 
       <Footer />
     </>

@@ -1,6 +1,5 @@
-// app/page.tsx
 import { Suspense } from "react";
-
+import { Metadata } from "next";
 import Header from "@/components/header";
 import Hero from "@/components/hero";
 import LatestSection from "@/components/latest";
@@ -14,6 +13,88 @@ import { SubscribeModalTrigger } from "@/components/subscribepopup";
 import YouTubeEmbed from "@/components/youtube";
 import Footer from "@/components/footer";
 import MarqueeNote from "@/components/marqueeNote";
+
+// --- Enhanced Metadata for Homepage ---
+export const metadata: Metadata = {
+  title: {
+    default: "Daddieshinor",
+    template: "%s — Daddieshinor",
+  },
+  description:
+    "Daddieshinor is a modern journal exploring culture, technology, life, and branding — ideas, signals, and stories that shape how we think and live.",
+
+  keywords: [
+    "culture blog",
+    "technology insights",
+    "branding and identity",
+    "modern life essays",
+    "digital culture",
+    "creative thinking",
+    "Daddieshinor",
+    "Africa tech culture",
+    "thoughtful essays",
+  ],
+
+  metadataBase: new URL("https://daddieshinor.com"),
+
+  // Icons (favicons + social sharing icons)
+  icons: {
+    icon: [
+      { url: "/DS.png", type: "image/png", sizes: "any" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    apple: [
+      { url: "/DS.png", sizes: "180x180" },
+      { url: "/DS.png", sizes: "any" },
+    ],
+    shortcut: "/DS.png",
+  },
+
+  openGraph: {
+    title: "Daddieshinor — Ideas That Shape How We Think",
+    description:
+      "Essays and signals on culture, technology, life, and branding. Not noise — meaning. A thoughtful space from Africa and beyond.",
+    url: "https://daddieshinor.com",
+    siteName: "Daddieshinor",
+    type: "website",
+    locale: "en_US",
+    images: [
+      // Primary large preview image (1200×630 – used by most platforms)
+      {
+        url: "/og-home.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Daddieshinor – Culture, Tech, Life & Branding",
+      },
+      // Small square logo fallback (used by WhatsApp, Telegram, compact previews)
+      {
+        url: "/DS.png",
+        width: 512,
+        height: 512,
+        alt: "Daddieshinor Logo",
+      },
+    ],
+  },
+
+  twitter: {
+    card: "summary_large_image",
+    title: "Daddieshinor — Ideas That Shape How We Think",
+    description:
+      "Essays and signals on culture, technology, life, and branding. Not noise — meaning.",
+    images: ["/og-home.jpg", "/DS.png"], // primary + fallback
+    creator: "@daddieshinor",
+    site: "@daddieshinor",
+  },
+
+  alternates: {
+    canonical: "https://daddieshinor.com",
+  },
+
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 function HeroSkeleton() {
   return (
@@ -74,7 +155,6 @@ export default function Home() {
       </div>
       <AllPostsIndex />
 
-
       <main className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <Suspense fallback={<HeroSkeleton />}>
           <Hero />
@@ -88,7 +168,6 @@ export default function Home() {
           <BrandsSection />
           <HeadlineIndex title="All Posts" description="Latest posts from all categories" />
 
-
           <div className="pt-2">
             <SubscribeModalTrigger />
           </div>
@@ -99,7 +178,7 @@ export default function Home() {
         <YouTubeEmbed
           urlOrId="https://youtu.be/-U5dEdWouDY?si=u1fyqkI14-SpGvNl"
           className="w-full"
-        // Optional: start={30} if you want to skip intro
+          // Optional: start={30} if you want to skip intro
         />
       </div>
       <Footer />

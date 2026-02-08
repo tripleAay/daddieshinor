@@ -182,23 +182,18 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
           {/* RIGHT SIDEBAR */}
           <aside className="col-span-12 md:col-span-3 lg:col-span-3 min-w-0">
             <div className="sticky top-24 space-y-6">
-              <div className="rounded-2xl border border-black/10 bg-[#f4f3dc] p-6 sm:p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70 min-w-0">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest">
+              <div className="rounded-2xl border border-zinc-300 bg-[#f4f3dc] p-6 sm:p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70 min-w-0">
+                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/80 dark:border-white/10 dark:bg-zinc-950 dark:text-white/80">
                   Daddieshinor Letters
                 </div>
 
-                <h3 className="mt-4 text-2xl font-black leading-tight break-words">
-                  Stay Close
-                </h3>
+                <h3 className="mt-4 text-2xl font-black leading-tight break-words">Stay Close</h3>
 
-                <p className="mt-2 text-sm leading-relaxed break-words">
+                <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70 break-words">
                   A short note when something is worth thinking about. No spam. No noise.
                 </p>
 
-                <form
-                  className="mt-5 flex items-center gap-2"
-                  onSubmit={(e) => e.preventDefault()}
-                >
+                <form className="mt-5 flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
                   <input
                     type="email"
                     placeholder="Email Address"

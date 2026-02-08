@@ -1,7 +1,33 @@
 // src/app/contact/page.tsx
+import type { Metadata } from "next";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import Link from "next/link";
+
+
+
+export const metadata: Metadata = {
+  title: "Contact Daddieshinor — Get in Touch",
+  description:
+    "Contact Daddieshinor for questions, feedback, partnerships, or collaborations. We read every message and respond quickly.",
+  alternates: {
+    canonical: "https://daddieshinor.com/contact",
+  },
+  openGraph: {
+    title: "Contact Daddieshinor",
+    description:
+      "Questions, ideas, partnerships, or just want to say hello? Reach out to Daddieshinor — we read every message.",
+    url: "https://daddieshinor.com/contact",
+    siteName: "Daddieshinor",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Daddieshinor",
+    description:
+      "Reach out to Daddieshinor for feedback, ideas, or partnerships. We’re listening.",
+  },
+};
 
 export default function ContactPage() {
   return (

@@ -1,9 +1,8 @@
+// app/tech/page.tsx
 import { Metadata } from "next";
 import TechCategoryView from "./techCategoryView";
 
 const WP_BASE_URL = (process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com").replace(/\/+$/, "");
-
-// ✅ set your real Tech category ID
 const TECH_CATEGORY_ID = 4;
 
 type WPMedia = {
@@ -73,14 +72,9 @@ function getFeaturedImage(post: WPPost): { url: string; alt: string } {
 async function fetchTechPosts(): Promise<CardPost[]> {
   const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish&categories=${TECH_CATEGORY_ID}&per_page=12&orderby=date&order=desc`;
 
-  console.log("Fetching Tech Posts from:", url);
-
   try {
     const res = await fetch(url, { next: { revalidate: 300 } });
-    if (!res.ok) {
-      console.warn("Failed to fetch Tech posts:", res.status);
-      return [];
-    }
+    if (!res.ok) return [];
 
     const data: WPPost[] = await res.json();
     if (!Array.isArray(data)) return [];
@@ -106,9 +100,31 @@ async function fetchTechPosts(): Promise<CardPost[]> {
   }
 }
 
+// --- Metadata for SEO + Social Sharing ---
 export const metadata: Metadata = {
   title: "Tech – Daddieshinor",
   description: "Signals, shifts, and real implications — tech explained with human meaning.",
+  openGraph: {
+    title: "Tech – Daddieshinor",
+    description: "Signals, shifts, and real implications — tech explained with human meaning.",
+    url: "https://daddieshinor.com/tech",
+    siteName: "Daddieshinor",
+    type: "website",
+    images: [
+      {
+        url: "/og-tech.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Tech category – Daddieshinor",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tech – Daddieshinor",
+    description: "Signals, shifts, and real implications — tech explained with human meaning.",
+    images: ["/og-tech.jpg"],
+  },
 };
 
 export default async function TechPage() {

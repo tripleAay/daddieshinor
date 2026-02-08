@@ -37,9 +37,9 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
       {/* Page container */}
       <div className="mx-auto w-full max-w-[1320px] px-4 sm:px-6 pb-16 pt-10">
         <div className="grid grid-cols-12 gap-6 md:gap-10 min-w-0">
-          {/* LEFT RAIL */}
+          {/* LEFT RAIL – sticky */}
           <aside className="hidden md:block md:col-span-3 lg:col-span-2 min-w-0">
-            <div className="sticky top-24 space-y-8">
+            <div className="sticky top-[var(--header-height,80px)] pt-6 space-y-8">
               <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/40 min-w-0">
                 <div className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-white px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
                   <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
@@ -54,10 +54,12 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
                   {posts?.length ? `${posts.length} posts` : "No posts yet"}
                 </div>
               </div>
+
+              {/* You can add more sticky widgets here if needed */}
             </div>
           </aside>
 
-          {/* CENTER */}
+          {/* CENTER – scrolls normally */}
           <main className="col-span-12 md:col-span-6 lg:col-span-7 min-w-0">
             <div className="min-w-0 break-words mt-10">
               <Breadcrumb category="Life" title="" />
@@ -130,7 +132,7 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
               </div>
             )}
 
-            {/* List */}
+            {/* List – this is what scrolls */}
             <div className="mt-10 space-y-6 min-w-0">
               {rest.map((p) => (
                 <Link
@@ -180,26 +182,21 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
             </div>
           </main>
 
-          {/* RIGHT SIDEBAR */}
-          <aside className="col-span-12 md:col-span-3 lg:col-span-3 min-w-0">
-            <div className="sticky top-24 space-y-6">
+          {/* RIGHT SIDEBAR – sticky */}
+          <aside className="hidden md:block md:col-span-3 lg:col-span-3 min-w-0">
+            <div className="sticky top-[var(--header-height,80px)] pt-6 space-y-6">
               <div className="rounded-2xl border border-zinc-300 bg-[#f4f3dc] p-6 sm:p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70 min-w-0">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/80 dark:border-white/10 dark:bg-zinc-950 dark:text-white/80">
                   Daddieshinor Letters
                 </div>
 
-                <h3 className="mt-4 text-2xl font-black leading-tight break-words">
-                  Stay Close
-                </h3>
+                <h3 className="mt-4 text-2xl font-black leading-tight break-words">Stay Close</h3>
 
-                <p className="mt-2 text-sm leading-relaxed break-words">
+                <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70 break-words">
                   A short note when something is worth thinking about. No spam. No noise.
                 </p>
 
-                <form
-                  className="mt-5 flex items-center gap-2"
-                  onSubmit={(e) => e.preventDefault()}
-                >
+                <form className="mt-5 flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
                   <input
                     type="email"
                     placeholder="Email Address"
@@ -222,6 +219,8 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
                   If it made your next day cleaner, it’s life.
                 </p>
               </div>
+
+              {/* You can add more widgets here (e.g. recent posts, tags, etc.) */}
             </div>
           </aside>
         </div>

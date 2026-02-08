@@ -108,8 +108,27 @@ async function fetchBrandingPosts(): Promise<CardPost[]> {
 
 export const metadata: Metadata = {
     title: "Branding – Daddieshinor",
-    description: "Brand strategy, identity, positioning, and the psychology behind what people trust.",
+    description:
+        "Brand strategy, identity, positioning, and the psychology behind what people trust.",
+    alternates: {
+        canonical: "https://daddieshinor.com/brands",
+    },
+    openGraph: {
+        title: "Branding – Daddieshinor",
+        description:
+            "Brand strategy, identity, positioning, and the psychology behind what people trust.",
+        url: "https://daddieshinor.com/brands",
+        siteName: "Daddieshinor",
+        type: "website",
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "Branding – Daddieshinor",
+        description:
+            "Brand strategy, identity, positioning, and the psychology behind what people trust.",
+    },
 };
+
 
 export default async function BrandingPage() {
     const posts = await fetchBrandingPosts();

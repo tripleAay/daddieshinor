@@ -127,6 +127,11 @@ export default function Footer() {
                   Advertise
                 </Link>
               </li>
+               <li>
+                <Link href="/partnerships" className="hover:text-white transition-colors">
+                  Partnerships
+                </Link>
+              </li>
             </ul>
           </div>
 
