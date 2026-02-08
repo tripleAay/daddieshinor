@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import Link from "next/link";
 import {
   Instagram,
@@ -8,8 +10,10 @@ import {
   Linkedin,
   Globe,
 } from "lucide-react";
+import LatestComponent from "@/components/latest";
 
 export default function Footer() {
+  const [showLatest, setShowLatest] = useState(false);
   return (
     <footer className="bg-black text-zinc-400">
       {/* Main content */}
@@ -74,12 +78,16 @@ export default function Footer() {
             </h3>
             <ul className="space-y-2.5 sm:space-y-3 text-sm">
               <li>
-                <Link href="/latest" className="hover:text-white transition-colors">
-                  Latest
-                </Link>
-              </li>
+                  
+                  <button
+                    onClick={() => setShowLatest(true)}
+                    className="hover:text-white transition-colors"
+                  >
+                    Latest
+                  </button>
+                </li>
               <li>
-                <Link href="/brand" className="hover:text-white transition-colors">
+                <Link href="/branding" className="hover:text-white transition-colors">
                   Branding
                 </Link>
               </li>

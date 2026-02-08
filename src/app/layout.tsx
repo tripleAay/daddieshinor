@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { AudioProvider } from "../components/audioProvider";
@@ -26,20 +27,12 @@ export default function RootLayout({
       <head>
         {/* Plausible Analytics */}
         <script
-          async
-          src="https://plausible.io/js/pa-PFIhde_KI0eKufR4Lr.js"
+          defer
+          data-domain="daddieshinor.com"
+          src="https://plausible.io/js/plausible.js"
         ></script>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              window.plausible = window.plausible || function() { (plausible.q = plausible.q || []).push(arguments) }
-              plausible.init = plausible.init || function(i) { plausible.o = i || {}; plausible.init(); };
-              plausible.init();
-            `,
-          }}
-        />
 
-        {/* Explicit favicon & icons for social sharing */}
+        {/* Favicons & social icons */}
         <link rel="icon" href="/DS.png" type="image/png" />
         <link rel="apple-touch-icon" href="/DS.png" />
         <link rel="shortcut icon" href="/DS.png" />

@@ -97,7 +97,7 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
             {/* Desktop / large screen view: headline layout */}
             <div className="hidden lg:block">
               <HeadlineLayout
-                title="Life"
+                title="Culture"
                 description="Culture decoded — what people feel, repeat, follow, and become."
                 categoryId={17}
               />
