@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState, ReactNode } from "react";
 import Image from "next/image";
 import { Breadcrumb } from "@/components/bedcrumb";
+import NewsletterCard from "@/components/newsletterCard";
 import Header from "@/components/header";
 import {
   Facebook,
@@ -194,7 +195,7 @@ export default function PostLayout({
           {/* CENTER CONTENT */}
           <main className="col-span-12 md:col-span-6 lg:col-span-7 overscroll-x-none">
             <div className="mt-10">
-              <Breadcrumb  category={category} title={title} />
+              <Breadcrumb category={category} title={title} />
             </div>
             <div className="flex justify-end">
               <time className="text-sm font-medium text-black/60 dark:text-white/60">
@@ -235,35 +236,21 @@ export default function PostLayout({
           <aside className="col-span-12 md:col-span-3 lg:col-span-3 overscroll-x-none overflow-x-hidden">
             <div className="sticky top-[96px] max-h-[calc(100vh-120px)] overflow-y-auto overscroll-x-none overscroll-y-contain space-y-6">
               {/* Newsletter card */}
-              <div className="rounded-xl border border-zinc-200/80 bg-gradient-to-b from-[#f8f7e8] to-[#f0efd8] p-6 shadow-md dark:border-zinc-700/60 dark:from-zinc-900/80 dark:to-zinc-900/60">
-                <div className="inline-flex items-center gap-1.5 rounded-full border border-black/10 bg-white/90 px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/80 backdrop-blur-sm dark:border-white/10 dark:bg-zinc-950/80 dark:text-white/80">
-                  Daddieshinor Letters
-                </div>
 
-                <h3 className="mt-4 text-xl font-black leading-tight">{newsletterTitle}</h3>
+              <div>
 
-                <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70">
-                  {newsletterSubtitle}
-                </p>
+                <NewsletterCard
+                  badgeText="Daddieshinor Letters"
+                  title={newsletterTitle}
+                  subtitle={newsletterSubtitle}
+                  buttonText="Subscribe"
+                />
 
-                <form className="mt-5 flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="h-10 w-full rounded-lg border border-black/15 bg-white/90 px-3.5 text-sm outline-none focus:border-orange-500/40 focus:ring-2 focus:ring-orange-500/20 dark:border-white/15 dark:bg-zinc-800/90 dark:focus:border-orange-400/40 dark:focus:ring-orange-400/20"
-                  />
-                  <button
-                    type="submit"
-                    className="h-10 shrink-0 rounded-lg bg-gradient-to-b from-black to-zinc-900 px-5 text-sm font-black text-white hover:from-zinc-900 hover:to-black dark:from-white dark:to-zinc-200 dark:text-black dark:hover:from-zinc-200 dark:hover:to-white"
-                  >
-                    Subscribe
-                  </button>
-                </form>
 
-                <div className="mt-5 flex justify-end text-[11px] text-black/40 dark:text-white/40">
-                  <span>powered by fynaro tech</span>
-                </div>
               </div>
+
+
+
 
               {/* Partner tile */}
               <div className="rounded-xl border border-black/8 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50">

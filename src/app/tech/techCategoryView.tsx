@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo } from "react";
 import Header from "@/components/header";
 import { Breadcrumb } from "@/components/bedcrumb";
+import NewsletterCard from "@/components/newsletterCard";
 import MobileAllPosts from "@/components/headlines/MobileAllPosts";
 import HeadlineLayout from "@/components/headlines/HeadlineLayout";
 import Footer from "@/components/footer";
@@ -201,42 +202,14 @@ export default function TechCategoryView({ posts }: { posts: CardPost[] }) {
 
           {/* RIGHT SIDEBAR - hidden on mobile */}
           <aside className="col-span-12 md:col-span-3 lg:col-span-3 min-w-0 hidden md:block">
-            <div className="sticky top-24 space-y-6">
-              <div className="rounded-2xl border border-zinc-300 bg-[#f4f3dc] p-6 sm:p-7 shadow-sm dark:border-zinc-700 dark:bg-zinc-900/70 min-w-0">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/80 dark:border-white/10 dark:bg-zinc-950 dark:text-white/80">
-                  Daddieshinor Letters
-                </div>
-
-                <h3 className="mt-4 text-2xl font-black leading-tight break-words">Stay Close</h3>
-
-                <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70 break-words">
-                  A short note when something is worth thinking about. No spam. No noise.
-                </p>
-
-                <form className="mt-5 flex items-center gap-2" onSubmit={(e) => e.preventDefault()}>
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    className="h-11 w-full min-w-0 rounded-xl border border-black/20 bg-white px-3 text-sm outline-none focus:ring-2 focus:ring-orange-500/25 dark:border-white/15 dark:bg-zinc-800 dark:focus:ring-orange-400/25"
-                  />
-                  <button
-                    type="submit"
-                    className="h-11 shrink-0 rounded-xl bg-black px-4 text-sm font-black text-white hover:bg-black/90 dark:bg-white dark:text-black dark:hover:bg-white/90"
-                  >
-                    Subscribe
-                  </button>
-                </form>
-              </div>
-
-              <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-zinc-900/40 min-w-0">
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-black/70 dark:text-white/70">
-                  Tech moves
-                </p>
-                <p className="mt-2 text-sm leading-relaxed text-black/75 dark:text-white/75 break-words">
-                  If it changed how you think, it’s tech.
-                </p>
-              </div>
-            </div>
+            <div>
+                                      <NewsletterCard
+                                        badgeText="Daddieshinor Letters"
+                                        title="Stay Sharp on Tech"
+                                        subtitle="Fresh insights on identity, positioning, trust, and memorable design systems."
+                                        buttonText="Subscribe"
+                                      />
+                                    </div>
           </aside>
         </div>
       </div>
