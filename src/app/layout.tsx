@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { AudioProvider } from "../components/audioProvider";
 import Toaster from "@/components/toaster";
-import { Providers } from "./providers";
+import { Providers } from "./providers"; // ← Add this import
 
 export const metadata: Metadata = {
   title: "Daddieshinor",
@@ -55,23 +55,14 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Favicon links */}
         <link rel="icon" href="/DS.png" type="image/png" />
         <link rel="apple-touch-icon" href="/DS.png" />
         <link rel="shortcut icon" href="/DS.png" />
         <link rel="icon" type="image/png" sizes="512x512" href="/DS.png" />
-
-        {/* Sacramento font - loaded globally but can be applied selectively */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Kavoon&display=swap"
-          rel="stylesheet"
-        />
       </head>
 
       <body className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-        <Providers>
+        <Providers>  {/* ← PostHog wrapper added here */}
           <AudioProvider>
             {children}
             <Toaster />

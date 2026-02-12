@@ -120,14 +120,11 @@ export default function Header() {
             {/* Text changes to accent color on hover */}
             <span
               className="
-      text-xl sm:text-2xl font-black tracking-tight
-      text-black dark:text-white
-      group-hover:text-[#968e68]
-      transition-colors duration-300
-      font-['Sacramento']  /* ← this applies the font */
-      text-2xl sm:text-3xl   /* optional: adjust size for script feel */
-      font-normal            /* Sacramento looks better not bold */
-    "
+                text-xl sm:text-2xl font-black tracking-tight
+                text-black dark:text-white
+                group-hover:text-[#968e68]
+                transition-colors duration-300
+              "
             >
               Daddieshinor
             </span>
@@ -142,10 +139,11 @@ export default function Header() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`relative rounded-full px-5 py-2 text-sm font-semibold tracking-tight transition-all ${active
+                className={`relative rounded-full px-5 py-2 text-sm font-semibold tracking-tight transition-all ${
+                  active
                     ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
                     : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-                  } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
+                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
               >
                 {item.label}
                 {active && (
@@ -159,10 +157,11 @@ export default function Header() {
 
           <Link
             href="/about"
-            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${isActive("/about")
+            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
+              isActive("/about")
                 ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
                 : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-              } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
+            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
           >
             About
           </Link>
