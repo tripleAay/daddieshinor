@@ -51,7 +51,7 @@ export default function CultureCategoryView({ posts }: { posts: CardPost[] }) {
   const rest = useMemo(() => (posts?.length ? posts.slice(1) : []), [posts]);
 
   return (
-    <article className="min-h-screen w-full overflow-x-hidden bg-white text-black dark:bg-zinc-950 dark:text-white">
+    <article className="min-h-screen w-full overflow-x-hidden bg-[#D0CD94] text-black dark:bg-zinc-950 dark:text-white">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/85 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/75">
         <Header />

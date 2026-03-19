@@ -42,7 +42,7 @@ const ACCENT = "#968e68";
 
 export default function AboutPage() {
   return (
-    <article className="min-h-screen bg-gradient-to-b from-zinc-50 to-white text-black dark:from-black dark:to-zinc-950 dark:text-white">
+    <article className="min-h-screen bg-[#D0CD94] text-black dark:from-black dark:to-zinc-950 dark:text-white">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-md dark:border-zinc-800 dark:bg-black/80">
         <Header />

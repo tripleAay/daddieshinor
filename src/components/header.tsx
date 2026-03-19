@@ -21,21 +21,15 @@ type Theme = "light" | "dark";
 const ACCENT = "#968e68";
 
 function applyTheme(next: Theme) {
-  const root = document.documentElement;
-  if (next === "dark") root.classList.add("dark");
-  else root.classList.remove("dark");
+  document.documentElement.classList.toggle("dark", next === "dark");
 }
 
-// Format time in WAT (West Africa Time, UTC+1)
 function formatWATTime() {
-  const now = new Date();
-  // WAT is UTC+1
-  const watTime = new Date(now.getTime() + 60 * 60 * 1000); // add 1 hour to UTC
-  return watTime.toLocaleTimeString("en-US", {
+  return new Date().toLocaleTimeString("en-US", {
     hour: "2-digit",
     minute: "2-digit",
     hour12: true,
-    timeZone: "Africa/Lagos", // WAT timezone
+    timeZone: "Africa/Lagos",
   });
 }
 
@@ -45,270 +39,225 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(formatWATTime());
+  const [q, setQ] = useState("");
 
   const { isPlaying, togglePlay } = useAudio();
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
 
-  // Update time every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentTime(formatWATTime());
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, []);
-
   useEffect(() => {
     setMounted(true);
-
     const stored = localStorage.getItem("theme") as Theme | null;
-    const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
-    const initial: Theme = stored ?? (prefersDark ? "dark" : "light");
-
+    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const initial = stored ?? (prefers ? "dark" : "light");
     setTheme(initial);
     applyTheme(initial);
   }, []);
 
   useEffect(() => {
-    if (localStorage.getItem("theme")) return;
+    if (!localStorage.getItem("theme")) {
+      const media = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => {
+        const next = media.matches ? "dark" : "light";
+        setTheme(next);
+        applyTheme(next);
+      };
+      media.addEventListener("change", handler);
+      return () => media.removeEventListener("change", handler);
+    }
+  }, []);
 
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const onChange = () => {
-      const next: Theme = media.matches ? "dark" : "light";
-      setTheme(next);
-      applyTheme(next);
-    };
-
-    media.addEventListener("change", onChange);
-    return () => media.removeEventListener("change", onChange);
+  useEffect(() => {
+    const id = setInterval(() => setCurrentTime(formatWATTime()), 30000);
+    return () => clearInterval(id);
   }, []);
 
   const toggleTheme = () => {
-    const next: Theme = theme === "dark" ? "light" : "dark";
+    const next = theme === "dark" ? "light" : "dark";
     setTheme(next);
     localStorage.setItem("theme", next);
     applyTheme(next);
   };
 
-  const [q, setQ] = useState("");
   const searchHref = useMemo(
     () => (q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"),
-    [q]
+    [q],
   );
 
-  const handleCloseMenu = () => setIsMenuOpen(false);
-
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-black/10 bg-white/90 backdrop-blur-md dark:border-white/10 dark:bg-black/90">
-      <div className="mx-auto flex h-14 max-w-[1400px] items-center gap-3 px-4 sm:px-6 lg:h-16 lg:px-8">
-        {/* Left: menu button + brand */}
-        <div className="flex items-center gap-3 sm:gap-5">
-          <button
-            type="button"
-            aria-label="Open menu"
-            onClick={() => setIsMenuOpen(true)}
-            className="lg:hidden rounded-full p-2.5 hover:bg-black/5 dark:hover:bg-white/10 transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60"
-          >
-            <Menu className="h-5 w-5 text-black/80 dark:text-white/80" />
-          </button>
+    <>
+      <header className="sticky top-0 z-50 w-full border-b border-black/8 bg-[#D0CD94] backdrop-blur-xl dark:border-white/8 dark:bg-zinc-950/85">
+        <div className="mx-auto flex h-12 sm:h-[52px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
 
-          <Link
-            href="/"
-            className="group flex items-center gap-2.5 transition-all duration-300"
-            aria-label="Daddieshinor Home"
-          >
-            <span
-              className="
-                relative h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-xl
-                ring-1 ring-black/10 dark:ring-white/10 bg-zinc-100 dark:bg-zinc-900
-                transition-all duration-700
-                group-hover:rotate-y-180 group-hover:scale-110 group-hover:ring-[#968e68]/50
-                preserve-3d
-              "
-              style={{ transformStyle: "preserve-3d" }}
+          {/* LEFT – Logo + mobile menu */}
+          <div className="flex items-center gap-3 sm:gap-5">
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="lg:hidden -ml-2 rounded-full p-2 text-black/70 hover:text-black hover:bg-black/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5 transition"
+              aria-label="Open menu"
             >
-              <Image
-                src="/ds.jpg"
-                alt="Daddieshinor"
-                fill
-                sizes="(max-width: 768px) 100vw, 1200px"
-                className="object-cover transition-all duration-700 group-hover:scale-110"
-              />
-            </span>
+              <Menu className="h-5 w-5" />
+            </button>
 
-            <span
-              className="
-                text-xl sm:text-2xl font-black tracking-tight
-                text-black dark:text-white
-                group-hover:text-[#968e68]
-                transition-colors duration-300
-              "
+            <Link
+              href="/"
+              className="group flex items-center gap-2.5 transition-all"
+              aria-label="Home"
             >
-              Daddieshinor
-            </span>
-          </Link>
-        </div>
+              <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-black/10 dark:ring-white/10 bg-zinc-50 dark:bg-zinc-900 transition-all group-hover:ring-accent/40 group-hover:scale-[1.04]">
+                <Image
+                  src="/ds.jpg"
+                  alt="Daddieshinor"
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+              </div>
 
-        {/* Center nav – desktop only */}
-        <nav className="hidden lg:flex items-center gap-1.5 ml-2">
-          {nav.map((item) => {
-            const active = isActive(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`relative rounded-full px-5 py-2 text-sm font-semibold tracking-tight transition-all ${
-                  active
-                    ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
-                    : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-                } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
-              >
-                {item.label}
-                {active && (
-                  <span className="absolute -bottom-0.5 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-t bg-[#968e68]" />
-                )}
-              </Link>
-            );
-          })}
+              <div className="flex flex-col leading-none">
+                <span className="text-xl font-black tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+                  Daddieshinor
+                </span>
+                <span className="text-[10px] font-medium text-black/50 dark:text-white/40 tracking-wider">
+                  RC 8937639
+                </span>
+              </div>
+            </Link>
+          </div>
 
-          <div className="mx-3 h-5 w-px bg-black/10 dark:bg-white/10" />
+          {/* CENTER – Navigation (desktop only) */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {nav.map((item) => {
+              const active = isActive(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`
+                    relative px-4 py-1.5 text-sm font-semibold tracking-tight rounded-full transition-all duration-200
+                    ${
+                      active
+                        ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
+                        : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/8"
+                    }
+                  `}
+                >
+                  {item.label}
+                  {active && (
+                    <span className="absolute -bottom-px left-1/2 h-0.5 w-3 -translate-x-1/2 bg-[#968e68] rounded-t-full" />
+                  )}
+                </Link>
+              );
+            })}
 
-          <Link
-            href="/about"
-            className={`rounded-full px-5 py-2 text-sm font-semibold transition-all ${
-              isActive("/about")
-                ? "bg-black/5 dark:bg-white/10 text-black dark:text-white shadow-sm"
-                : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/10"
-            } focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60`}
-          >
-            About
-          </Link>
-        </nav>
+            <div className="mx-3 h-4 w-px bg-black/10 dark:bg-white/10" />
 
-        {/* Desktop search */}
-        <div className="flex-1 hidden md:flex justify-center">
-          <div className="w-full max-w-[720px] lg:max-w-[900px] xl:max-w-[1000px]">
-            <form
-              action="/search"
-              className="relative"
-              onSubmit={(e) => {
-                if (!q.trim()) e.preventDefault();
-              }}
+            <Link
+              href="/about"
+              className={`
+                px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-200
+                ${
+                  isActive("/about")
+                    ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
+                    : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/8"
+                }
+              `}
             >
-              <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
+              About
+            </Link>
+          </nav>
+
+          {/* RIGHT – Controls */}
+          <div className="flex items-center gap-2 sm:gap-3">
+
+            {/* WAT time – desktop only */}
+            <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-black/4 dark:bg-white/5 text-xs font-medium tabular-nums">
+              <span className="text-[#968e68] font-semibold">WAT</span>
+              <span className="text-black/70 dark:text-white/70">{currentTime}</span>
+            </div>
+
+            {/* Search (desktop) */}
+            <div className="hidden md:block relative w-72 lg:w-80 xl:w-96">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
               <input
-                suppressHydrationWarning
-                name="q"
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="Search essays, thoughts, culture, tech..."
-                autoComplete="off"
-                spellCheck={false}
+                placeholder="Search thoughts..."
                 className="
-                  h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
-                  placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
-                  transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
-                  dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
+                  h-9 w-full pl-10 pr-4 text-sm bg-white/70 dark:bg-zinc-900/70
+                  border border-black/10 dark:border-white/10 rounded-full
+                  placeholder:text-black/40 dark:placeholder:text-white/40
+                  focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/30
+                  transition-all
                 "
               />
-            </form>
+            </div>
+
+            {/* Mobile search icon */}
+            <Link
+              href={q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"}
+              className="md:hidden h-9 w-9 rounded-full grid place-items-center border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition"
+              aria-label="Search"
+            >
+              <Search className="h-4.5 w-4.5" />
+            </Link>
+
+            {/* Audio toggle */}
+            <button
+              onClick={togglePlay}
+              className={`
+                h-9 w-9 rounded-full border border-black/10 dark:border-white/10
+                grid place-items-center transition-all duration-200
+                hover:bg-black/5 dark:hover:bg-white/5
+                ${isPlaying ? "text-[#968e68] shadow-sm" : "text-black/70 dark:text-white/60"}
+              `}
+              aria-label={isPlaying ? "Pause ambient" : "Play ambient"}
+            >
+              {isPlaying ? <Pause className="h-4.5 w-4.5" /> : <Play className="h-4.5 w-4.5" />}
+            </button>
+
+            {/* Theme toggle */}
+            <button
+              onClick={toggleTheme}
+              className="
+                h-9 w-9 rounded-full border border-black/10 dark:border-white/10
+                grid place-items-center transition-all hover:bg-black/5 dark:hover:bg-white/5
+              "
+              aria-label="Toggle theme"
+            >
+              {mounted && (theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />)}
+            </button>
           </div>
         </div>
+      </header>
 
-        {/* Right actions – includes current time */}
-        <div className="ml-auto flex items-center gap-2 sm:gap-3 lg:gap-4">
-          {/* Current time display */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 text-sm font-medium text-black/80 dark:text-white/80">
-            <span className="text-[#968e68] font-bold">WAT</span>
-            <span>{currentTime}</span>
+      {/* Mobile bottom search bar */}
+      <div className="md:hidden border-t border-black/6 dark:border-white/8 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-lg">
+        <div className="px-4 py-2.5">
+          <div className="relative">
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
+            <input
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+              placeholder="Search Daddieshinor..."
+              className="
+                h-9 w-full pl-10 pr-4 text-sm rounded-full bg-white/70 dark:bg-zinc-900/60
+                border border-black/10 dark:border-white/10
+                placeholder:text-black/40 dark:placeholder:text-white/40
+                focus:outline-none focus:ring-2 focus:ring-[#968e68]/30
+              "
+            />
           </div>
-
-          {/* Audio Toggle */}
-          <button
-            onClick={togglePlay}
-            aria-label={isPlaying ? "Pause ambient music" : "Play ambient music"}
-            className={`
-              h-10 w-10 rounded-full border border-black/10 bg-white/80
-              hover:bg-black/5 hover:border-[#968e68]/40 hover:shadow-md hover:ring-1 hover:ring-[#968e68]/30
-              transition-all duration-300 dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60
-              ${isPlaying ? "text-[#968e68] shadow-sm" : "text-black/70 dark:text-white/70"}
-            `}
-          >
-            {isPlaying ? (
-              <Pause className="h-5 w-5 mx-auto" />
-            ) : (
-              <Play className="h-5 w-5 mx-auto" />
-            )}
-          </button>
-
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
-            className="
-              h-10 w-10 rounded-full border border-black/10 bg-white/80
-              hover:bg-black/5 hover:border-[#968e68]/40 hover:shadow-sm
-              transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60
-            "
-          >
-            {mounted ? (
-              theme === "dark" ? (
-                <Sun className="h-5 w-5 mx-auto" />
-              ) : (
-                <Moon className="h-5 w-5 mx-auto" />
-              )
-            ) : null}
-          </button>
-
-          {/* Mobile search button */}
-          <Link
-            href={q.trim() ? searchHref : "/search"}
-            aria-label="Search"
-            className="md:hidden h-10 w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60 grid place-items-center"
-          >
-            <Search className="h-5 w-5" />
-          </Link>
         </div>
-      </div>
-
-      {/* Mobile inline search bar */}
-      <div className="md:hidden border-t border-black/5 dark:border-white/10 px-4 pb-4 pt-3">
-        <form
-          action="/search"
-          className="relative"
-          onSubmit={(e) => {
-            if (!q.trim()) e.preventDefault();
-          }}
-        >
-          <Search className="absolute left-5 top-1/2 -translate-y-1/2 h-5 w-5 text-black/60 dark:text-white/60" />
-          <input
-            suppressHydrationWarning
-            name="q"
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="Search Daddieshinor essays..."
-            autoComplete="off"
-            spellCheck={false}
-            className="
-              h-12 w-full rounded-full border border-black/10 bg-white/90 pl-14 pr-6 text-sm font-medium text-black
-              placeholder:text-black/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/50
-              transition-all dark:border-white/15 dark:bg-black/70 dark:text-white dark:placeholder:text-white/50
-              dark:focus:ring-[#968e68]/50 dark:focus:border-[#968e68]/60
-            "
-          />
-        </form>
       </div>
 
       <MobileMenu
         isOpen={isMenuOpen}
-        onClose={handleCloseMenu}
+        onClose={() => setIsMenuOpen(false)}
         isActive={isActive}
         theme={theme}
       />
-    </header>
+    </>
   );
 }

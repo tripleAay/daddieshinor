@@ -26,7 +26,7 @@ export default function LifeCategoryView({ posts }: { posts: CardPost[] }) {
   const rest = useMemo(() => (posts?.length ? posts.slice(1) : []), [posts]);
 
   return (
-    <article className="min-h-screen w-full overflow-x-hidden bg-white text-black dark:bg-zinc-950 dark:text-white">
+    <article className="min-h-screen w-full overflow-x-hidden bg-[#D0CD94] text-black dark:bg-zinc-950 dark:text-white">
       {/* Fixed Header */}
       <div className="fixed inset-x-0 top-0 z-50 w-full overflow-x-hidden border-b border-zinc-200 bg-white/85 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/75">
         <Header />
