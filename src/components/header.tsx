@@ -26,16 +26,39 @@ function applyTheme(next: Theme) {
   else root.classList.remove("dark");
 }
 
+// Format time in WAT (West Africa Time, UTC+1)
+function formatWATTime() {
+  const now = new Date();
+  // WAT is UTC+1
+  const watTime = new Date(now.getTime() + 60 * 60 * 1000); // add 1 hour to UTC
+  return watTime.toLocaleTimeString("en-US", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: true,
+    timeZone: "Africa/Lagos", // WAT timezone
+  });
+}
+
 export default function Header() {
   const pathname = usePathname();
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [currentTime, setCurrentTime] = useState(formatWATTime());
 
   const { isPlaying, togglePlay } = useAudio();
 
   const isActive = (href: string) =>
     pathname === href || pathname?.startsWith(href + "/");
+
+  // Update time every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(formatWATTime());
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     setMounted(true);
@@ -91,13 +114,11 @@ export default function Header() {
             <Menu className="h-5 w-5 text-black/80 dark:text-white/80" />
           </button>
 
-          {/* Brand with flip logo + accent hover */}
           <Link
             href="/"
             className="group flex items-center gap-2.5 transition-all duration-300"
             aria-label="Daddieshinor Home"
           >
-            {/* Logo with 3D flip effect */}
             <span
               className="
                 relative h-8 w-8 sm:h-9 sm:w-9 overflow-hidden rounded-xl
@@ -117,7 +138,6 @@ export default function Header() {
               />
             </span>
 
-            {/* Text changes to accent color on hover */}
             <span
               className="
                 text-xl sm:text-2xl font-black tracking-tight
@@ -197,15 +217,13 @@ export default function Header() {
           </div>
         </div>
 
-        {/* Right actions */}
-        <div className="ml-auto flex items-center gap-2 sm:gap-3">
-          <Link
-            href={q.trim() ? searchHref : "/search"}
-            aria-label="Search"
-            className="md:hidden h-10 w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60 grid place-items-center"
-          >
-            <Search className="h-5 w-5" />
-          </Link>
+        {/* Right actions – includes current time */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-3 lg:gap-4">
+          {/* Current time display */}
+          <div className="hidden lg:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/5 dark:bg-white/5 text-sm font-medium text-black/80 dark:text-white/80">
+            <span className="text-[#968e68] font-bold">WAT</span>
+            <span>{currentTime}</span>
+          </div>
 
           {/* Audio Toggle */}
           <button
@@ -245,6 +263,15 @@ export default function Header() {
               )
             ) : null}
           </button>
+
+          {/* Mobile search button */}
+          <Link
+            href={q.trim() ? searchHref : "/search"}
+            aria-label="Search"
+            className="md:hidden h-10 w-10 rounded-full border border-black/10 bg-white/80 hover:bg-black/5 transition-all dark:border-white/10 dark:bg-black/80 dark:hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/60 grid place-items-center"
+          >
+            <Search className="h-5 w-5" />
+          </Link>
         </div>
       </div>
 

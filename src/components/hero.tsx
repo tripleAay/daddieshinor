@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState, Suspense } from "react";
 import { useGlobalLoader } from "@/components/global-loader";
 import ThoughtItem from "@/components/thoughtItem";
 
 // ────────────────────────────────────────────────
-// Types (unchanged)
+// Types
 // ────────────────────────────────────────────────
 type Slide = {
   tag: string;
@@ -27,7 +27,7 @@ type Thought = {
 };
 
 // ────────────────────────────────────────────────
-// Fallback data (unchanged)
+// Fallback data
 // ────────────────────────────────────────────────
 const fallbackSlides: Slide[] = [
   {
@@ -52,7 +52,7 @@ const fallbackThoughts: Thought[] = [
 ];
 
 // ────────────────────────────────────────────────
-// Utilities (unchanged)
+// Utilities
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -133,52 +133,44 @@ function Divider({ className = "" }: { className?: string }) {
 }
 
 // ────────────────────────────────────────────────
-// HeroSkeleton (unchanged)
+// HeroSkeleton (optimized for fast visual match)
 // ────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
-        <div className="lg:col-span-5 space-y-6">
+    <section className="mx-auto max-w-[1400px] px-5 py-8 md:py-12 lg:py-16">
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10 animate-pulse">
+        {/* Left column */}
+        <div className="lg:col-span-5 space-y-5">
           <div className="flex items-center justify-between">
-            <div className="h-10 w-56 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-            <div className="hidden sm:flex gap-3">
-              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-              <div className="h-10 w-10 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="h-8 w-40 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+            <div className="hidden sm:flex gap-2">
+              <div className="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-800" />
+              <div className="h-8 w-8 rounded-full bg-zinc-200 dark:bg-zinc-800" />
             </div>
           </div>
-          <div className="space-y-5">
-            <div className="h-16 md:h-20 lg:h-24 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-5 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-5 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
-          </div>
-          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10" />
+          <div className="h-12 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
+          <div className="h-4 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
+          <div className="h-4 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
+          <div className="aspect-[4/3] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         </div>
 
-        <div className="lg:col-span-5 flex flex-col space-y-8">
-          <div className="flex items-center justify-between">
-            <div className="h-10 w-48 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-1 w-24 rounded-full bg-zinc-200 dark:bg-zinc-800" />
-          </div>
-          {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="flex gap-5">
-              <div className="h-24 w-24 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
-              <div className="flex-1 space-y-3">
-                <div className="h-4 w-16 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-6 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
-                <div className="h-6 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
+        {/* Center column */}
+        <div className="lg:col-span-5 space-y-6">
+          <div className="h-8 w-36 rounded bg-zinc-200 dark:bg-zinc-800" />
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="flex gap-4">
+              <div className="h-20 w-20 rounded-xl bg-zinc-200 dark:bg-zinc-800 shrink-0" />
+              <div className="flex-1 space-y-2">
+                <div className="h-4 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
+                <div className="h-5 w-5/6 rounded bg-zinc-200 dark:bg-zinc-800" />
               </div>
             </div>
           ))}
         </div>
 
+        {/* Right column */}
         <div className="lg:col-span-2 space-y-4">
-          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
-          <div className="space-y-3 px-2">
-            <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-          </div>
+          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800" />
         </div>
       </div>
     </section>
@@ -186,7 +178,7 @@ function HeroSkeleton() {
 }
 
 // ────────────────────────────────────────────────
-// Shrunk & Balanced Hero (Main Fix)
+// Main Hero – FAST LOADING VERSION
 // ────────────────────────────────────────────────
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -210,7 +202,7 @@ export default function Hero() {
         setError(null);
 
         const proxyUrl = `/api/wp-proxy?path=${encodeURIComponent(
-          "/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&_embed=1"
+          "/wp-json/wp/v2/posts?per_page=6&orderby=date&order=desc&_embed=1"
         )}`;
         console.log("[Hero] Fetching via proxy:", proxyUrl);
 
@@ -231,7 +223,7 @@ export default function Hero() {
 
         const FEATURED_EXCERPT_CHARS = 180;
 
-        const mappedSlides = posts.slice(0, 4).map((post: any, idx: number) => {
+        const mappedSlides = posts.slice(0, 3).map((post: any, idx: number) => {
           const title = cleanWpText(post.title?.rendered) || "Untitled";
           const rawExcerpt = cleanWpText(post.excerpt?.rendered) || "";
           const excerpt = truncateText(rawExcerpt, FEATURED_EXCERPT_CHARS);
@@ -247,7 +239,7 @@ export default function Hero() {
           };
         });
 
-        const mappedThoughts = posts.slice(4, 10).map((post: any) => {
+        const mappedThoughts = posts.slice(3, 6).map((post: any) => {
           const title = cleanWpText(post.title?.rendered) || "Untitled";
           return {
             tag: getWpCategoryName(post),
@@ -326,7 +318,7 @@ export default function Hero() {
   if (loading) return <HeroSkeleton />;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-8 md:py-12 lg:py-16"> {/* Reduced vertical padding */}
+    <section className="mx-auto max-w-[1400px] px-5 py-8 md:py-12 lg:py-16">
       {error && (
         <div className="mb-6 rounded-xl bg-red-50/80 p-4 text-red-800 dark:bg-red-950/40 dark:text-red-200 border border-red-200 dark:border-red-800">
           {error}
@@ -334,7 +326,7 @@ export default function Hero() {
       )}
 
       <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10">
-        {/* LEFT — Featured Carousel (shrunk) */}
+        {/* LEFT — Featured Carousel */}
         <div className="lg:col-span-5">
           <div className="flex items-center justify-between gap-4 mb-5">
             <span className="inline-flex items-center gap-3 rounded-full border border-black/30 bg-white/90 px-4 py-1.5 text-xs font-extrabold tracking-wider text-black shadow-sm dark:bg-black/80 dark:text-white dark:border-white/20">
@@ -376,12 +368,12 @@ export default function Hero() {
             </p>
 
             <div className="relative mt-6 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
-              <div className="relative aspect-[4/3]"> {/* Shrunk aspect ratio – more balanced height */}
+              <div className="relative aspect-[4/3]">
                 <Image
                   src={active.image}
                   alt={active.alt}
                   fill
-                  priority
+                  priority  // Only the featured slide is priority
                   sizes="(max-width: 1024px) 100vw, (max-width: 1440px) 50vw, 45vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-105"
                 />
@@ -429,7 +421,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* CENTER — Recent Thoughts (slightly shorter) */}
+        {/* CENTER — Recent Thoughts */}
         <div className="lg:col-span-5 flex flex-col overscroll-none">
           <div className="mb-5 flex items-center justify-between shrink-0">
             <h2 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-black dark:text-white">
@@ -471,7 +463,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — Editor’s Pick + Partnership Tile (unchanged) */}
+        {/* RIGHT — Editor’s Pick + Partnership Tile */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Editorial Canvas */}
           <div
@@ -497,7 +489,7 @@ export default function Hero() {
                 fill
                 sizes="(max-width: 1024px) 100vw, 20vw"
                 className="object-cover transition-transform duration-700 group-hover:scale-105"
-                priority
+                priority={false} // Non-critical, lazy load
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
             </div>

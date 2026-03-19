@@ -15,6 +15,9 @@ import YouTubeEmbed from "@/components/youtube";
 import Footer from "@/components/footer";
 import MarqueeNote from "@/components/marqueeNote";
 
+
+
+
 // --- Enhanced Metadata for Homepage ---
 export const metadata: Metadata = {
   title: {
