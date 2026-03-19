@@ -87,7 +87,12 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-black/8 bg-[#D0CD94] backdrop-blur-xl dark:border-white/8 dark:bg-zinc-950/85">
+      <header   className="
+    sticky top-0 z-50 w-full 
+    bg-[#D0CD94] backdrop-blur-xl 
+    dark:bg-zinc-950/85
+  "
+>
         <div className="mx-auto flex h-12 sm:h-[52px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
 
           {/* LEFT – Logo + mobile menu */}
@@ -233,7 +238,7 @@ export default function Header() {
       </header>
 
       {/* Mobile bottom search bar */}
-      <div className="md:hidden border-t border-black/6 dark:border-white/8 bg-white/80 dark:bg-zinc-950/80 backdrop-blur-lg">
+      <div className="md:hidden border-t border-black/6 dark:border-white/8 bg-[#D0CD94] dark:bg-zinc-950/80 backdrop-blur-lg">
         <div className="px-4 py-2.5">
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
