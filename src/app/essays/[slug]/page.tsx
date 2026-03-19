@@ -1,7 +1,6 @@
 // app/essays/[slug]/page.tsx
 import { notFound } from "next/navigation";
-import RelatedSection from "@/components/RelatedSection";
-import Footer from "@/components/footer";
+
 import PostLayout from "../[slug]/PostLayoutWrapper";
 import WpContentRenderer from "@/components/WpContentRenderer";
 
@@ -51,7 +50,7 @@ function sanitizeWpHtml(html: string) {
   return html
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, "")
+    // ✅ iframes KEPT — needed for YouTube / Vimeo embeds
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
     .replace(/<embed\b[^>]*>/gi, "")
     .replace(/\son\w+="[^"]*"/gi, "")
@@ -97,7 +96,10 @@ async function fetchPost(slug: string): Promise<WPPost | null> {
 // --------------------- Static Params ---------------------
 export async function generateStaticParams() {
   try {
-    const res = await fetch(`${WP_BASE_URL}/wp-json/wp/v2/posts?per_page=30&status=publish&orderby=date&order=desc`, { next: { revalidate: 3600 } });
+    const res = await fetch(
+      `${WP_BASE_URL}/wp-json/wp/v2/posts?per_page=30&status=publish&orderby=date&order=desc`,
+      { next: { revalidate: 3600 } }
+    );
     if (!res.ok) return [];
     const posts: WPPost[] = await res.json();
     return posts.map((p) => ({ slug: p.slug }));
@@ -117,12 +119,8 @@ export async function generateMetadata({ params }: PageProps) {
 
   const title = stripHtml(post.title?.rendered || "Daddieshinor");
   const desc = stripHtml(post.excerpt?.rendered || "").slice(0, 160);
-
-  
   const featured = getFeatured(post);
-  const fallbackImage = "/ds.jpg"; 
-
-  const ogImage = featured.url || fallbackImage;
+  const ogImage = featured.url || "/ds.jpg";
 
   return {
     title: `${title} - Daddieshinor`,
@@ -133,14 +131,7 @@ export async function generateMetadata({ params }: PageProps) {
       url: `${WP_BASE_URL}/essays/${slug}`,
       siteName: "Daddieshinor",
       type: "article",
-      images: [
-        {
-          url: ogImage,
-          width: 1200,
-          height: 630,
-          alt: featured.alt || "Daddieshinor",
-        },
-      ],
+      images: [{ url: ogImage, width: 1200, height: 630, alt: featured.alt || "Daddieshinor" }],
     },
     twitter: {
       card: "summary_large_image",
@@ -161,29 +152,20 @@ export default async function EssayPage({ params }: PageProps) {
   const date = formatDate(post.date);
   const featured = getFeatured(post);
   const primaryCategory = getPrimaryCategory(post);
-
   const safeHtml = sanitizeWpHtml(post.content?.rendered || "");
 
   return (
-    <>
-      <PostLayout
-        title={title}
-        category={primaryCategory.name}
-        author="Shina Hustle"
-        dateLabel={date}
-        heroImage={featured.url}
-        heroAlt={featured.alt}
-      >
-        <WpContentRenderer html={safeHtml} />
-      </PostLayout>
-
-      <RelatedSection
-        currentSlug={slug}
-        categoryId={primaryCategory.id}
-        categoryName={primaryCategory.name}
-      />
-
-      <Footer />
-    </>
+    <PostLayout
+      title={title}
+      category={primaryCategory.name}
+      author="Shina Hustle"
+      dateLabel={date}
+      heroImage={featured.url}
+      heroAlt={featured.alt}
+      // ↓ RelatedSection + Footer live INSIDE the scroll column now
+      
+    >
+      <WpContentRenderer html={safeHtml} />
+    </PostLayout>
   );
 }
