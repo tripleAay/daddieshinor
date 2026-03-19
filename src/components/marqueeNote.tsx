@@ -1,15 +1,17 @@
 "use client";
 
 const ITEMS = [
-  "I’m not here to shout — I’m here to make meaning.",
-  "If it touched your mind, it deserves your time.",
-  "Small moves. Deep thoughts. Quiet consistency.",
-  "Daddieshinor Letters: when a thought is worth keeping.",
-  "If you read this far, you’re already part of the story.",
+  "Not here to shout — here to make meaning.",
+  "If it touched your heart, give it your time.",
+  "Small moves. Deep thoughts. Quiet fire.",
+  "Daddieshinor Letters — thoughts worth keeping.",
+  "You read this far — thank you for staying.",
+  "Eid Mubarak to every Muslim reader today — may your celebration overflow with peace, love, family, laughter, good food, and endless barakah 🤍🕌🌙✨",
+  "Grateful for every soul who passes through these words.",
 ];
 
 export default function MarqueeNote() {
-  const loop = [...ITEMS, ...ITEMS];
+  const loop = [...ITEMS, ...ITEMS]; // seamless infinite loop
 
   return (
     <div
@@ -27,18 +29,18 @@ export default function MarqueeNote() {
     >
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="relative h-10 overflow-hidden">
-          {/* Fade edges */}
-          <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-zinc-50 to-transparent dark:from-black/70" />
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-zinc-50 to-transparent dark:from-black/70" />
+          {/* Softer, wider fade edges */}
+          <div className="pointer-events-none absolute inset-y-0 left-0 w-16 md:w-24 bg-gradient-to-r from-zinc-50 to-transparent dark:from-black/70" />
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-16 md:w-24 bg-gradient-to-l from-zinc-50 to-transparent dark:from-black/70" />
 
           <div className="flex h-full items-center">
-            <div className="marquee flex items-center gap-8 whitespace-nowrap will-change-transform">
+            <div className="marquee flex items-center gap-10 md:gap-16 whitespace-nowrap will-change-transform">
               {loop.map((text, i) => (
                 <span
                   key={i}
-                  className="text-sm font-semibold tracking-tight text-zinc-800 dark:text-zinc-200"
+                  className="text-sm md:text-base font-medium tracking-tight text-zinc-800 dark:text-zinc-200"
                 >
-                  <span className="mx-2 inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] align-middle" />
+                  <span className="mx-2.5 inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] align-middle" />
                   {text}
                 </span>
               ))}

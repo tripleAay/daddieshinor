@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 
 import PostLayout from "../[slug]/PostLayoutWrapper";
 import WpContentRenderer from "@/components/WpContentRenderer";
+import HeadlineLayout from "@/components/headline-layout";
+import RelatedPosts from "@/components/RelatedSection";
+import Footer from "@/components/footerr";
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
@@ -148,11 +151,11 @@ export default async function EssayPage({ params }: PageProps) {
   const post = await fetchPost(slug);
   if (!post) return notFound();
 
-  const title = stripHtml(post.title?.rendered || "Untitled");
-  const date = formatDate(post.date);
-  const featured = getFeatured(post);
+  const title       = stripHtml(post.title?.rendered || "Untitled");
+  const date        = formatDate(post.date);
+  const featured    = getFeatured(post);
   const primaryCategory = getPrimaryCategory(post);
-  const safeHtml = sanitizeWpHtml(post.content?.rendered || "");
+  const safeHtml    = sanitizeWpHtml(post.content?.rendered || "");
 
   return (
     <PostLayout
@@ -162,10 +165,19 @@ export default async function EssayPage({ params }: PageProps) {
       dateLabel={date}
       heroImage={featured.url}
       heroAlt={featured.alt}
-      // ↓ RelatedSection + Footer live INSIDE the scroll column now
-      
+      // You can pass footer prop too if you still want something fixed at bottom
     >
       <WpContentRenderer html={safeHtml} />
+
+      {/* ← Related posts appear here — inside the scrolling area */}
+      
+      <RelatedPosts
+        currentSlug={slug}
+        categoryId={primaryCategory.id}
+        categoryName={primaryCategory.name}
+      />
+      <HeadlineLayout title="Latest Essays" />
+      <Footer/>
     </PostLayout>
   );
 }

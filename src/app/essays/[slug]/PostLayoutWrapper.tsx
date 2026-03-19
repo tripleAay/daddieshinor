@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Breadcrumb } from "@/components/bedcrumb";
 import NewsletterCard from "@/components/newsletterCard";
 import Header from "@/components/header";
+
+
 import {
   Facebook,
   Twitter,
@@ -114,6 +116,7 @@ export default function PostLayout({
       />
 
       {/* ── Fixed Header — row 1 ── */}
+      
       <div className="flex-none z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
         <Header />
       </div>
@@ -205,7 +208,31 @@ export default function PostLayout({
 
               <Breadcrumb category={category} title={title} />
 
-              <div className="flex justify-end mt-2">
+              <div className="flex items-center gap-4 mb-4">
+                <button
+                  type="button"
+                  onClick={() => window.history.back()}
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  aria-label="Go back to previous page"
+                >
+                  <svg
+                    className="h-5 w-5 transition-transform group-hover:-translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                  Back
+                </button>
+
+                {/* Optional: keep date on the right */}
+                <div className="flex-1" />
                 <time className="text-sm font-medium text-black/60 dark:text-white/60">
                   {dateLabel}
                 </time>
@@ -325,6 +352,8 @@ export default function PostLayout({
 
         </div>
       </div>
+
+
 
     </article>
   );

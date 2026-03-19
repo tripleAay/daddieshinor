@@ -7,7 +7,7 @@ import { useGlobalLoader } from "@/components/global-loader";
 import ThoughtItem from "@/components/thoughtItem";
 
 // ────────────────────────────────────────────────
-// Types
+// Types (unchanged)
 // ────────────────────────────────────────────────
 type Slide = {
   tag: string;
@@ -27,7 +27,7 @@ type Thought = {
 };
 
 // ────────────────────────────────────────────────
-// Fallback data
+// Fallback data (unchanged)
 // ────────────────────────────────────────────────
 const fallbackSlides: Slide[] = [
   {
@@ -52,7 +52,7 @@ const fallbackThoughts: Thought[] = [
 ];
 
 // ────────────────────────────────────────────────
-// Utilities
+// Utilities (unchanged)
 // ────────────────────────────────────────────────
 function decodeHtmlEntities(input: string): string {
   if (!input) return "";
@@ -133,7 +133,7 @@ function Divider({ className = "" }: { className?: string }) {
 }
 
 // ────────────────────────────────────────────────
-// HeroSkeleton
+// HeroSkeleton (unchanged)
 // ────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
@@ -186,7 +186,7 @@ function HeroSkeleton() {
 }
 
 // ────────────────────────────────────────────────
-// Main Hero Component (FIXED)
+// Shrunk & Balanced Hero (Main Fix)
 // ────────────────────────────────────────────────
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -291,7 +291,6 @@ export default function Hero() {
     };
   }, [start, stop]);
 
-
   const ordered = useMemo(() => {
     const featured = slides.find((s) => s.featured) ?? slides[0];
     const rest = slides.filter((s) => s !== featured);
@@ -327,34 +326,34 @@ export default function Hero() {
   if (loading) return <HeroSkeleton />;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
+    <section className="mx-auto max-w-[1400px] px-5 py-8 md:py-12 lg:py-16"> {/* Reduced vertical padding */}
       {error && (
-        <div className="mb-8 rounded-xl bg-red-50/80 p-5 text-red-800 dark:bg-red-950/40 dark:text-red-200 border border-red-200 dark:border-red-800">
+        <div className="mb-6 rounded-xl bg-red-50/80 p-4 text-red-800 dark:bg-red-950/40 dark:text-red-200 border border-red-200 dark:border-red-800">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
-        {/* LEFT — Featured Carousel */}
+      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10">
+        {/* LEFT — Featured Carousel (shrunk) */}
         <div className="lg:col-span-5">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <span className="inline-flex items-center gap-3 rounded-full border border-black/30 bg-white/90 px-5 py-2 text-sm font-extrabold tracking-wider text-black shadow-sm dark:bg-black/80 dark:text-white dark:border-white/20">
+          <div className="flex items-center justify-between gap-4 mb-5">
+            <span className="inline-flex items-center gap-3 rounded-full border border-black/30 bg-white/90 px-4 py-1.5 text-xs font-extrabold tracking-wider text-black shadow-sm dark:bg-black/80 dark:text-white dark:border-white/20">
               FEATURED ESSAY
-              <span className="inline-block h-2 w-2 rounded-full bg-[#968e68] animate-pulse" />
+              <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] animate-pulse" />
               <span className="font-bold text-[#968e68]">{active.tag.toUpperCase()}</span>
             </span>
 
-            <div className="hidden sm:flex items-center gap-3">
+            <div className="hidden sm:flex items-center gap-2">
               <button
                 onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-8 w-8 rounded-full border border-zinc-300 bg-white text-lg font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Previous"
               >
                 ←
               </button>
               <button
                 onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-8 w-8 rounded-full border border-zinc-300 bg-white text-lg font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Next"
               >
                 →
@@ -368,16 +367,16 @@ export default function Hero() {
             onMouseEnter={() => (hoveringRef.current = true)}
             onMouseLeave={() => (hoveringRef.current = false)}
           >
-            <h3 className="text-2xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+            <h3 className="text-2xl md:text-4xl lg:text-5xl font-black leading-tight tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
               {active.title}
             </h3>
 
-            <p className="mt-5 text-lg md:text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl">
+            <p className="mt-4 text-base md:text-lg text-zinc-700 dark:text-zinc-300 max-w-2xl">
               {active.excerpt}
             </p>
 
-            <div className="relative mt-8 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
-              <div className="relative aspect-[16/10]">
+            <div className="relative mt-6 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
+              <div className="relative aspect-[4/3]"> {/* Shrunk aspect ratio – more balanced height */}
                 <Image
                   src={active.image}
                   alt={active.alt}
@@ -389,9 +388,9 @@ export default function Hero() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-4 bg-black/70 px-6 py-4 text-white backdrop-blur-md">
-                <div className="flex items-center gap-4">
-                  <span className="rounded-full bg-white/20 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-white/90">
+              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-4 bg-black/70 px-5 py-3 text-white backdrop-blur-md">
+                <div className="flex items-center gap-3">
+                  <span className="rounded-full bg-white/20 px-3 py-1 text-xs font-extrabold uppercase tracking-widest text-white/90">
                     {active.tag}
                   </span>
                   <span className="text-sm font-medium opacity-90">Read full essay →</span>
@@ -405,7 +404,7 @@ export default function Hero() {
                         e.preventDefault();
                         setIndex(i);
                       }}
-                      className={`h-2 rounded-full transition-all ${i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/50"}`}
+                      className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-[#968e68]" : "w-1.5 bg-white/50"}`}
                       aria-label={`Go to slide ${i + 1}`}
                     />
                   ))}
@@ -414,47 +413,47 @@ export default function Hero() {
             </div>
           </Link>
 
-          <div className="mt-6 flex justify-between sm:hidden">
+          <div className="mt-5 flex justify-between sm:hidden">
             <button
               onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="px-4 py-2 rounded-full border border-zinc-300 text-base font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               ← Prev
             </button>
             <button
               onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="px-4 py-2 rounded-full border border-zinc-300 text-base font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               Next →
             </button>
           </div>
         </div>
 
-        {/* CENTER — Recent Thoughts */}
+        {/* CENTER — Recent Thoughts (slightly shorter) */}
         <div className="lg:col-span-5 flex flex-col overscroll-none">
-          <div className="mb-6 flex items-center justify-between shrink-0">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-black dark:text-white">
+          <div className="mb-5 flex items-center justify-between shrink-0">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-black tracking-tight text-black dark:text-white">
               Recent Thoughts
             </h2>
-            <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#968e68] via-[#968e68]/80 to-transparent" />
+            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-[#968e68] via-[#968e68]/80 to-transparent" />
           </div>
 
           <div
             className={`
               relative flex-1 overflow-y-auto overscroll-contain overscroll-x-none
               -mr-2 lg:-mr-4 pr-2 lg:pr-4
-              max-h-[620px] lg:max-h-[720px] xl:max-h-[800px]
+              max-h-[500px] lg:max-h-[600px] xl:max-h-[700px]
               scrollbar-thin scrollbar-thumb-zinc-300/60 scrollbar-track-transparent
               hover:scrollbar-thumb-zinc-400/90 scrollbar-thumb-rounded-full
               dark:scrollbar-thumb-zinc-700/50 dark:hover:scrollbar-thumb-zinc-600/90
               transition-all duration-200 ease-out
-              after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-16
+              after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-12
               after:pointer-events-none after:bg-gradient-to-t
               after:from-white/70 after:via-white/40 after:to-transparent
               dark:after:from-black/70 dark:after:via-black/40 dark:after:to-transparent
             `}
           >
-            <div className="space-y-10 pb-12 lg:pb-14">
+            <div className="space-y-8 pb-10 lg:pb-12">
               {thoughts.map((t, i) => (
                 <div key={t.href} className="group">
                   <ThoughtItem
@@ -472,7 +471,7 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* RIGHT — Editor’s Pick + Partnership Tile */}
+        {/* RIGHT — Editor’s Pick + Partnership Tile (unchanged) */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Editorial Canvas */}
           <div
