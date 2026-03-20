@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://daddieshinor.com
+
+# Sitemaps
+Sitemap: https://daddieshinor.com/sitemap.xml

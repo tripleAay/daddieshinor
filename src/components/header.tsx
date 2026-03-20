@@ -87,51 +87,41 @@ export default function Header() {
 
   return (
     <>
-      <header   className="
-    sticky top-0 z-50 w-full 
-    bg-[#D0CD94] backdrop-blur-xl 
-    dark:bg-zinc-950/85
-  "
->
-        <div className="mx-auto flex h-12 sm:h-[52px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <header
+        className="
+          sticky top-0 z-50 w-full 
+          bg-[#D0CD94] backdrop-blur-xl 
+          dark:bg-zinc-950/85 pt-1.5 pt-2
+        "
+      >
+        <div className="mx-auto flex h-12 sm:h-[52px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6  lg:px-8">
 
-          {/* LEFT – Logo + mobile menu */}
-          <div className="flex items-center gap-3 sm:gap-5">
-            <button
-              type="button"
-              onClick={() => setIsMenuOpen(true)}
-              className="lg:hidden -ml-2 rounded-full p-2 text-black/70 hover:text-black hover:bg-black/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5 transition"
-              aria-label="Open menu"
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+          {/* LEFT – Logo only (mobile & desktop) */}
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5 transition-all"
+            aria-label="Home"
+          >
+            <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-black/10 dark:ring-white/10 bg-zinc-50 dark:bg-zinc-900 transition-all group-hover:ring-accent/40 group-hover:scale-[1.04]">
+              <Image
+                src="/ds.jpg"
+                alt="Daddieshinor"
+                fill
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
+              />
+            </div>
 
-            <Link
-              href="/"
-              className="group flex items-center gap-2.5 transition-all"
-              aria-label="Home"
-            >
-              <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-black/10 dark:ring-white/10 bg-zinc-50 dark:bg-zinc-900 transition-all group-hover:ring-accent/40 group-hover:scale-[1.04]">
-                <Image
-                  src="/ds.jpg"
-                  alt="Daddieshinor"
-                  fill
-                  className="object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-              </div>
+            <div className="flex flex-col leading-none">
+              <span className="text-xl font-black tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+                Daddieshinor
+              </span>
+              <span className="text-[10px] font-medium text-black/50 dark:text-white/40 tracking-wider">
+                RC 8937639
+              </span>
+            </div>
+          </Link>
 
-              <div className="flex flex-col leading-none">
-                <span className="text-xl font-black tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
-                  Daddieshinor
-                </span>
-                <span className="text-[10px] font-medium text-black/50 dark:text-white/40 tracking-wider">
-                  RC 8937639
-                </span>
-              </div>
-            </Link>
-          </div>
-
-          {/* CENTER – Navigation (desktop only) */}
+          {/* CENTER – Desktop navigation only */}
           <nav className="hidden lg:flex items-center gap-1">
             {nav.map((item) => {
               const active = isActive(item.href);
@@ -173,18 +163,17 @@ export default function Header() {
             </Link>
           </nav>
 
-          {/* RIGHT – Controls */}
+          {/* RIGHT – Controls (mobile menu button now extreme right) */}
           <div className="flex items-center gap-2 sm:gap-3">
-
-            {/* WAT time – desktop only */}
-            <div className="hidden xl:flex items-center gap-2 px-3 py-1 rounded-full bg-black/4 dark:bg-white/5 text-xs font-medium tabular-nums">
+            {/* WAT time */}
+            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-black/4 dark:bg-white/5 text-xs sm:text-sm font-medium tabular-nums">
               <span className="text-[#968e68] font-semibold">WAT</span>
-              <span className="text-black/70 dark:text-white/70">{currentTime}</span>
+              <span className="text-black/80 dark:text-white/80">{currentTime}</span>
             </div>
 
-            {/* Search (desktop) */}
-            <div className="hidden md:block relative w-72 lg:w-80 xl:w-96">
-              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
+            {/* Desktop search */}
+            <div className="hidden md:block relative w-64 lg:w-72 xl:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
@@ -233,12 +222,22 @@ export default function Header() {
             >
               {mounted && (theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />)}
             </button>
+
+            {/* Hamburger – now extreme right on mobile */}
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen(true)}
+              className="lg:hidden rounded-full p-2 text-black/70 hover:text-black hover:bg-black/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5 transition"
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
           </div>
         </div>
       </header>
 
       {/* Mobile bottom search bar */}
-      <div className="md:hidden border-t border-black/6 dark:border-white/8 bg-[#D0CD94] dark:bg-zinc-950/80 backdrop-blur-lg">
+      <div className="md:hidden bg-[#D0CD94] dark:bg-zinc-950/80 backdrop-blur-lg">
         <div className="px-4 py-2.5">
           <div className="relative">
             <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />

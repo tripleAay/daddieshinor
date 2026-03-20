@@ -19,7 +19,7 @@ export default function PostFooter() {
             </h2>
           </Link>
           <p className="mt-3 text-sm sm:text-base text-zinc-600 dark:text-zinc-400 max-w-md mx-auto leading-relaxed">
-            Thinking space for tech, culture, work, and the questions we rarely voice.
+            Thinking space for tech, culture, brand and the questions we rarely voice.
           </p>
         </div>
 
