@@ -1,25 +1,54 @@
 import { MetadataRoute } from "next";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  const baseUrl = "https://daddieshinor.com";
+
+  let posts: any[] = [];
+
+  try {
+    const res = await fetch(
+      "https://api.daddieshinor.com/wp-json/wp/v2/posts?per_page=100&_embed",
+      { cache: "no-store" }
+    );
+
+    if (res.ok) {
+      posts = await res.json();
+    }
+  } catch (err) {
+    console.error("Sitemap fetch error:", err);
+  }
+
+  const postUrls = posts.map((post) => ({
+    url: `${baseUrl}/essays/${post.slug}`,
+    lastModified: new Date(post.modified),
+  }));
+
   return [
     {
-      url: "https://daddieshinor.com/",
+      url: baseUrl,
       lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
     },
     {
-      url: "https://daddieshinor.com/about",
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.8,
     },
     {
-      url: "https://daddieshinor.com/tech",
+      url: `${baseUrl}/tech`,
       lastModified: new Date(),
-      changeFrequency: "daily",
-      priority: 0.9,
     },
-    // add other static routes
+    {
+      url: `${baseUrl}/branding`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${baseUrl}/culture`,
+      lastModified: new Date(),
+    },
+    {
+      url: `${baseUrl}/life`,
+      lastModified: new Date(),
+    },
+
+    ...postUrls,
   ];
 }
