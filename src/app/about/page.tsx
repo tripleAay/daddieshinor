@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <article className="min-h-screen bg-[#D0CD94] text-black dark:bg-zinc-950/85 dark:text-white">
+    <article className="min-h-screen bg-[#D9DCD6] text-black dark:bg-zinc-950/85 dark:text-white">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50  bg-white/80 backdrop-blur-md dark:border-zinc-800/40 dark:bg-black/70">
         <Header />

@@ -90,7 +90,7 @@ export default function Header() {
       <header
         className="
           sticky top-0 z-50 w-full 
-          bg-[#D0CD94] backdrop-blur-xl 
+          bg-[#D9DCD6] backdrop-blur-xl 
           dark:bg-zinc-950/85 pt-1.5 pt-2
         "
       >

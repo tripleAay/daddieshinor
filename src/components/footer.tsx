@@ -133,7 +133,7 @@ export default function PostFooter() {
 
           <div className="col-span-2 sm:col-span-1 text-center sm:text-left">
             <p className="text-xs text-zinc-500 dark:text-zinc-500 mt-2 sm:mt-0">
-              © {new Date().getFullYear()} Daddieshinor<br />
+             
               Built slowly. Written thoughtfully.
             </p>
           </div>
@@ -144,7 +144,7 @@ export default function PostFooter() {
       <div className="border-t border-zinc-200/70 dark:border-zinc-800/70 bg-white/40 dark:bg-zinc-950/40 py-6">
         <div className="mx-auto max-w-4xl px-5 md:px-0 text-center text-xs text-zinc-500 dark:text-zinc-400">
           <p>© {new Date().getFullYear()} Daddieshinor. All rights reserved.</p>
-          <p className="mt-1">Built slowly. Written thoughtfully.</p>
+         
         </div>
       </div>
     </footer>

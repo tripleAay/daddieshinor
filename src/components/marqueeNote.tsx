@@ -1,14 +1,13 @@
 "use client";
 
 const ITEMS = [
-  "Not here to shout — here to make meaning.",
-  "If it touched your heart, give it your time.",
-  "Small moves. Deep thoughts. Quiet fire.",
-  "Daddieshinor Letters — thoughts worth keeping.",
-  "You read this far — thank you for staying.",
-  "Eid Mubarak to every Muslim reader today — may your celebration overflow with peace, love, family, laughter, good food, and endless barakah 🤍🕌🌙✨",
-  "Happy Easter to everyone celebrating today! May your day be filled with renewal, joy, chocolate eggs, warm gatherings, and new beginnings 🐣🌸🥚✝️",
-  "Grateful for every soul who passes through these words.",
+  "Not here to be loud — here to leave something that stays with you.",
+  "Some words are not meant to impress you; they are meant to return you to yourself.",
+  "Small moves. Deep thoughts. Quiet fire. That is how real things are built.",
+  "Daddieshinor Letters — for the ones who still believe meaning matters.",
+  "This is a place for culture, hustle, memory, travel, and the truths we carry quietly.",
+  "If something here touched your heart, stay with it a little longer — that is how perspective begins.",
+  "Grateful for every soul who passes through these words; in a fast world, your attention means everything.",
 ];
 
 export default function MarqueeNote() {
@@ -22,7 +21,7 @@ export default function MarqueeNote() {
         z-40
         w-full
         border-b border-black/5
-        bg-zinc-50/80              // lighter & more subtle (was zinc-60)
+        bg-zinc-50/80
         backdrop-blur-md
         dark:border-white/10
         dark:bg-black/70
@@ -30,7 +29,6 @@ export default function MarqueeNote() {
     >
       <div className="mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8">
         <div className="relative h-10 overflow-hidden">
-          {/* Softer fade edges – improved contrast */}
           <div className="pointer-events-none absolute inset-y-0 left-0 w-20 md:w-32 bg-gradient-to-r from-zinc-50/90 to-transparent dark:from-zinc-950/90" />
           <div className="pointer-events-none absolute inset-y-0 right-0 w-20 md:w-32 bg-gradient-to-l from-zinc-50/90 to-transparent dark:from-zinc-950/90" />
 

@@ -9,7 +9,7 @@ type HeadlinePost = {
   title: string;
   href: string;
 };
-
+ 
 type Props = {
   title: string;
   description?: string;

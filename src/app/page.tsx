@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s — Daddieshinor",
   },
   description:
-    "Daddieshinor is a modern journal exploring culture, technology, life, and branding — ideas, signals, and stories that shape how we think and live.",
+    "A thinking platform about how tech, culture, and branding shape modern life.",
 
   keywords: [
     "culture blog",
@@ -152,7 +152,7 @@ function HeroSkeleton() {
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen bg-[#D0CD94] font-sans antialiased dark:bg-black">
+    <div className="relative min-h-screen bg-[#D9DCD6] font-sans antialiased dark:bg-black">
       <div className="sticky top-0 z-50 w-full">
       
         <Header />

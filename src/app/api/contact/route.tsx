@@ -1,27 +1,35 @@
 import { NextResponse } from "next/server";
+import { Resend } from "resend";
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json().catch(() => null);
+    const body = await req.json();
+    const { name, email, message } = body;
 
-    const email = String(body?.email || "").trim();
-    const message = String(body?.message || "").trim();
-
-    if (!email || !message) {
-      return NextResponse.json(
-        { error: "Email and message are required." },
-        { status: 400 }
-      );
+    if (!name || !email || !message) {
+      return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    // TODO: send email or store in DB here
-    // For now, just respond success so the form works.
+    await resend.emails.send({
+      from: "Daddieshinor <onboarding@resend.dev>",
+      to: ["hello@daddieshinor.com"],
+      subject: `New Contact Message from ${name}`,
+      replyTo: email,
+      html: `
+        <div style="font-family: sans-serif;">
+          <h2>New Message</h2>
+          <p><strong>Name:</strong> ${name}</p>
+          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Message:</strong></p>
+          <p>${message}</p>
+        </div>
+      `,
+    });
 
-    return NextResponse.json({ ok: true }, { status: 200 });
-  } catch (e: any) {
-    return NextResponse.json(
-      { error: "Server error", details: String(e?.message || e) },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    return NextResponse.json({ error: "Something went wrong" }, { status: 500 });
   }
 }

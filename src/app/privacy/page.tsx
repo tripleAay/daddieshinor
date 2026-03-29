@@ -4,7 +4,7 @@ import Footer from "@/components/footer";
 
 export default function PrivacyPolicyPage() {
   return (
-    <article className="min-h-screen bg-[#D0CD94] text-black dark:bg-black dark:text-white">
+    <article className="min-h-screen bg-[#D9DCD6] text-black dark:bg-black dark:text-white">
       {/* Fixed Header */}
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/85 backdrop-blur dark:border-zinc-800 dark:bg-black/75">
         <Header />

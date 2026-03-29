@@ -21,168 +21,184 @@ type CardPost = {
   alt: string;
 };
 
-export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
+export default function BrandingCategoryView({
+  posts,
+}: {
+  posts: CardPost[];
+}) {
   const featured = useMemo(() => posts?.[0], [posts]);
   const rest = useMemo(() => (posts?.length ? posts.slice(1) : []), [posts]);
 
   return (
-    <article className="min-h-screen w-full overflow-x-hidden bg-[#D0CD94] text-black dark:bg-zinc-950 dark:text-white">
+    <article className="flex h-screen flex-col overflow-hidden bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white">
       {/* Fixed Header */}
-      <div className="fixed inset-x-0 top-0 z-50 w-full overflow-x-hidden border-b border-zinc-200 bg-white/85 shadow-sm backdrop-blur dark:border-zinc-800 dark:bg-zinc-950/75">
+      <div className="z-40 flex-none border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
         <Header />
       </div>
 
-      {/* Spacer */}
-      <div className="h-[var(--header-height,80px)]" />
-
-      {/* Page container */}
-      <div className="mx-auto w-full max-w-[1320px] px-4 sm:px-6 pb-16 pt-10">
-        <div className="grid grid-cols-12 gap-6 md:gap-10 min-w-0">
+      {/* Locked body area */}
+      <div className="h-[calc(100vh-var(--header-height,80px))] flex-1 overflow-hidden">
+        <div className="mx-auto grid h-full w-full max-w-[1320px] grid-cols-12 gap-0 px-4 sm:px-6 lg:gap-6 lg:px-8">
           {/* LEFT RAIL */}
-          <aside className="hidden md:block md:col-span-3 lg:col-span-2 min-w-0">
-            <div className="sticky top-24 space-y-8">
-              <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-zinc-900/40 min-w-0">
-                <div className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-white px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
-                  <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-                  Branding
-                </div>
-
-                <p className="mt-4 text-xs leading-relaxed text-black/60 dark:text-white/60 break-words">
-                  Branding is trust with a design system — positioning, identity, and the story people remember.
-                </p>
-
-                <div className="mt-5 text-xs font-semibold text-black/70 dark:text-white/70">
-                  {posts?.length ? `${posts.length} posts` : "No posts yet"}
-                </div>
+          <aside className="hidden overflow-hidden py-8 md:col-span-3 md:flex md:flex-col md:gap-5 lg:col-span-2">
+            <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
+              <div className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-white px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
+                <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                Branding
               </div>
+
+              <p className="mt-4 text-xs leading-relaxed text-black/60 dark:text-white/60">
+                Branding is trust with a design system — positioning, identity,
+                and the story people remember.
+              </p>
+
+              <div className="mt-5 text-xs font-semibold text-black/70 dark:text-white/70">
+                {posts?.length ? `${posts.length} posts` : "No posts yet"}
+              </div>
+            </div>
+
+            <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
+              <p className="text-xs font-black uppercase tracking-[0.20em] text-black/60 dark:text-white/60">
+                Brand Notes
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70">
+                Identity earns attention. Consistency earns trust. Meaning earns
+                memory.
+              </p>
             </div>
           </aside>
 
-          {/* CENTER */}
-          <main className="col-span-12 md:col-span-6 lg:col-span-7 min-w-0">
-            <div className="min-w-0 break-words mt-10">
-              <Breadcrumb category="Branding" title="" />
-            </div>
+          {/* CENTER — ONLY SCROLLING COLUMN */}
+          <main
+            id="branding-scroller"
+            className="scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent col-span-12 h-full min-w-0 overflow-y-auto overscroll-contain px-0 md:col-span-6 md:px-4 lg:col-span-7 lg:px-6"
+          >
+            <div className="min-w-0 py-8 pb-24">
+              <div className="min-w-0 break-words">
+                <Breadcrumb category="Branding" title="" />
+              </div>
 
-            <div className="lg:hidden">
-              <MobileAllPosts categoryId={13} />
-            </div>
+              <div className="mt-6 flex items-end justify-between gap-4 min-w-0">
+                <HeadlineLayout
+                  title="Branding"
+                  description="Positioning, identity, trust, and the systems that make brands memorable."
+                  categoryId={13}
+                />
 
-            {/* Desktop / large screen view: headline layout */}
-            <div className="hidden lg:block">
-              <HeadlineLayout
-                title="Branding"
-                description="Branding decoded — how meaning becomes memory, trust, and position."
-                categoryId={13}
-              />
-            </div>
+                <Link
+                  href="/"
+                  className="hidden shrink-0 rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-bold text-black transition hover:bg-zinc-50 dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800 sm:inline-flex"
+                >
+                  Home →
+                </Link>
+              </div>
 
-            <div className="flex items-end justify-between gap-4 min-w-0">
-              <div className="min-w-0">
-                <h1 className="text-[34px] leading-[1.12] font-black tracking-tight md:text-[44px] break-words">
+              <div className="mt-6 min-w-0">
+                <h1 className="break-words text-[34px] font-black leading-[1.12] tracking-tight md:text-[44px]">
                   Branding
                 </h1>
-                <p className="mt-3 text-base md:text-lg text-black/70 dark:text-white/70 break-words">
+                <p className="mt-3 break-words text-base text-black/70 dark:text-white/70 md:text-lg">
                   Not just logos. Meaning. Memory. Position.
                 </p>
               </div>
 
-              <Link
-                href="/"
-                className="hidden sm:inline-flex shrink-0 rounded-full border border-black/10 bg-white px-5 py-2 text-sm font-bold text-black hover:bg-zinc-50 transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
-              >
-                Home →
-              </Link>
-            </div>
-
-            {/* Featured */}
-            {featured && (
-              <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
-                <Link href={featured.href} className="block group">
-                  <div className="relative w-full aspect-[16/9] overflow-hidden">
-                    <Image
-                      src={featured.image}
-                      alt={featured.alt}
-                      fill
-                      priority
-                      sizes="(max-width: 1024px) 100vw, 700px"
-                      className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-                    <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 text-white min-w-0">
-                      <div className="text-xs font-black uppercase tracking-widest opacity-90">
-                        Featured
-                      </div>
-                      <h2 className="mt-2 text-2xl md:text-3xl font-black leading-tight group-hover:text-[#968e68] transition-colors break-words">
-                        {featured.title}
-                      </h2>
-                      {featured.excerpt && (
-                        <p className="mt-3 text-sm md:text-base text-white/90 line-clamp-3 break-words">
-                          {featured.excerpt}
-                        </p>
-                      )}
-                      <div className="mt-4 text-sm font-bold text-white/90">
-                        {featured.dateLabel}
-                      </div>
-                    </div>
-                  </div>
-                </Link>
+              <div className="mt-6 lg:hidden">
+                <MobileAllPosts categoryId={13} />
               </div>
-            )}
 
-            {/* List */}
-            <div className="mt-10 space-y-6 min-w-0">
-              {rest.map((p) => (
-                <Link
-                  key={p.id}
-                  href={p.href}
-                  className="group block overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm hover:shadow-md transition dark:border-zinc-800 dark:bg-zinc-950"
-                >
-                  <div className="grid gap-0 md:grid-cols-12 min-w-0">
-                    <div className="relative md:col-span-4 w-full aspect-[4/3] overflow-hidden">
+              {/* Featured */}
+              {featured && (
+                <div className="mt-8 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-950">
+                  <Link href={featured.href} className="group block">
+                    <div className="relative aspect-[16/9] overflow-hidden">
                       <Image
-                        src={p.image}
-                        alt={p.alt}
+                        src={featured.image}
+                        alt={featured.alt}
                         fill
-                        sizes="(max-width: 768px) 100vw, 280px"
+                        priority
+                        sizes="(max-width: 1024px) 100vw, 700px"
                         className="object-cover transition-transform duration-700 group-hover:scale-105"
                       />
-                    </div>
-
-                    <div className="md:col-span-8 p-5 sm:p-6 min-w-0">
-                      <div className="text-xs font-bold uppercase tracking-widest text-black/60 dark:text-white/60">
-                        {p.dateLabel}
-                      </div>
-
-                      <h3 className="mt-2 text-xl md:text-2xl font-black leading-tight group-hover:text-[#968e68] transition-colors break-words">
-                        {p.title}
-                      </h3>
-
-                      {p.excerpt && (
-                        <p className="mt-3 text-sm md:text-base text-zinc-700 dark:text-zinc-300 line-clamp-3 break-words">
-                          {p.excerpt}
-                        </p>
-                      )}
-
-                      <div className="mt-4 text-sm font-bold text-black/80 dark:text-white/80">
-                        Read →
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      <div className="absolute bottom-0 left-0 right-0 min-w-0 p-5 text-white sm:p-6">
+                        <div className="text-xs font-black uppercase tracking-widest opacity-90">
+                          Featured
+                        </div>
+                        <h2 className="mt-2 break-words text-2xl font-black leading-tight transition-colors group-hover:text-[#968e68] md:text-3xl">
+                          {featured.title}
+                        </h2>
+                        {featured.excerpt && (
+                          <p className="mt-3 line-clamp-3 break-words text-sm text-white/90 md:text-base">
+                            {featured.excerpt}
+                          </p>
+                        )}
+                        <div className="mt-4 text-sm font-bold text-white/90">
+                          {featured.dateLabel}
+                        </div>
                       </div>
                     </div>
-                  </div>
-                </Link>
-              ))}
-
-              {!posts?.length && (
-                <div className="mt-16 text-center text-zinc-500 dark:text-zinc-400">
-                  No Branding posts found yet.
+                  </Link>
                 </div>
               )}
+
+              {/* List */}
+              <div className="mt-10 min-w-0 space-y-6">
+                {rest.map((p) => (
+                  <Link
+                    key={p.id}
+                    href={p.href}
+                    className="group block overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:shadow-md dark:border-zinc-800 dark:bg-zinc-950"
+                  >
+                    <div className="grid min-w-0 gap-0 md:grid-cols-12">
+                      <div className="relative aspect-[4/3] overflow-hidden md:col-span-4">
+                        <Image
+                          src={p.image}
+                          alt={p.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 280px"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+
+                      <div className="min-w-0 p-5 sm:p-6 md:col-span-8">
+                        <div className="text-xs font-bold uppercase tracking-widest text-black/60 dark:text-white/60">
+                          {p.dateLabel}
+                        </div>
+
+                        <h3 className="mt-2 break-words text-xl font-black leading-tight transition-colors group-hover:text-[#968e68] md:text-2xl">
+                          {p.title}
+                        </h3>
+
+                        {p.excerpt && (
+                          <p className="mt-3 line-clamp-3 break-words text-sm text-zinc-700 dark:text-zinc-300 md:text-base">
+                            {p.excerpt}
+                          </p>
+                        )}
+
+                        <div className="mt-4 text-sm font-bold text-black/80 dark:text-white/80">
+                          Read →
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+
+                {!posts?.length && (
+                  <div className="mt-16 text-center text-zinc-500 dark:text-zinc-400">
+                    No Branding posts found yet.
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-16">
+                <Footer />
+              </div>
             </div>
           </main>
 
-          {/* RIGHT SIDEBAR */}
-          <aside className="col-span-12 md:col-span-3 lg:col-span-3 min-w-0">
-            <div>
+          {/* RIGHT RAIL */}
+          <aside className="hidden overflow-hidden py-8 md:col-span-3 md:flex md:flex-col md:gap-5 lg:col-span-3">
+            <div className="flex-none">
               <NewsletterCard
                 badgeText="Daddieshinor Letters"
                 title="Stay Sharp on Branding"
@@ -190,11 +206,19 @@ export default function BrandingCategoryView({ posts }: { posts: CardPost[] }) {
                 buttonText="Subscribe"
               />
             </div>
+
+            <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
+              <p className="text-xs font-black uppercase tracking-[0.20em] text-black/60 dark:text-white/60">
+                Positioning Signal
+              </p>
+              <p className="mt-2 text-sm leading-relaxed text-black/70 dark:text-white/70">
+                A brand becomes clear when people know what it means before you
+                explain it.
+              </p>
+            </div>
           </aside>
         </div>
       </div>
-
-      <Footer />
     </article>
   );
 }

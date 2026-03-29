@@ -1,107 +1,89 @@
-// src/app/contact/page.tsx
 import type { Metadata } from "next";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ContactForm from "@/components/contactform";
+import BackButton from "@/components/back-button";
 import Link from "next/link";
+import { Mail, Twitter } from "lucide-react";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
   title: "Contact Daddieshinor — Get in Touch",
   description:
-    "Contact Daddieshinor for questions, feedback, partnerships, or collaborations. We read every message and respond quickly.",
+    "Contact Daddieshinor for questions, feedback, partnerships, or collaborations.",
   alternates: { canonical: "https://daddieshinor.com/contact" },
-  openGraph: {
-    title: "Contact Daddieshinor",
-    description:
-      "Questions, ideas, partnerships, or just want to say hello? Reach out to Daddieshinor — we read every message.",
-    url: "https://daddieshinor.com/contact",
-    siteName: "Daddieshinor",
-    type: "website",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "Contact Daddieshinor",
-    description: "Reach out to Daddieshinor for feedback, ideas, or partnerships. We’re listening.",
-  },
 };
 
 export default function ContactPage() {
   return (
-    <article className="min-h-screen bg-[#D0CD94] text-black dark:bg-black dark:text-white">
-      <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/85 backdrop-blur dark:border-zinc-800 dark:bg-black/75">
+    <article className="min-h-screen bg-[#D9DCD6] text-black dark:bg-black dark:text-white">
+
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/70">
         <Header />
       </div>
 
-      <div className="h-[var(--header-height,80px)]" />
+      <div className="h-[80px]" />
 
-      <main className="px-5 py-16 md:py-24">
-        <div className="mx-auto max-w-[1100px]">
+      <main className="px-5 py-12 md:py-24">
+        <div className="mx-auto max-w-[900px]">
+
+          <BackButton />
+
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mb-10">
-            <ol className="flex flex-wrap items-center gap-2 text-sm font-medium text-zinc-500 dark:text-zinc-400">
-              <li>
-                <Link href="/" className="hover:text-black dark:hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li aria-hidden="true" className="text-zinc-400 dark:text-zinc-600">
-                ›
-              </li>
-              <li aria-current="page" className="font-semibold text-black dark:text-white">
-                Contact
-              </li>
-            </ol>
+          <nav className="mb-6 text-xs text-zinc-500">
+            <Link href="/">Home</Link> / <span>Contact</span>
           </nav>
 
-          <header className="mb-20 max-w-[720px]">
-            <div className="mb-6 h-1 w-20 rounded-full bg-black dark:bg-white" />
-            <h1 className="text-4xl md:text-6xl font-black tracking-tight leading-tight">
-              Contact Daddieshinor
+          {/* Header */}
+          <header className="mb-10 max-w-[520px]">
+            <h1 className="text-3xl md:text-5xl font-semibold">
+              Let’s talk.
             </h1>
-            <p className="mt-8 text-xl md:text-2xl leading-relaxed text-zinc-700 dark:text-zinc-300">
-              Questions, ideas, partnerships, or just want to say hello? We read every message.
+            <p className="mt-3 text-sm md:text-base text-zinc-600 dark:text-zinc-400">
+              Ideas, collaborations, or something you're building.
             </p>
           </header>
 
-          <div className="mx-auto max-w-[720px] space-y-20">
-            <section className="space-y-6">
-              <h2 className="text-3xl font-black tracking-tight">Get in Touch</h2>
-              <p className="text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
-                Whether you're a reader with feedback, a brand interested in collaboration, a writer with an idea,
-                or someone who just wants to connect — we're listening.
-              </p>
-              <p className="text-lg leading-relaxed text-zinc-700 dark:text-zinc-300">
-                The best way to reach us is email — we aim to respond within 48 hours (usually much faster).
-              </p>
-            </section>
+          {/* Content */}
+          <div className="grid md:grid-cols-2 gap-8">
 
-            <ContactForm />
+            {/* Form */}
+            <div className="bg-white/60 dark:bg-white/5 backdrop-blur rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 md:p-6">
+              <ContactForm />
+            </div>
 
-            <section className="space-y-6">
-              <h2 className="text-3xl font-black tracking-tight">Other Ways to Connect</h2>
-              <ul className="space-y-4 text-lg text-zinc-700 dark:text-zinc-300">
-                <li>
-                  <strong>Email:</strong>{" "}
-                  <a href="mailto:hello@daddieshinor.com" className="text-[#968e68] hover:underline">
-                    hello@daddieshinor.com
-                  </a>
-                </li>
-                <li>
-                  <strong>X (Twitter):</strong>{" "}
-                  <a
-                    href="https://x.com/daddieshinor"   // 👈 brand account recommended
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[#968e68] hover:underline"
-                  >
-                    @daddieshinor
-                  </a>
-                </li>
-              </ul>
-            </section>
+            {/* Info */}
+            <div className="space-y-6 text-sm">
+
+              <div className="flex items-center gap-2">
+                <Mail size={16} />
+                <a href="mailto:hello@daddieshinor.com">
+                  hello@daddieshinor.com
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Twitter size={16} />
+                <a
+                  href="https://x.com/daddieshinor"
+                  target="_blank"
+                >
+                  @daddieshinor
+                </a>
+              </div>
+
+              <p className="text-xs text-zinc-500 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+                Replies within 24–48 hours.
+              </p>
+            </div>
+
           </div>
         </div>
       </main>
+
+      <ToastContainer position="top-right" autoClose={3000} />
 
       <Footer />
     </article>

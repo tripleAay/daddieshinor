@@ -107,7 +107,7 @@ export default function PostLayout({
   }, []);
 
   return (
-    <article className="h-screen flex flex-col bg-[#D0CD94] text-black dark:bg-zinc-950 dark:text-white overflow-hidden">
+    <article className="h-screen flex flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white overflow-hidden">
 
       {/* ── Reading Progress Bar ── */}
       <div
