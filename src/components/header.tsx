@@ -18,8 +18,6 @@ const nav = [
 
 type Theme = "light" | "dark";
 
-const ACCENT = "#968e68";
-
 function applyTheme(next: Theme) {
   document.documentElement.classList.toggle("dark", next === "dark");
 }
@@ -82,27 +80,20 @@ export default function Header() {
 
   const searchHref = useMemo(
     () => (q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"),
-    [q],
+    [q]
   );
 
   return (
     <>
-      <header
-        className="
-          sticky top-0 z-50 w-full 
-          bg-[#D9DCD6] backdrop-blur-xl 
-          dark:bg-zinc-950/85 pt-1.5 pt-2
-        "
-      >
-        <div className="mx-auto flex h-12 sm:h-[52px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-6  lg:px-8">
-
-          {/* LEFT – Logo only (mobile & desktop) */}
+      <header className="sticky top-0 z-50 w-full bg-[#D9DCD6]/95 backdrop-blur-xl dark:bg-zinc-950/90">
+        <div className="mx-auto flex h-12 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[52px] sm:gap-3 sm:px-4 md:px-6 lg:px-8">
+          {/* LEFT – Logo */}
           <Link
             href="/"
-            className="group flex items-center gap-2.5 transition-all"
+            className="group flex min-w-0 flex-1 items-center gap-2 transition-all sm:flex-none sm:gap-2.5"
             aria-label="Home"
           >
-            <div className="relative h-8 w-8 overflow-hidden rounded-lg ring-1 ring-black/10 dark:ring-white/10 bg-zinc-50 dark:bg-zinc-900 transition-all group-hover:ring-accent/40 group-hover:scale-[1.04]">
+            <div className="relative h-7 w-7 shrink-0 overflow-hidden rounded-lg bg-zinc-50 ring-1 ring-black/10 transition-all group-hover:scale-[1.04] group-hover:ring-[#968e68]/40 dark:bg-zinc-900 dark:ring-white/10 sm:h-8 sm:w-8">
               <Image
                 src="/ds.jpg"
                 alt="Daddieshinor"
@@ -111,36 +102,33 @@ export default function Header() {
               />
             </div>
 
-            <div className="flex flex-col leading-none">
-              <span className="text-xl font-black tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+            <div className="min-w-0 leading-none">
+              <span className="block truncate text-[15px] font-black tracking-tight text-black transition-colors group-hover:text-[#968e68] dark:text-white xs:text-base sm:text-xl">
                 Daddieshinor
               </span>
-              <span className="text-[10px] font-medium text-black/50 dark:text-white/40 tracking-wider">
+              <span className="hidden text-[10px] font-medium tracking-wider text-black/50 dark:text-white/40 sm:block">
                 RC 8937639
               </span>
             </div>
           </Link>
 
-          {/* CENTER – Desktop navigation only */}
-          <nav className="hidden lg:flex items-center gap-1">
+          {/* CENTER – Desktop nav */}
+          <nav className="hidden items-center gap-1 lg:flex">
             {nav.map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`
-                    relative px-4 py-1.5 text-sm font-semibold tracking-tight rounded-full transition-all duration-200
-                    ${
-                      active
-                        ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
-                        : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/8"
-                    }
-                  `}
+                  className={`relative rounded-full px-4 py-1.5 text-sm font-semibold tracking-tight transition-all duration-200 ${
+                    active
+                      ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
+                      : "text-black/80 hover:bg-black/5 hover:text-black dark:text-white/80 dark:hover:bg-white/8 dark:hover:text-white"
+                  }`}
                 >
                   {item.label}
                   {active && (
-                    <span className="absolute -bottom-px left-1/2 h-0.5 w-3 -translate-x-1/2 bg-[#968e68] rounded-t-full" />
+                    <span className="absolute -bottom-px left-1/2 h-0.5 w-3 -translate-x-1/2 rounded-t-full bg-[#968e68]" />
                   )}
                 </Link>
               );
@@ -150,84 +138,83 @@ export default function Header() {
 
             <Link
               href="/about"
-              className={`
-                px-4 py-1.5 text-sm font-semibold rounded-full transition-all duration-200
-                ${
-                  isActive("/about")
-                    ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
-                    : "text-black/80 hover:text-black hover:bg-black/5 dark:text-white/80 dark:hover:text-white dark:hover:bg-white/8"
-                }
-              `}
+              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-all duration-200 ${
+                isActive("/about")
+                  ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
+                  : "text-black/80 hover:bg-black/5 hover:text-black dark:text-white/80 dark:hover:bg-white/8 dark:hover:text-white"
+              }`}
             >
               About
             </Link>
           </nav>
 
-          {/* RIGHT – Controls (mobile menu button now extreme right) */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* RIGHT – Controls */}
+          <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
             {/* WAT time */}
-            <div className="hidden sm:flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1 rounded-full bg-black/4 dark:bg-white/5 text-xs sm:text-sm font-medium tabular-nums">
-              <span className="text-[#968e68] font-semibold">WAT</span>
-              <span className="text-black/80 dark:text-white/80">{currentTime}</span>
+            <div className="hidden items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-xs font-medium tabular-nums dark:bg-white/5 sm:flex">
+              <span className="font-semibold text-[#968e68]">WAT</span>
+              <span className="text-black/80 dark:text-white/80">
+                {currentTime}
+              </span>
             </div>
 
             {/* Desktop search */}
-            <div className="hidden md:block relative w-64 lg:w-72 xl:w-80">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
+            <div className="relative hidden md:block md:w-56 lg:w-72 xl:w-80">
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/50 dark:text-white/50" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search thoughts..."
-                className="
-                  h-9 w-full pl-10 pr-4 text-sm bg-white/70 dark:bg-zinc-900/70
-                  border border-black/10 dark:border-white/10 rounded-full
-                  placeholder:text-black/40 dark:placeholder:text-white/40
-                  focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 focus:border-[#968e68]/30
-                  transition-all
-                "
+                className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-4 text-sm placeholder:text-black/40 transition-all focus:border-[#968e68]/30 focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 dark:border-white/10 dark:bg-zinc-900/70 dark:placeholder:text-white/40"
               />
             </div>
 
-            {/* Mobile search icon */}
+            {/* Mobile search */}
             <Link
-              href={q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"}
-              className="md:hidden h-9 w-9 rounded-full grid place-items-center border border-black/10 dark:border-white/10 hover:bg-black/5 dark:hover:bg-white/5 transition"
+              href={searchHref}
+              className="grid h-8 w-8 place-items-center rounded-full border border-black/10 transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9 md:hidden"
               aria-label="Search"
             >
-              <Search className="h-4.5 w-4.5" />
+              <Search className="h-4 w-4" />
             </Link>
 
-            {/* Audio toggle */}
+            {/* Audio toggle - visible on both mobile and desktop */}
             <button
               onClick={togglePlay}
-              className={`
-                h-9 w-9 rounded-full border border-black/10 dark:border-white/10
-                grid place-items-center transition-all duration-200
-                hover:bg-black/5 dark:hover:bg-white/5
-                ${isPlaying ? "text-[#968e68] shadow-sm" : "text-black/70 dark:text-white/60"}
-              `}
+              className={`grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all duration-200 hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9 ${
+                isPlaying
+                  ? "text-[#968e68] shadow-sm"
+                  : "text-black/70 dark:text-white/60"
+              }`}
               aria-label={isPlaying ? "Pause ambient" : "Play ambient"}
+              aria-pressed={isPlaying}
             >
-              {isPlaying ? <Pause className="h-4.5 w-4.5" /> : <Play className="h-4.5 w-4.5" />}
+              {isPlaying ? (
+                <Pause className="h-4 w-4" />
+              ) : (
+                <Play className="h-4 w-4" />
+              )}
             </button>
 
             {/* Theme toggle */}
             <button
               onClick={toggleTheme}
-              className="
-                h-9 w-9 rounded-full border border-black/10 dark:border-white/10
-                grid place-items-center transition-all hover:bg-black/5 dark:hover:bg-white/5
-              "
+              className="grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9"
               aria-label="Toggle theme"
             >
-              {mounted && (theme === "dark" ? <Sun className="h-4.5 w-4.5" /> : <Moon className="h-4.5 w-4.5" />)}
+              {mounted &&
+                (theme === "dark" ? (
+                  <Sun className="h-4 w-4" />
+                ) : (
+                  <Moon className="h-4 w-4" />
+                ))}
             </button>
 
-            {/* Hamburger – now extreme right on mobile */}
+            {/* Hamburger */}
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
-              className="lg:hidden rounded-full p-2 text-black/70 hover:text-black hover:bg-black/5 dark:text-white/70 dark:hover:text-white dark:hover:bg-white/5 transition"
+              className="rounded-full p-1.5 text-black/70 transition hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
@@ -236,21 +223,16 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile bottom search bar */}
-      <div className="md:hidden bg-[#D0CD94] dark:bg-zinc-950/80 backdrop-blur-lg">
-        <div className="px-4 py-2.5">
+      {/* Mobile search bar */}
+      <div className="border-t border-black/5 bg-[#D9DCD6]/95 backdrop-blur-lg dark:border-white/5 dark:bg-zinc-950/85 md:hidden">
+        <div className="px-3 py-2 sm:px-4 sm:py-2.5">
           <div className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-black/50 dark:text-white/50 pointer-events-none" />
+            <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/50 dark:text-white/50" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search Daddieshinor..."
-              className="
-                h-9 w-full pl-10 pr-4 text-sm rounded-full bg-white/70 dark:bg-zinc-900/60
-                border border-black/10 dark:border-white/10
-                placeholder:text-black/40 dark:placeholder:text-white/40
-                focus:outline-none focus:ring-2 focus:ring-[#968e68]/30
-              "
+              className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-4 text-sm placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#968e68]/30 dark:border-white/10 dark:bg-zinc-900/60 dark:placeholder:text-white/40"
             />
           </div>
         </div>

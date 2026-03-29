@@ -20,8 +20,8 @@ const GlobalLoaderContext = createContext<GlobalLoaderCtx | null>(null);
 // ✅ Safe no-op fallback (prevents crashes if Provider is missing)
 const noopCtx: GlobalLoaderCtx = {
   isLoading: false,
-  start: () => {},
-  stop: () => {},
+  start: () => { },
+  stop: () => { },
 };
 
 export function GlobalLoaderProvider({ children }: { children: ReactNode }) {
@@ -35,17 +35,20 @@ export function GlobalLoaderProvider({ children }: { children: ReactNode }) {
     },
     []
   );
-
   const stop = useMemo(
     () => () => {
       if (activeLoadersRef.current > 0) {
         activeLoadersRef.current -= 1;
-        if (activeLoadersRef.current === 0) setIsLoading(false);
+
+        if (activeLoadersRef.current === 0) {
+          setTimeout(() => {
+            setIsLoading(false);
+          }, 500); // 👈 minimum 0.5s visible
+        }
       }
     },
     []
   );
-
   const value = useMemo(
     () => ({
       isLoading,

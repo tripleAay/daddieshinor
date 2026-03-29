@@ -229,13 +229,24 @@ export default function BestNewReads() {
               className="group flex flex-col transition-transform hover:scale-[1.02] duration-300"
             >
               {/* Circular Image */}
-              <div className="relative aspect-square overflow-hidden rounded-full border-4 border-zinc-800 group-hover:border-[#968e68] transition-all duration-300 shadow-lg group-hover:shadow-[0_0_25px_rgba(150,142,104,0.3)]">
+              <div
+                className="
+    relative mx-auto
+    h-[110px] w-[110px] sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px]
+    overflow-hidden rounded-full
+    border border-white/10
+    bg-zinc-900/40
+    transition-all duration-300
+    group-hover:border-[#968e68]/40
+    group-hover:shadow-[0_0_18px_rgba(150,142,104,0.18)]
+  "
+              >
                 <Image
                   src={entry.image}
                   alt={entry.title}
                   fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 640px) 110px, (max-width: 1024px) 140px, 160px"
                 />
               </div>
 
