@@ -111,13 +111,13 @@ export const metadata: Metadata = {
     description:
         "Brand strategy, identity, positioning, and the psychology behind what people trust.",
     alternates: {
-        canonical: "https://daddieshinor.com/brands",
+        canonical: "https://daddieshinor.com/branding",
     },
     openGraph: {
         title: "Branding – Daddieshinor",
         description:
             "Brand strategy, identity, positioning, and the psychology behind what people trust.",
-        url: "https://daddieshinor.com/brands",
+        url: "https://daddieshinor.com/branding",
         siteName: "Daddieshinor",
         type: "website",
     },
@@ -128,8 +128,6 @@ export const metadata: Metadata = {
             "Brand strategy, identity, positioning, and the psychology behind what people trust.",
     },
 };
-
-
 export default async function BrandingPage() {
     const posts = await fetchBrandingPosts();
     return <BrandingCategoryView posts={posts} />;

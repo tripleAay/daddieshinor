@@ -154,6 +154,11 @@ export const metadata: Metadata = {
   title: "Life – Daddieshinor",
   description:
     "Life in motion — habits, clarity, relationships, and the quiet work of becoming.",
+
+  alternates: {
+    canonical: "https://daddieshinor.com/life",
+  },
+
   openGraph: {
     title: "Life – Daddieshinor",
     description:
@@ -170,6 +175,7 @@ export const metadata: Metadata = {
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: "Life – Daddieshinor",
@@ -177,8 +183,6 @@ export const metadata: Metadata = {
       "Life in motion — habits, clarity, relationships, and the quiet work of becoming.",
     images: ["/og-life.jpg"],
   },
-  // Optional: add canonical if needed
-  // alternates: { canonical: "https://daddieshinor.com/life" },
 };
 
 // ────────────────────────────────────────────────

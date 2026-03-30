@@ -103,10 +103,15 @@ async function fetchTechPosts(): Promise<CardPost[]> {
 // --- Metadata for SEO + Social Sharing ---
 export const metadata: Metadata = {
   title: "Tech – Daddieshinor",
-  description: "Signals, shifts, and real implications — tech explained with human meaning.",
+  description:
+    "Signals, shifts, and real implications — tech explained with human meaning.",
+  alternates: {
+    canonical: "https://daddieshinor.com/tech",
+  },
   openGraph: {
     title: "Tech – Daddieshinor",
-    description: "Signals, shifts, and real implications — tech explained with human meaning.",
+    description:
+      "Signals, shifts, and real implications — tech explained with human meaning.",
     url: "https://daddieshinor.com/tech",
     siteName: "Daddieshinor",
     type: "website",
@@ -122,7 +127,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Tech – Daddieshinor",
-    description: "Signals, shifts, and real implications — tech explained with human meaning.",
+    description:
+      "Signals, shifts, and real implications — tech explained with human meaning.",
     images: ["/og-tech.jpg"],
   },
 };

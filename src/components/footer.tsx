@@ -24,43 +24,52 @@ export default function PostFooter() {
         </div>
 
         {/* Social links – centered on mobile, left-aligned on larger */}
-        <div className="flex justify-center sm:justify-start items-center gap-5 sm:gap-6 mb-10">
-          <a
-            href="#"
-            aria-label="Instagram"
-            className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
-          >
-            <Instagram className="h-5 w-5 sm:h-6 sm:w-6" />
-          </a>
-          <a
-            href="#"
-            aria-label="X / Twitter"
-            className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
-          >
-            <Twitter className="h-5 w-5 sm:h-6 sm:w-6" />
-          </a>
-          <a
-            href="#"
-            aria-label="YouTube"
-            className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
-          >
-            <Youtube className="h-5 w-5 sm:h-6 sm:w-6" />
-          </a>
-          <a
-            href="#"
-            aria-label="LinkedIn"
-            className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
-          >
-            <Linkedin className="h-5 w-5 sm:h-6 sm:w-6" />
-          </a>
-          <a
-            href="/"
-            aria-label="Website"
-            className="text-zinc-500 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
-          >
-            <Globe className="h-5 w-5 sm:h-6 sm:w-6" />
-          </a>
-        </div>
+       {/* Social links – premium centered */}
+<div className="flex justify-center mb-12">
+  <div className="flex items-center gap-6 px-6 py-3 rounded-full border border-black/5 bg-white/60 dark:bg-zinc-900/50 backdrop-blur-md shadow-sm">
+    
+    <a
+      href="#"
+      aria-label="Instagram"
+      className="text-zinc-400 hover:text-[#968e68] transition-all duration-300 hover:scale-110"
+    >
+      <Instagram className="h-5 w-5" />
+    </a>
+
+    <a
+      href="#"
+      aria-label="X / Twitter"
+      className="text-zinc-400 hover:text-[#968e68] transition-all duration-300 hover:scale-110"
+    >
+      <Twitter className="h-5 w-5" />
+    </a>
+
+    <a
+      href="#"
+      aria-label="YouTube"
+      className="text-zinc-400 hover:text-[#968e68] transition-all duration-300 hover:scale-110"
+    >
+      <Youtube className="h-5 w-5" />
+    </a>
+
+    <a
+      href="#"
+      aria-label="LinkedIn"
+      className="text-zinc-400 hover:text-[#968e68] transition-all duration-300 hover:scale-110"
+    >
+      <Linkedin className="h-5 w-5" />
+    </a>
+
+    <a
+      href="/"
+      aria-label="Website"
+      className="text-zinc-400 hover:text-[#968e68] transition-all duration-300 hover:scale-110"
+    >
+      <Globe className="h-5 w-5" />
+    </a>
+
+  </div>
+</div>
 
         {/* Quick links – stacked on mobile, grid on desktop */}
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 text-sm text-center mb-10">
