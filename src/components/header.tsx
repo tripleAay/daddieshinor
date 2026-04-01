@@ -37,6 +37,7 @@ export default function Header() {
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(formatWATTime());
+const [tick, setTick] = useState(false);
   const [q, setQ] = useState("");
 
   const { isPlaying, togglePlay } = useAudio();
@@ -66,10 +67,16 @@ export default function Header() {
     }
   }, []);
 
-  useEffect(() => {
-    const id = setInterval(() => setCurrentTime(formatWATTime()), 30000);
-    return () => clearInterval(id);
-  }, []);
+useEffect(() => {
+  const id = setInterval(() => {
+    setCurrentTime(formatWATTime());
+    setTick(true);
+
+    setTimeout(() => setTick(false), 300); // subtle pulse duration
+  }, 30000);
+
+  return () => clearInterval(id);
+}, []);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -151,12 +158,17 @@ export default function Header() {
           {/* RIGHT – Controls */}
           <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
             {/* WAT time */}
-            <div className="hidden items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-xs font-medium tabular-nums dark:bg-white/5 sm:flex">
-              <span className="font-semibold text-[#968e68]">WAT</span>
-              <span className="text-black/80 dark:text-white/80">
-                {currentTime}
-              </span>
-            </div>
+            <div className="flex items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-[11px] font-medium tabular-nums dark:bg-white/5 sm:text-xs">
+  <span className="font-semibold text-[#968e68]">WAT</span>
+
+  <span
+    className={`text-black/80 dark:text-white/80 transition-all duration-300 ${
+      tick ? "scale-105 opacity-100" : "scale-100 opacity-90"
+    }`}
+  >
+    {currentTime}
+  </span>
+</div>
 
             {/* Desktop search */}
             <div className="relative hidden md:block md:w-56 lg:w-72 xl:w-80">
@@ -170,13 +182,7 @@ export default function Header() {
             </div>
 
             {/* Mobile search */}
-            <Link
-              href={searchHref}
-              className="grid h-8 w-8 place-items-center rounded-full border border-black/10 transition hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9 md:hidden"
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Link>
+           
 
             {/* Audio toggle - visible on both mobile and desktop */}
             <button
