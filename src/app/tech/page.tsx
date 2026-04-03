@@ -53,7 +53,11 @@ function stripHtml(input: string) {
 function formatDate(dateStr: string) {
   const d = new Date(dateStr);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+  return d.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
 }
 
 function getFeaturedImage(post: WPPost): { url: string; alt: string } {
@@ -102,16 +106,26 @@ async function fetchTechPosts(): Promise<CardPost[]> {
 
 // --- Metadata for SEO + Social Sharing ---
 export const metadata: Metadata = {
-  title: "Tech – Daddieshinor",
+  title: "Technology Insights, Analysis & Commentary — Daddieshinor",
   description:
-    "Signals, shifts, and real implications — tech explained with human meaning.",
+    "Explore technology through depth, clarity, and perspective — sharp analysis of trends, tools, innovation, digital culture, and the real human implications of tech.",
+  keywords: [
+    "technology blog",
+    "tech analysis",
+    "technology insights",
+    "digital culture commentary",
+    "innovation and society",
+    "tech trends explained",
+    "human impact of technology",
+    "Daddieshinor tech",
+  ],
   alternates: {
     canonical: "https://daddieshinor.com/tech",
   },
   openGraph: {
-    title: "Tech – Daddieshinor",
+    title: "Technology Insights, Analysis & Commentary — Daddieshinor",
     description:
-      "Signals, shifts, and real implications — tech explained with human meaning.",
+      "Explore technology through depth, clarity, and perspective — sharp analysis of trends, tools, innovation, digital culture, and the real human implications of tech.",
     url: "https://daddieshinor.com/tech",
     siteName: "Daddieshinor",
     type: "website",
@@ -120,15 +134,15 @@ export const metadata: Metadata = {
         url: "/og-tech.jpg",
         width: 1200,
         height: 630,
-        alt: "Tech category – Daddieshinor",
+        alt: "Technology Insights — Daddieshinor",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Tech – Daddieshinor",
+    title: "Technology Insights, Analysis & Commentary — Daddieshinor",
     description:
-      "Signals, shifts, and real implications — tech explained with human meaning.",
+      "Explore technology through depth, clarity, and perspective — sharp analysis of trends, tools, innovation, digital culture, and the real human implications of tech.",
     images: ["/og-tech.jpg"],
   },
 };

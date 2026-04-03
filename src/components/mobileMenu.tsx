@@ -78,7 +78,7 @@ export default function MobileMenu({
             transition={{ type: "spring", stiffness: 300, damping: 35 }}
             className="
               fixed top-0 left-0 z-[10000] h-[100dvh] w-4/5 max-w-xs
-              bg-[#D0CD94] dark:bg-zinc-950
+              bg-[#D9DCD6]/95  dark:bg-zinc-950
               shadow-2xl lg:hidden
               flex flex-col
             "

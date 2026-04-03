@@ -21,23 +21,22 @@ import MarqueeNote from "@/components/marqueeNote";
 // --- Enhanced Metadata for Homepage ---
 export const metadata: Metadata = {
   title: {
-    default: "Daddieshinor",
+   default: "Daddieshinor — Tech, Culture, Life & Brand Insights",
     template: "%s — Daddieshinor",
   },
   description:
-    "A thinking platform about how tech, culture, and branding shape modern life.",
-
+  "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective — thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
   keywords: [
-    "culture blog",
-    "technology insights",
-    "branding and identity",
-    "modern life essays",
-    "digital culture",
-    "creative thinking",
-    "Daddieshinor",
-    "Africa tech culture",
-    "thoughtful essays",
-  ],
+  "tech culture blog",
+  "technology and culture insights",
+  "branding and identity analysis",
+  "modern life essays",
+  "African tech culture",
+  "thoughtful essays",
+  "creative thinking platform",
+  "startup and branding insights",
+  "Daddieshinor blog",
+],
 
   metadataBase: new URL("https://daddieshinor.com"),
 
@@ -57,7 +56,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Daddieshinor — Ideas That Shape How We Think",
     description:
-      "Essays and signals on culture, technology, life, and branding. Not noise — meaning. A thoughtful space from Africa and beyond.",
+   "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective. Thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
     url: "https://daddieshinor.com",
     siteName: "Daddieshinor",
     type: "website",

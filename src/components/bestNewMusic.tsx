@@ -202,7 +202,7 @@ export default function BestNewReads() {
   if (!entries.length) return null;
 
   return (
-    <section className="bg-[#1C1C1C] text-white  md:py-16">
+   <section className="relative overflow-hidden bg-[#151515] pt-16 pb-14 text-white md:px-10 md:pt-16 md:pb-16 lg:px-16">
       <div className="mx-auto max-w-[1440px] px-5">
         {/* Header */}
         <header className="mb-10 md:mb-14 text-center md:text-left">

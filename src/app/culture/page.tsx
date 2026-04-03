@@ -105,16 +105,26 @@ async function fetchCulturePosts(): Promise<CardPost[]> {
 }
 
 export const metadata: Metadata = {
-  title: "Culture – Daddieshinor",
+  title: "Culture Insights, Commentary & Analysis — Daddieshinor",
   description:
-    "Culture decoded — what people feel, follow, repeat, and become.",
+    "Explore culture through depth, clarity, and perspective — commentary on what people feel, follow, repeat, and become across media, society, identity, and modern life.",
+  keywords: [
+    "culture blog",
+    "culture analysis",
+    "digital culture",
+    "media and society",
+    "identity and culture",
+    "modern life commentary",
+    "cultural insights",
+    "Daddieshinor culture",
+  ],
   alternates: {
     canonical: "https://daddieshinor.com/culture",
   },
   openGraph: {
-    title: "Culture – Daddieshinor",
+    title: "Culture Insights, Commentary & Analysis — Daddieshinor",
     description:
-      "Culture decoded — what people feel, follow, repeat, and become.",
+      "Explore culture through depth, clarity, and perspective — commentary on what people feel, follow, repeat, and become across media, society, identity, and modern life.",
     url: "https://daddieshinor.com/culture",
     siteName: "Daddieshinor",
     type: "website",
@@ -123,15 +133,15 @@ export const metadata: Metadata = {
         url: "/og-culture.jpg",
         width: 1200,
         height: 630,
-        alt: "Culture – Daddieshinor",
+        alt: "Culture Insights — Daddieshinor",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Culture – Daddieshinor",
+    title: "Culture Insights, Commentary & Analysis — Daddieshinor",
     description:
-      "Culture decoded — what people feel, follow, repeat, and become.",
+      "Explore culture through depth, clarity, and perspective — commentary on what people feel, follow, repeat, and become across media, society, identity, and modern life.",
     images: ["/og-culture.jpg"],
   },
 };

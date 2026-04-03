@@ -2,7 +2,7 @@
 import { Metadata } from "next";
 import LifeCategoryView from "./lifeCategoryView";
 
-const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
+const WP_BASE_URL = (process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com").replace(/\/$/, "");
 const LIFE_CATEGORY_ID = 18;
 
 // ────────────────────────────────────────────────
@@ -19,6 +19,7 @@ type WPMedia = {
     sizes?: {
       large?: WPMediaSize;
       medium_large?: WPMediaSize;
+      medium?: WPMediaSize;
       [key: string]: WPMediaSize | undefined;
     };
   };
@@ -55,7 +56,7 @@ function decodeHtmlEntities(input: string | undefined): string {
     .replace(/&#8217;/g, "'")
     .replace(/&#8216;/g, "'")
     .replace(/&#8220;/g, '"')
-    .replace(/&#8221;/g, '"')     // ← fixed here
+    .replace(/&#8221;/g, '"')
     .replace(/&#8230;/g, "…")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">");
@@ -64,8 +65,7 @@ function decodeHtmlEntities(input: string | undefined): string {
 function stripHtml(html: string | undefined): string {
   if (!html) return "";
   const decoded = decodeHtmlEntities(html);
-  const plain = decoded.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
-  return plain;
+  return decoded.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
 }
 
 function formatDate(dateStr: string): string {
@@ -107,7 +107,7 @@ async function fetchLifePosts(): Promise<CardPost[]> {
     const url = `${WP_BASE_URL}/wp-json/wp/v2/posts?_embed&status=publish&categories=${LIFE_CATEGORY_ID}&per_page=12&orderby=date&order=desc`;
 
     const res = await fetch(url, {
-      next: { revalidate: 300 }, // 5 minutes
+      next: { revalidate: 300 },
       headers: {
         Accept: "application/json",
       },
@@ -151,18 +151,26 @@ async function fetchLifePosts(): Promise<CardPost[]> {
 // Metadata (SEO + Social)
 // ────────────────────────────────────────────────
 export const metadata: Metadata = {
-  title: "Life – Daddieshinor",
+  title: "Life, Growth & Perspective — Daddieshinor",
   description:
-    "Life in motion — habits, clarity, relationships, and the quiet work of becoming.",
-
+    "Explore life through depth, clarity, and perspective — essays on habits, relationships, self-development, ambition, and the quiet work of becoming.",
+  keywords: [
+    "life blog",
+    "personal growth essays",
+    "self development blog",
+    "life perspective",
+    "habits and clarity",
+    "relationships and growth",
+    "modern life insights",
+    "Daddieshinor life",
+  ],
   alternates: {
     canonical: "https://daddieshinor.com/life",
   },
-
   openGraph: {
-    title: "Life – Daddieshinor",
+    title: "Life, Growth & Perspective — Daddieshinor",
     description:
-      "Life in motion — habits, clarity, relationships, and the quiet work of becoming.",
+      "Explore life through depth, clarity, and perspective — essays on habits, relationships, self-development, ambition, and the quiet work of becoming.",
     url: "https://daddieshinor.com/life",
     siteName: "Daddieshinor",
     type: "website",
@@ -171,16 +179,15 @@ export const metadata: Metadata = {
         url: "/og-life.jpg",
         width: 1200,
         height: 630,
-        alt: "Life – Daddieshinor",
+        alt: "Life, Growth & Perspective — Daddieshinor",
       },
     ],
   },
-
   twitter: {
     card: "summary_large_image",
-    title: "Life – Daddieshinor",
+    title: "Life, Growth & Perspective — Daddieshinor",
     description:
-      "Life in motion — habits, clarity, relationships, and the quiet work of becoming.",
+      "Explore life through depth, clarity, and perspective — essays on habits, relationships, self-development, ambition, and the quiet work of becoming.",
     images: ["/og-life.jpg"],
   },
 };
