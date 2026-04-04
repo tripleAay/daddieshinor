@@ -1,6 +1,6 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {
-  getAppCheck,
+  AppCheck,
   initializeAppCheck,
   ReCaptchaV3Provider,
 } from "firebase/app-check";
@@ -17,14 +17,18 @@ const firebaseConfig = {
 export const firebaseApp =
   getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
 
-let appCheckInstance: ReturnType<typeof getAppCheck> | null = null;
+let appCheckInstance: AppCheck | null = null;
 
 export function getOrInitAppCheck() {
   if (typeof window === "undefined") return null;
   if (appCheckInstance) return appCheckInstance;
 
   if (process.env.NODE_ENV !== "production") {
-    (self as typeof globalThis & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
+    (
+      self as typeof globalThis & {
+        FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean;
+      }
+    ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
     console.log("App Check debug mode enabled");
   }
 
