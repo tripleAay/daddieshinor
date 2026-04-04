@@ -8,7 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const res = await fetch(
       "https://api.daddieshinor.com/wp-json/wp/v2/posts?per_page=100&_embed",
-      { cache: "no-store" }
+      {
+        next: { revalidate: 3600 }, // refresh every 1 hour
+      }
     );
 
     if (res.ok) {
@@ -20,7 +22,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const postUrls = posts.map((post) => ({
     url: `${baseUrl}/essays/${post.slug}`,
-    lastModified: new Date(post.modified),
+    lastModified: post.modified ? new Date(post.modified) : new Date(),
   }));
 
   return [
@@ -48,7 +50,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       url: `${baseUrl}/life`,
       lastModified: new Date(),
     },
-
     ...postUrls,
   ];
 }
