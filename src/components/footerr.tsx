@@ -84,6 +84,14 @@ export default function PostFooter() {
                   About
                 </Link>
               </li>
+               <li>
+                  <Link
+                    href="/author"
+                    className="transition-colors hover:text-black dark:hover:text-white"
+                  >
+                    Author
+                  </Link>
+                </li>
               <li>
                 <Link href="/contact" className="hover:text-black dark:hover:text-white transition-colors">
                   Contact

@@ -1,4 +1,3 @@
-// app/essays/[slug]/page.tsx
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
@@ -7,6 +6,7 @@ import WpContentRenderer from "@/components/WpContentRenderer";
 import HeadlineLayout from "@/components/headline-layout";
 import RelatedPosts from "@/components/RelatedSection";
 import Footer from "@/components/footerr";
+import PostComments from "@/components/postcomment";
 
 const WP_BASE_URL = (
   process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com"
@@ -104,6 +104,13 @@ function formatDate(dateStr: string): string {
     month: "long",
     day: "numeric",
   });
+}
+
+function getReadingTime(html: string): string {
+  const text = stripHtml(html);
+  const wordCount = text.split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.ceil(wordCount / 200));
+  return `${minutes} min read`;
 }
 
 // --------------------- Data Fetch ---------------------
@@ -210,6 +217,7 @@ export default async function EssayPage({ params }: PageProps) {
   const featured = getFeatured(post);
   const primaryCategory = getPrimaryCategory(post);
   const safeHtml = sanitizeWpHtml(post.content?.rendered || "");
+  const readingTime = getReadingTime(post.content?.rendered || "");
 
   return (
     <PostLayout
@@ -219,17 +227,29 @@ export default async function EssayPage({ params }: PageProps) {
       dateLabel={date}
       heroImage={featured.url}
       heroAlt={featured.alt}
+      readingTime={readingTime}
     >
       <WpContentRenderer html={safeHtml} />
 
-      <RelatedPosts
-        currentSlug={slug}
-        categoryId={primaryCategory.id}
-        categoryName={primaryCategory.name}
-      />
+      <div className="mt-14">
+        <PostComments postId={post.id} />
+      </div>
 
-      <HeadlineLayout title="Latest Essays" />
-      <Footer />
+      <div className="mt-14">
+        <RelatedPosts
+          currentSlug={slug}
+          categoryId={primaryCategory.id}
+          categoryName={primaryCategory.name}
+        />
+      </div>
+
+      <div className="mt-14">
+        <HeadlineLayout title="Latest Essays" />
+      </div>
+
+      <div className="mt-14">
+        <Footer />
+      </div>
     </PostLayout>
   );
 }

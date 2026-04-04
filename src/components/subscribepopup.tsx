@@ -1,41 +1,39 @@
-// components/SubscribeModalTrigger.tsx  (or wherever you have it)
 "use client";
 
 import { useEffect, useState } from "react";
-import { SubscribeModal } from "./subscribeModal"; // adjust path
+import { SubscribeModal } from "@/components/subscribeModal";
 
-const STORAGE_KEY = "daddieshinor_subscribe_seen_v1"; // bump version if you change logic
+const FOREVER_KEY = "daddieshinor_subscribe_seen_v1";
+const SESSION_KEY = "daddieshinor_subscribe_closed_session";
 
 export function SubscribeModalTrigger() {
   const [isOpen, setIsOpen] = useState(false);
-  const [hasChecked, setHasChecked] = useState(false); // prevent flash before check
+  const [hasChecked, setHasChecked] = useState(false);
 
   useEffect(() => {
-    // Guard: only run in browser
     if (typeof window === "undefined") return;
 
-    const hasSeen = localStorage.getItem(STORAGE_KEY);
+    const hasSubscribed = localStorage.getItem(FOREVER_KEY);
+    const closedThisSession = sessionStorage.getItem(SESSION_KEY);
 
-    if (!hasSeen) {
+    setHasChecked(true);
+
+    if (!hasSubscribed && !closedThisSession) {
       const timer = setTimeout(() => {
         setIsOpen(true);
-      }, 5000); // 5 seconds delay – feels natural, not intrusive
+      }, 5000);
 
       return () => clearTimeout(timer);
     }
-
-    setHasChecked(true);
   }, []);
 
   const handleClose = () => {
-    // Only set if in browser (redundant but safe)
     if (typeof window !== "undefined") {
-      localStorage.setItem(STORAGE_KEY, "true");
+      sessionStorage.setItem(SESSION_KEY, "true");
     }
     setIsOpen(false);
   };
 
-  // Don't render anything until we've checked storage (avoids mismatch)
   if (!hasChecked) return null;
 
   return <SubscribeModal isOpen={isOpen} onClose={handleClose} />;

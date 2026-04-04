@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Facebook, Twitter, Link2 } from "lucide-react";
 import Header from "@/components/header";
+import NewsletterCard from "@/components/newsletterCard";
 
 const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
 
@@ -62,7 +63,6 @@ async function searchPosts(query: string): Promise<SearchResult[]> {
   }
 }
 
-// Share / Copy Component
 function ShareSection({ query }: { query: string }) {
   const [url, setUrl] = useState("");
   const [copied, setCopied] = useState(false);
@@ -92,7 +92,7 @@ function ShareSection({ query }: { query: string }) {
 
   return (
     <div className="rounded-2xl border border-zinc-200 bg-white p-5 sm:p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-      <p className="text-xs font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400 mb-4">
+      <p className="mb-4 text-xs font-black uppercase tracking-widest text-zinc-500 dark:text-zinc-400">
         Share this search
       </p>
 
@@ -101,7 +101,7 @@ function ShareSection({ query }: { query: string }) {
           href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black transition hover:bg-zinc-50 hover:shadow dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
           aria-label="Share on Facebook"
         >
           <Facebook className="h-5 w-5" />
@@ -111,7 +111,7 @@ function ShareSection({ query }: { query: string }) {
           href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(shareText)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black transition hover:bg-zinc-50 hover:shadow dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
           aria-label="Share on X"
         >
           <Twitter className="h-5 w-5" />
@@ -120,7 +120,7 @@ function ShareSection({ query }: { query: string }) {
         <button
           type="button"
           onClick={copyLink}
-          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black hover:bg-zinc-50 hover:shadow transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+          className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white text-black transition hover:bg-zinc-50 hover:shadow dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
           aria-label="Copy link"
           title={copied ? "Copied!" : "Copy link"}
         >
@@ -135,22 +135,24 @@ function ShareSection({ query }: { query: string }) {
   );
 }
 
-// Main Search Page
 export default function SearchPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-zinc-950 text-black dark:text-white">
-      {/* Fixed Header */}
+    <div className="min-h-screen bg-[#D9DCD6]/95 text-black dark:bg-zinc-950 dark:text-white">
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/90 backdrop-blur-md dark:border-zinc-800 dark:bg-zinc-950/90">
         <Header />
       </div>
 
-      {/* Spacer to prevent overlap with fixed header */}
       <div className="h-16 lg:h-20" />
 
-      {/* Accent bar */}
       <div className="h-2 w-full bg-gradient-to-r from-black via-[#968e68] to-black dark:from-white dark:via-[#968e68] dark:to-white" />
 
-      <Suspense fallback={<div className="text-center py-20 text-zinc-500">Loading search results...</div>}>
+      <Suspense
+        fallback={
+          <div className="py-20 text-center text-zinc-500">
+            Loading search results...
+          </div>
+        }
+      >
         <SearchContent />
       </Suspense>
     </div>
@@ -161,7 +163,6 @@ function SearchContent() {
   const [results, setResults] = useState<MappedPost[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // Get query from URL
   const searchParams = new URLSearchParams(
     typeof window !== "undefined" ? window.location.search : ""
   );
@@ -183,8 +184,12 @@ function SearchContent() {
 
         const mapped = raw.map((post) => {
           const title = stripHtml(post.title?.rendered || "Untitled");
-          const excerpt = stripHtml(post.excerpt?.rendered || "").slice(0, 160) + (post.excerpt?.rendered ? "..." : "");
-          const image = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url || "/fallback.jpg";
+          const excerpt =
+            stripHtml(post.excerpt?.rendered || "").slice(0, 160) +
+            (post.excerpt?.rendered ? "..." : "");
+          const image =
+            post._embedded?.["wp:featuredmedia"]?.[0]?.source_url ||
+            "/fallback.jpg";
           const date = formatDate(post.date);
 
           return { id: post.id, slug: post.slug, title, excerpt, image, date };
@@ -209,12 +214,10 @@ function SearchContent() {
   const resultsCount = results.length;
 
   return (
-    <div className="mx-auto max-w-[1320px] px-4 sm:px-6 pb-16 pt-6 lg:pt-10">
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-6 lg:gap-10">
-        {/* LEFT RAIL – Search info + Share (hidden on mobile, sticky on desktop) */}
-        <aside className="hidden md:block md:col-span-3 lg:col-span-2">
+    <div className="mx-auto max-w-[1320px] px-4 pt-6 pb-16 sm:px-6 lg:pt-10">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-12 lg:gap-10">
+        <aside className="hidden md:col-span-3 md:block lg:col-span-2">
           <div className="sticky top-20 space-y-6">
-            {/* Search Info Card */}
             <div className="rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
               <h3 className="text-lg font-black tracking-tight text-black dark:text-white">
                 Search Results
@@ -225,7 +228,9 @@ function SearchContent() {
                     Found <strong className="text-[#968e68]">{resultsCount}</strong>{" "}
                     {resultsCount === 1 ? "post" : "posts"} for
                     <br />
-                    <span className="font-semibold text-black dark:text-white">"{query}"</span>
+                    <span className="font-semibold text-black dark:text-white">
+                      "{query}"
+                    </span>
                   </>
                 ) : (
                   "Enter a keyword to explore essays & thoughts."
@@ -237,10 +242,9 @@ function SearchContent() {
           </div>
         </aside>
 
-        {/* CENTER – Main content */}
         <main className="col-span-1 md:col-span-6 lg:col-span-7">
           <div className="mb-8">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight text-black dark:text-white">
+            <h1 className="text-3xl font-black tracking-tight text-black dark:text-white sm:text-4xl md:text-5xl">
               {query ? (
                 <>
                   Results for: <span className="text-[#968e68]">{query}</span>
@@ -254,27 +258,27 @@ function SearchContent() {
               {loading
                 ? "Searching..."
                 : results.length > 0
-                ? `${results.length} ${results.length === 1 ? "post" : "posts"} found`
-                : query
-                ? "No results found."
-                : "Find essays, thoughts, culture, tech, branding, life insights, or anything that sparks curiosity."}
+                  ? `${results.length} ${results.length === 1 ? "post" : "posts"} found`
+                  : query
+                    ? "No results found."
+                    : "Find essays, thoughts, culture, tech, branding, life insights, or anything that sparks curiosity."}
             </p>
           </div>
 
           {(!query || (!loading && results.length === 0)) && (
             <div className="mt-12 text-center">
-              <div className="inline-block rounded-2xl bg-zinc-100/80 p-8 sm:p-12 dark:bg-zinc-900/60 border border-zinc-200 dark:border-zinc-800">
-                <h2 className="text-2xl sm:text-3xl font-black text-zinc-700 dark:text-zinc-300">
+              <div className="inline-block rounded-2xl border border-zinc-200 bg-zinc-100/80 p-8 dark:border-zinc-800 dark:bg-zinc-900/60 sm:p-12">
+                <h2 className="text-2xl font-black text-zinc-700 dark:text-zinc-300 sm:text-3xl">
                   {query ? `No matches for "${query}"` : "Start typing to search"}
                 </h2>
-                <p className="mt-4 text-base text-zinc-600 dark:text-zinc-400 max-w-lg mx-auto">
+                <p className="mx-auto mt-4 max-w-lg text-base text-zinc-600 dark:text-zinc-400">
                   {query
                     ? "Try different keywords or browse our latest essays."
                     : "Search for essays, ideas, culture, tech, branding, life insights, or anything that sparks curiosity."}
                 </p>
                 <Link
                   href="/"
-                  className="mt-8 inline-block rounded-full bg-[#968e68] px-8 py-3 sm:px-10 sm:py-4 text-base font-semibold text-white hover:bg-[#968e68]/90 transition"
+                  className="mt-8 inline-block rounded-full bg-[#968e68] px-8 py-3 text-base font-semibold text-white transition hover:bg-[#968e68]/90 sm:px-10 sm:py-4"
                 >
                   Go to Homepage
                 </Link>
@@ -288,22 +292,22 @@ function SearchContent() {
                 <Link
                   key={post.id}
                   href={`/essays/${post.slug}`}
-                  className="group block overflow-hidden rounded-2xl border border-zinc-200 dark:border-zinc-800 hover:border-[#968e68]/50 transition-all hover:shadow-xl hover:-translate-y-1 duration-300"
+                  className="group block overflow-hidden rounded-2xl border border-zinc-200 transition-all duration-300 hover:-translate-y-1 hover:border-[#968e68]/50 hover:shadow-xl dark:border-zinc-800"
                 >
-                  <div className="grid md:grid-cols-12 gap-0">
-                    <div className="relative md:col-span-4 aspect-[4/3] md:aspect-auto overflow-hidden">
+                  <div className="grid gap-0 md:grid-cols-12">
+                    <div className="relative aspect-[4/3] overflow-hidden md:col-span-4 md:aspect-auto">
                       <Image
                         src={post.image}
                         alt={post.title}
                         fill
-                        className="object-cover transition-transform group-hover:scale-105 duration-500"
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
-                    <div className="md:col-span-8 p-5 md:p-8 flex flex-col justify-center">
-                      <h3 className="text-xl sm:text-2xl md:text-3xl font-black leading-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
+                    <div className="flex flex-col justify-center p-5 md:col-span-8 md:p-8">
+                      <h3 className="text-xl font-black leading-tight text-black transition-colors group-hover:text-[#968e68] dark:text-white sm:text-2xl md:text-3xl">
                         {post.title}
                       </h3>
-                      <p className="mt-3 sm:mt-4 text-base text-zinc-600 dark:text-zinc-400 line-clamp-3 text-justify">
+                      <p className="mt-3 line-clamp-3 text-base text-zinc-600 dark:text-zinc-400 sm:mt-4 text-justify">
                         {post.excerpt}
                       </p>
                       <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-500">
@@ -317,47 +321,32 @@ function SearchContent() {
           )}
         </main>
 
-        {/* RIGHT SIDEBAR – Newsletter + Partnership (hidden on mobile) */}
-        <aside className="hidden lg:block lg:col-span-3">
+        <aside className="hidden lg:col-span-3 lg:block">
           <div className="sticky top-20 space-y-8">
-            <div className="rounded-2xl border border-zinc-200 bg-white p-6 shadow-sm dark:border-zinc-800 dark:bg-zinc-900">
-              <h3 className="text-xl font-black tracking-tight text-black dark:text-white">
-                Stay Close
-              </h3>
-              <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400">
-                A short note when something is worth thinking about. No spam. No noise.
-              </p>
-              <form className="mt-6 space-y-4">
-                <input
-                  type="email"
-                  placeholder="Your email address"
-                  className="w-full h-12 px-5 rounded-xl border border-zinc-300 bg-white text-base outline-none focus:border-[#968e68] focus:ring-2 focus:ring-[#968e68]/30 dark:border-zinc-700 dark:bg-zinc-800 dark:focus:border-[#968e68]"
-                />
-                <button
-                  type="button"
-                  className="w-full h-12 rounded-xl bg-black text-white font-bold hover:bg-black/90 transition dark:bg-white dark:text-black dark:hover:bg-white/90"
-                >
-                  Subscribe
-                </button>
-              </form>
-              <p className="mt-6 text-xs text-zinc-500 dark:text-zinc-400 text-center">
-                powered by fynaro tech
-              </p>
-            </div>
+            <NewsletterCard
+              badgeText="Daddieshinor Letters"
+              title="Stay Close"
+              subtitle="A short note when something is worth thinking about. No spam. No noise."
+              buttonText="Subscribe"
+              footerText="powered by fynaro tech"
+              source="daddieshinor_search_sidebar"
+            />
 
-            <div className="rounded-2xl border border-[#968e68]/20 bg-gradient-to-br from-[#968e68]/5 to-white/50 p-6 shadow-md dark:from-[#968e68]/10 dark:to-zinc-950/50 dark:border-[#968e68]/30">
-              <div className="flex items-center gap-3 mb-4">
-                <span className="text-[#968e68] font-black text-2xl">✦</span>
-                <h4 className="text-xl font-extrabold text-[#968e68] tracking-tight">
+            <div className="rounded-2xl border border-[#968e68]/20 bg-gradient-to-br from-[#968e68]/5 to-white/50 p-6 shadow-md dark:border-[#968e68]/30 dark:from-[#968e68]/10 dark:to-zinc-950/50">
+              <div className="mb-4 flex items-center gap-3">
+                <span className="text-2xl font-black text-[#968e68]">✦</span>
+                <h4 className="text-xl font-extrabold tracking-tight text-[#968e68]">
                   Partnership with Daddieshinor
                 </h4>
               </div>
               <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-                Collaborate with us to reach thoughtful readers across Africa and beyond. Sponsored insights, brand stories, and meaningful visibility — done with integrity.
+                Collaborate with us to reach thoughtful readers across Africa and
+                beyond. Sponsored insights, brand stories, and meaningful visibility
+                — done with integrity.
               </p>
               <Link
                 href="/partnerships"
-                className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-[#968e68] hover:text-[#a8a07a] transition"
+                className="mt-6 inline-flex items-center gap-2 text-base font-semibold text-[#968e68] transition hover:text-[#a8a07a]"
               >
                 Let’s talk →
               </Link>
@@ -369,5 +358,4 @@ function SearchContent() {
   );
 }
 
-// Prevent static prerendering issues
 export const dynamic = "force-dynamic";

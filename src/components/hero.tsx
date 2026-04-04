@@ -121,9 +121,6 @@ function getFeaturedImage(
   );
 }
 
-// ────────────────────────────────────────────────
-// Divider
-// ────────────────────────────────────────────────
 function Divider({ className = "" }: { className?: string }) {
   return (
     <div
@@ -137,9 +134,9 @@ function Divider({ className = "" }: { className?: string }) {
 // ────────────────────────────────────────────────
 function HeroSkeleton() {
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12 animate-pulse">
-        <div className="lg:col-span-5 space-y-6">
+    <section className="mx-auto max-w-[1440px] px-5 py-10 md:py-14 lg:py-20">
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-10 animate-pulse">
+        <div className="lg:col-span-6 space-y-6">
           <div className="flex items-center justify-between">
             <div className="h-10 w-56 rounded-full bg-zinc-200 dark:bg-zinc-800" />
             <div className="hidden sm:flex gap-3">
@@ -152,10 +149,10 @@ function HeroSkeleton() {
             <div className="h-5 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-5 w-4/5 rounded bg-zinc-200 dark:bg-zinc-800" />
           </div>
-          <div className="aspect-[16/10] w-full rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10" />
+          <div className="aspect-[16/10] w-full rounded-[28px] bg-zinc-200 dark:bg-zinc-800 shadow-2xl ring-1 ring-black/10 dark:ring-white/10" />
         </div>
 
-        <div className="lg:col-span-5 flex flex-col space-y-8">
+        <div className="lg:col-span-4 flex flex-col space-y-8">
           <div className="flex items-center justify-between">
             <div className="h-10 w-48 rounded bg-zinc-200 dark:bg-zinc-800" />
             <div className="h-1 w-24 rounded-full bg-zinc-200 dark:bg-zinc-800" />
@@ -172,13 +169,9 @@ function HeroSkeleton() {
           ))}
         </div>
 
-        <div className="lg:col-span-2 space-y-4">
-          <div className="aspect-[3/4] rounded-2xl bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
-          <div className="space-y-3 px-2">
-            <div className="h-6 w-32 rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-8 w-full rounded bg-zinc-200 dark:bg-zinc-800" />
-            <div className="h-4 w-3/4 rounded bg-zinc-200 dark:bg-zinc-800" />
-          </div>
+        <div className="lg:col-span-2 space-y-5">
+          <div className="aspect-[4/5] rounded-[28px] bg-zinc-200 dark:bg-zinc-800 shadow-2xl" />
+          <div className="rounded-[28px] bg-zinc-200 dark:bg-zinc-800 h-44" />
         </div>
       </div>
     </section>
@@ -186,7 +179,7 @@ function HeroSkeleton() {
 }
 
 // ────────────────────────────────────────────────
-// Main Hero Component (FIXED)
+// Main Hero Component
 // ────────────────────────────────────────────────
 export default function Hero() {
   const [slides, setSlides] = useState<Slide[]>([]);
@@ -196,8 +189,6 @@ export default function Hero() {
 
   const { start, stop } = useGlobalLoader();
   const isMounted = useRef(true);
-
-  const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://www.daddieshinor.com";
 
   useEffect(() => {
     isMounted.current = true;
@@ -212,7 +203,6 @@ export default function Hero() {
         const proxyUrl = `/api/wp-proxy?path=${encodeURIComponent(
           "/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&_embed=1"
         )}`;
-        console.log("[Hero] Fetching via proxy:", proxyUrl);
 
         const res = await fetch(proxyUrl, { cache: "no-store" });
 
@@ -291,7 +281,6 @@ export default function Hero() {
     };
   }, [start, stop]);
 
-
   const ordered = useMemo(() => {
     const featured = slides.find((s) => s.featured) ?? slides[0];
     const rest = slides.filter((s) => s !== featured);
@@ -310,7 +299,7 @@ export default function Hero() {
     const timer = setInterval(() => {
       if (!mountedRef.current || hoveringRef.current) return;
       setIndex((prev) => (prev + 1) % ordered.length);
-    }, 4500);
+    }, 5000);
 
     return () => {
       mountedRef.current = false;
@@ -327,34 +316,51 @@ export default function Hero() {
   if (loading) return <HeroSkeleton />;
 
   return (
-    <section className="mx-auto max-w-[1400px] px-5 py-10 md:py-14 lg:py-20">
+    <section className="mx-auto max-w-[1440px] px-5 py-10 md:py-14 lg:py-20">
+      <style>{`
+        @keyframes brandFloat {
+          0%, 20% {
+            transform: translateY(0);
+          }
+          30%, 45% {
+            transform: translateY(-28px);
+          }
+          55%, 70% {
+            transform: translateY(-56px);
+          }
+          80%, 100% {
+            transform: translateY(-84px);
+          }
+        }
+      `}</style>
+
       {error && (
-        <div className="mb-8 rounded-xl bg-red-50/80 p-5 text-red-800 dark:bg-red-950/40 dark:text-red-200 border border-red-200 dark:border-red-800">
+        <div className="mb-8 rounded-2xl border border-red-200 bg-red-50/80 p-5 text-red-800 dark:border-red-800 dark:bg-red-950/40 dark:text-red-200">
           {error}
         </div>
       )}
 
-      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-12">
-        {/* LEFT — Featured Carousel */}
-        <div className="lg:col-span-5">
-          <div className="flex items-center justify-between gap-4 mb-6">
-            <span className="inline-flex items-center gap-3 rounded-full border border-black/30 bg-white/90 px-5 py-2 text-sm font-extrabold tracking-wider text-black shadow-sm dark:bg-black/80 dark:text-white dark:border-white/20">
-              FEATURED ESSAY
+      <div className="grid grid-cols-1 items-start gap-10 lg:grid-cols-12 lg:gap-10 xl:gap-12">
+        {/* LEFT — Featured Story */}
+        <div className="lg:col-span-6">
+          <div className="mb-6 flex items-center justify-between gap-4">
+            <span className="inline-flex items-center gap-3 rounded-full border border-black/15 bg-white/90 px-5 py-2.5 text-[11px] font-black uppercase tracking-[0.22em] text-black shadow-sm dark:border-white/10 dark:bg-zinc-950/85 dark:text-white">
+              Featured Story
               <span className="inline-block h-2 w-2 rounded-full bg-[#968e68] animate-pulse" />
-              <span className="font-bold text-[#968e68]">{active.tag.toUpperCase()}</span>
+              <span className="text-[#968e68]">{active.tag}</span>
             </span>
 
             <div className="hidden sm:flex items-center gap-3">
               <button
                 onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-11 w-11 rounded-full border border-zinc-300 bg-white text-lg font-bold text-black transition hover:-translate-y-0.5 hover:border-[#968e68] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Previous"
               >
                 ←
               </button>
               <button
                 onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-                className="h-10 w-10 rounded-full border border-zinc-300 bg-white text-xl font-bold text-black hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                className="h-11 w-11 rounded-full border border-zinc-300 bg-white text-lg font-bold text-black transition hover:-translate-y-0.5 hover:border-[#968e68] hover:bg-zinc-100 dark:border-zinc-700 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
                 aria-label="Next"
               >
                 →
@@ -368,47 +374,55 @@ export default function Hero() {
             onMouseEnter={() => (hoveringRef.current = true)}
             onMouseLeave={() => (hoveringRef.current = false)}
           >
-            <h3 className="text-2xl md:text-5xl lg:text-6xl xl:text-7xl font-black leading-[1.05] tracking-tight text-black dark:text-white group-hover:text-[#968e68] transition-colors">
-              {active.title}
-            </h3>
+            <div className="max-w-4xl">
+              <h1 className="text-[2rem] font-black leading-[0.98] tracking-[-0.03em] text-black transition-colors duration-300 group-hover:text-[#968e68] dark:text-white sm:text-5xl lg:text-6xl xl:text-[4.2rem]">
+                {active.title}
+              </h1>
 
-            <p className="mt-5 text-lg md:text-xl text-zinc-700 dark:text-zinc-300 max-w-2xl">
-              {active.excerpt}
-            </p>
+              <p className="mt-5 max-w-2xl text-base leading-8 text-zinc-700 dark:text-zinc-300 md:text-lg">
+                {active.excerpt}
+              </p>
+            </div>
 
-            <div className="relative mt-8 overflow-hidden rounded-2xl shadow-2xl ring-1 ring-black/10 dark:ring-white/10">
+            <div className="relative mt-8 overflow-hidden rounded-[30px] border border-black/10 bg-zinc-100 shadow-[0_18px_60px_rgba(0,0,0,0.10)] dark:border-white/10 dark:bg-zinc-900 dark:shadow-[0_18px_60px_rgba(0,0,0,0.35)]">
               <div className="relative aspect-[16/10]">
                 <Image
                   src={active.image}
                   alt={active.alt}
                   fill
                   priority
-                  sizes="(max-width: 1024px) 100vw, (max-width: 1440px) 50vw, 45vw"
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
+                  sizes="(max-width: 1024px) 100vw, (max-width: 1440px) 55vw, 52vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/20 to-transparent" />
               </div>
 
-              <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-4 bg-black/70 px-6 py-4 text-white backdrop-blur-md">
-                <div className="flex items-center gap-4">
-                  <span className="rounded-full bg-white/20 px-4 py-1.5 text-xs font-extrabold uppercase tracking-widest text-white/90">
-                    {active.tag}
-                  </span>
-                  <span className="text-sm font-medium opacity-90">Read full essay →</span>
-                </div>
+              <div className="absolute inset-x-0 bottom-0 p-5 sm:p-6">
+                <div className="flex flex-col gap-4 rounded-2xl border border-white/10 bg-black/55 p-4 text-white backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex flex-wrap items-center gap-3">
+                    <span className="rounded-full bg-white/15 px-4 py-1.5 text-[11px] font-black uppercase tracking-[0.18em] text-white/95">
+                      {active.tag}
+                    </span>
+                    <span className="text-sm text-white/80">
+                      Read full story
+                    </span>
+                  </div>
 
-                <div className="flex gap-2">
-                  {ordered.map((_, i) => (
-                    <button
-                      key={i}
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setIndex(i);
-                      }}
-                      className={`h-2 rounded-full transition-all ${i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/50"}`}
-                      aria-label={`Go to slide ${i + 1}`}
-                    />
-                  ))}
+                  <div className="flex gap-2">
+                    {ordered.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setIndex(i);
+                        }}
+                        className={`h-2 rounded-full transition-all ${
+                          i === index ? "w-8 bg-[#968e68]" : "w-2 bg-white/45"
+                        }`}
+                        aria-label={`Go to slide ${i + 1}`}
+                      />
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
@@ -417,13 +431,13 @@ export default function Hero() {
           <div className="mt-6 flex justify-between sm:hidden">
             <button
               onClick={() => setIndex((i) => (i - 1 + ordered.length) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="rounded-full border border-zinc-300 px-5 py-3 text-sm font-bold transition hover:border-[#968e68] hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               ← Prev
             </button>
             <button
               onClick={() => setIndex((i) => (i + 1) % ordered.length)}
-              className="px-5 py-3 rounded-full border border-zinc-300 text-lg font-bold hover:bg-zinc-100 hover:border-[#968e68] transition dark:border-zinc-700 dark:hover:bg-zinc-800"
+              className="rounded-full border border-zinc-300 px-5 py-3 text-sm font-bold transition hover:border-[#968e68] hover:bg-zinc-100 dark:border-zinc-700 dark:hover:bg-zinc-800"
             >
               Next →
             </button>
@@ -431,30 +445,30 @@ export default function Hero() {
         </div>
 
         {/* CENTER — Recent Thoughts */}
-        <div className="lg:col-span-5 flex flex-col overscroll-none">
-          <div className="mb-6 flex items-center justify-between shrink-0">
-            <h2 className="text-3xl md:text-4xl font-black tracking-tight text-black dark:text-white">
-              Recent Thoughts
-            </h2>
-            <div className="h-1 w-20 rounded-full bg-gradient-to-r from-[#968e68] via-[#968e68]/80 to-transparent" />
+        <div className="lg:col-span-4 flex flex-col">
+          <div className="mb-6 flex items-end justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-black uppercase tracking-[0.22em] text-[#968e68]">
+                Fresh Reading
+              </p>
+              <h2 className="mt-2 text-3xl font-black tracking-tight text-black dark:text-white">
+                Recent Thoughts
+              </h2>
+            </div>
+            <div className="h-1 w-16 rounded-full bg-gradient-to-r from-[#968e68] via-[#968e68]/80 to-transparent" />
           </div>
 
           <div
-            className={`
-              relative flex-1 overflow-y-auto overscroll-contain overscroll-x-none
-              -mr-2 lg:-mr-4 pr-2 lg:pr-4
-              max-h-[620px] lg:max-h-[720px] xl:max-h-[800px]
+            className="
+              relative flex-1 overflow-y-auto overscroll-contain
+              -mr-2 pr-2 lg:-mr-3 lg:pr-3
+              max-h-[650px] lg:max-h-[760px]
               scrollbar-thin scrollbar-thumb-zinc-300/60 scrollbar-track-transparent
-              hover:scrollbar-thumb-zinc-400/90 scrollbar-thumb-rounded-full
+              hover:scrollbar-thumb-zinc-400/90
               dark:scrollbar-thumb-zinc-700/50 dark:hover:scrollbar-thumb-zinc-600/90
-              transition-all duration-200 ease-out
-              after:content-[''] after:absolute after:inset-x-0 after:bottom-0 after:h-16
-              after:pointer-events-none after:bg-gradient-to-t
-              after:from-white/70 after:via-white/40 after:to-transparent
-              dark:after:from-black/70 dark:after:via-black/40 dark:after:to-transparent
-            `}
+            "
           >
-            <div className="space-y-10 pb-12 lg:pb-14">
+            <div className="space-y-8 pb-12">
               {thoughts.map((t, i) => (
                 <div key={t.href} className="group">
                   <ThoughtItem
@@ -464,94 +478,117 @@ export default function Hero() {
                     href={t.href}
                   />
                   {i < thoughts.length - 1 && (
-                    <Divider className="opacity-50 group-hover:opacity-90 transition-opacity duration-300" />
+                    <Divider className="mt-8 opacity-50 transition-opacity duration-300 group-hover:opacity-90" />
                   )}
                 </div>
               ))}
             </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-white/90 via-white/55 to-transparent dark:from-black/80 dark:via-black/40 dark:to-transparent" />
           </div>
         </div>
 
-        {/* RIGHT — Editor’s Pick + Partnership Tile */}
-        <div className="lg:col-span-2 flex flex-col gap-6">
-          {/* Editorial Canvas */}
+        {/* RIGHT — Brand / Partnership Rail */}
+        <div className="lg:col-span-2 flex flex-col gap-5">
+          {/* Editorial Tile */}
           <div
-            role="button"
-            tabIndex={0}
-            aria-label="Editorial canvas - a space for evolving ideas"
-            className="
-              group cursor-pointer select-none
-              overflow-hidden rounded-xl
-              bg-gradient-to-br from-zinc-950 to-black
-              text-white shadow-lg
-              transition-all duration-500 ease-out
-              hover:-translate-y-2 hover:shadow-2xl hover:shadow-[#968e68]/10
-              active:translate-y-0 active:scale-[0.98]
-              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#968e68]/70 focus-visible:ring-offset-2 focus-visible:ring-offset-black
-            "
-            onClick={(e) => e.preventDefault()}
-          >
-            <div className="relative aspect-[3/4] overflow-hidden">
-              <Image
-                src="/images/premium_photo-1742995782977-ee4b53fecadb.jpg"
-                alt="Editorial canvas visual"
-                fill
-                sizes="(max-width: 1024px) 100vw, 20vw"
-                className="object-cover transition-transform duration-700 group-hover:scale-105"
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-transparent" />
-            </div>
+  role="button"
+  tabIndex={0}
+  aria-label="Daddieshinor editorial visual"
+  className="
+    group cursor-pointer overflow-hidden rounded-[30px]
+    border border-black/10 dark:border-white/10
+    shadow-[0_18px_60px_rgba(0,0,0,0.18)]
+    transition-all duration-500 ease-out
+    hover:-translate-y-1.5 hover:shadow-[0_24px_80px_rgba(0,0,0,0.28)]
+  "
+  onClick={(e) => e.preventDefault()}
+>
+  <div className="relative aspect-[4/5] overflow-hidden">
+    <Image
+      src="/images/daddieshinor.jpg"
+      alt="Daddieshinor editorial visual"
+      fill
+      sizes="(max-width: 1024px) 100vw, 20vw"
+      className="
+        object-cover
+        transition-transform duration-700 ease-out
+        group-hover:scale-[1.06]
+      "
+      priority
+    />
 
-            <div className="relative p-5 sm:p-6">
-              <span className="inline-block rounded-full border border-white/30 px-3 py-1 text-[10px] sm:text-[11px] font-black uppercase tracking-widest text-white/90">
-                Editorial Canvas
-              </span>
-
-              <h3 className="mt-3 text-xl sm:text-2xl font-extrabold leading-tight group-hover:text-[#968e68] transition-colors">
-                A space for ideas that don’t fit yet
-              </h3>
-
-              <p className="mt-2 text-sm text-zinc-300/90 leading-relaxed line-clamp-3">
-                This tile is intentional. It can become anything — a manifesto, a collaboration, a quiet announcement, or something we haven’t named yet.
-              </p>
-
-              <div className="mt-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-white/70">
-                <span className="inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] animate-pulse" />
-                In progress
-              </div>
-            </div>
-          </div>
+    {/* subtle premium overlay (very light) */}
+    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition duration-500" />
+  </div>
+</div>
 
           {/* Partnership Tile */}
-          <div className="
-            rounded-xl border border-[#968e68]/25
-            bg-gradient-to-br from-[#968e68]/5 to-white/40
-            p-5 sm:p-6 shadow-md
-            transition-all duration-300 hover:shadow-lg hover:border-[#968e68]/40 hover:-translate-y-1
-            dark:from-[#968e68]/10 dark:to-zinc-950/60 dark:border-[#968e68]/20 dark:hover:border-[#968e68]/50
-          ">
-            <div className="flex items-center gap-3 mb-3">
-              <span className="text-[#968e68] font-black text-xl">✦</span>
-              <h4 className="text-sm font-bold text-[#968e68] tracking-tight">
-                Partnership with Daddieshinor
+          <div className="relative overflow-hidden rounded-[30px] border border-[#968e68]/25 bg-gradient-to-br from-[#968e68]/10 via-white to-[#968e68]/[0.02] p-6 shadow-[0_12px_40px_rgba(0,0,0,0.06)] transition-all duration-300 hover:-translate-y-1 hover:border-[#968e68]/45 hover:shadow-[0_18px_55px_rgba(0,0,0,0.10)] dark:border-[#968e68]/20 dark:from-[#968e68]/12 dark:via-zinc-950 dark:to-zinc-950">
+            <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#968e68]/60 to-transparent" />
+
+            <div className="flex items-center gap-2.5">
+              <span className="text-[#968e68] text-base leading-none">✦</span>
+              <h4 className="text-[10px] font-black uppercase tracking-[0.22em] text-[#968e68]">
+                Partnership
               </h4>
             </div>
 
-            <p className="text-sm leading-relaxed text-zinc-700 dark:text-zinc-300">
-              Collaborate with us to reach thoughtful readers across Africa and beyond. Sponsored insights, brand stories, and meaningful visibility — done with integrity.
+            <div className="relative mt-5 h-12 overflow-hidden">
+              <div
+                className="absolute inset-0 flex flex-col gap-4 text-[13px] leading-tight text-zinc-700 dark:text-zinc-300"
+                style={{ animation: "brandFloat 10s linear infinite" }}
+              >
+                <p>Thoughtful brand visibility.</p>
+                <p>Reach readers with depth.</p>
+                <p>Quiet influence. Real meaning.</p>
+                <p>Thoughtful brand visibility.</p>
+              </div>
+            </div>
+
+            <p className="mt-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
+              Built for brands that want presence with substance — not noise.
             </p>
 
             <Link
               href="/partnerships"
-              className="
-                mt-4 inline-flex items-center gap-2 text-sm font-semibold
-                text-[#968e68] hover:text-[#968e68]/80 transition-colors
-              "
+              className="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-[#968e68] transition-all duration-200 hover:translate-x-1 hover:text-[#7f764f]"
             >
-              Learn more →
+              Explore partnerships →
             </Link>
           </div>
+
+          <div
+  role="button"
+  tabIndex={0}
+  aria-label="Daddieshinor editorial visual"
+  className="
+    group cursor-pointer overflow-hidden rounded-[30px]
+    border border-black/10 dark:border-white/10
+    shadow-[0_18px_60px_rgba(0,0,0,0.18)]
+    transition-all duration-500 ease-out
+    hover:-translate-y-1.5 hover:shadow-[0_24px_80px_rgba(0,0,0,0.28)]
+  "
+  onClick={(e) => e.preventDefault()}
+>
+  <div className="relative aspect-[4/5] overflow-hidden">
+    <Image
+      src="/images/premium_photo-1742995782977-ee4b53fecadb.jpg"
+      alt="Daddieshinor editorial visual"
+      fill
+      sizes="(max-width: 1024px) 100vw, 20vw"
+      className="
+        object-cover
+        transition-transform duration-700 ease-out
+        group-hover:scale-[1.06]
+      "
+      priority
+    />
+
+    {/* subtle premium overlay (very light) */}
+    <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition duration-500" />
+  </div>
+</div>
         </div>
       </div>
     </section>

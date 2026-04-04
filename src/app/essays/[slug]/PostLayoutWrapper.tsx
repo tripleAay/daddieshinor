@@ -6,7 +6,6 @@ import { Breadcrumb } from "@/components/bedcrumb";
 import NewsletterCard from "@/components/newsletterCard";
 import Header from "@/components/header";
 
-
 import {
   Facebook,
   Twitter,
@@ -15,6 +14,7 @@ import {
   Link2,
   Sparkles,
   Handshake,
+  Clock3,
 } from "lucide-react";
 
 type PostLayoutProps = {
@@ -24,8 +24,9 @@ type PostLayoutProps = {
   dateLabel: string;
   heroImage: string;
   heroAlt?: string;
+  readingTime?: string;
   children: ReactNode;
-  /** RelatedSection + Footer — rendered inside the scrollable center column */
+  /** kept for compatibility if you still want to use it elsewhere */
   footer?: ReactNode;
   newsletterTitle?: string;
   newsletterSubtitle?: string;
@@ -58,6 +59,7 @@ export default function PostLayout({
   dateLabel,
   heroImage,
   heroAlt = "",
+  readingTime = "5 min read",
   children,
   footer,
   newsletterTitle = "Stay Close",
@@ -90,7 +92,6 @@ export default function PostLayout({
     }
   };
 
-  // Reading progress bar — driven by the scrollable center column, not window
   useEffect(() => {
     const bar = document.getElementById("reading-progress");
     const scroller = document.getElementById("post-scroller");
@@ -98,39 +99,31 @@ export default function PostLayout({
 
     const onScroll = () => {
       const { scrollTop, scrollHeight, clientHeight } = scroller;
-      const progress = (scrollTop / (scrollHeight - clientHeight)) * 100;
+      const maxScroll = scrollHeight - clientHeight;
+      const progress = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
       bar.style.width = `${Math.min(progress, 100)}%`;
     };
 
     scroller.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+
     return () => scroller.removeEventListener("scroll", onScroll);
   }, []);
 
   return (
     <article className="h-screen flex flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white overflow-hidden">
-
-      {/* ── Reading Progress Bar ── */}
       <div
         id="reading-progress"
         className="fixed top-0 left-0 h-[3px] w-0 bg-orange-600 z-50 transition-[width] duration-100"
       />
 
-      {/* ── Fixed Header — row 1 ── */}
-      
       <div className="flex-none z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
         <Header />
       </div>
 
-      {/* ── Body row — fills remaining height, never overflows ── */}
       <div className="flex-1 overflow-hidden">
         <div className="h-full mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 grid grid-cols-12 gap-0 lg:gap-6">
-
-          {/* ═══════════════════════════════════════════════
-              LEFT RAIL — fixed height, no scroll of its own
-          ═══════════════════════════════════════════════ */}
           <aside className="hidden md:flex md:col-span-3 lg:col-span-2 flex-col gap-5 py-8 overflow-hidden">
-
-            {/* Author card */}
             <div className="rounded-xl border border-black/8 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
               <div className="flex items-center gap-2 text-xs">
                 <span className="text-black/60 dark:text-white/60">By</span>
@@ -146,12 +139,16 @@ export default function PostLayout({
                 </span>
               </div>
 
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-bold text-black/70 dark:border-white/10 dark:bg-zinc-950 dark:text-white/70">
+                <Clock3 className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                {readingTime}
+              </div>
+
               <p className="mt-4 text-xs leading-relaxed text-black/60 dark:text-white/60">
                 Daddieshinor is where tech moves become thought moves.
               </p>
             </div>
 
-            {/* Share card */}
             <div className="rounded-xl border border-black/8 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
               <p className="text-xs font-black tracking-[0.20em] uppercase text-black/60 dark:text-white/60">
                 Share
@@ -191,21 +188,15 @@ export default function PostLayout({
                 </button>
               </div>
             </div>
-
           </aside>
 
-          {/* ═══════════════════════════════════════════════
-              CENTER — THE ONLY SCROLLING COLUMN
-          ═══════════════════════════════════════════════ */}
           <main
             id="post-scroller"
             className="col-span-12 md:col-span-6 lg:col-span-7 h-full overflow-y-auto overscroll-contain min-w-0
                        px-0 md:px-4 lg:px-6
                        scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent"
           >
-            {/* Inner padding so content doesn't hug edges */}
             <div className="py-8 pb-24">
-
               <Breadcrumb category={category} title={title} />
 
               <div className="flex items-center gap-4 mb-4">
@@ -231,14 +222,18 @@ export default function PostLayout({
                   Back
                 </button>
 
-                {/* Optional: keep date on the right */}
                 <div className="flex-1" />
-                <time className="text-sm font-medium text-black/60 dark:text-white/60">
-                  {dateLabel}
-                </time>
+
+                <div className="flex items-center gap-3 text-sm font-medium text-black/60 dark:text-white/60">
+                  <time>{dateLabel}</time>
+                  <span className="text-black/30 dark:text-white/30">•</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock3 className="h-4 w-4" />
+                    {readingTime}
+                  </span>
+                </div>
               </div>
 
-              {/* Title */}
               <h1 className="mt-3 text-2xl leading-tight font-black tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
                 {title}
               </h1>
@@ -247,7 +242,6 @@ export default function PostLayout({
                 Not just news. Meaning. Pattern. Perspective.
               </p>
 
-              {/* Hero image */}
               <div className="mt-6">
                 <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-black/8 shadow-md dark:bg-zinc-800 dark:ring-white/8">
                   <Image
@@ -262,7 +256,6 @@ export default function PostLayout({
                 </div>
               </div>
 
-              {/* Mobile Share Bar */}
               <div className="flex md:hidden items-center gap-2.5 mt-5 flex-wrap">
                 <span className="text-xs font-black tracking-widest uppercase text-black/50 dark:text-white/50 mr-1">
                   Share
@@ -301,27 +294,13 @@ export default function PostLayout({
                 </button>
               </div>
 
-              {/* Post body */}
-              <div className="mt-8">
-                {children}
-              </div>
+              <div className="mt-8">{children}</div>
 
-              {/* RelatedSection + Footer — scrolls with content */}
-              {footer && (
-                <div className="mt-16">
-                  {footer}
-                </div>
-              )}
-
+              {footer && <div className="mt-16">{footer}</div>}
             </div>
           </main>
 
-          {/* ═══════════════════════════════════════════════
-              RIGHT SIDEBAR — fixed height, no scroll of its own
-          ═══════════════════════════════════════════════ */}
           <aside className="hidden md:flex md:col-span-3 lg:col-span-3 flex-col gap-5 py-8 overflow-hidden">
-
-            {/* Newsletter */}
             <div className="flex-none">
               <NewsletterCard
                 badgeText="Daddieshinor Letters"
@@ -331,7 +310,6 @@ export default function PostLayout({
               />
             </div>
 
-            {/* Partner tile */}
             <div className="rounded-xl border border-black/8 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
               <div className="flex items-start gap-3">
                 <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 ring-1 ring-orange-500/15 dark:bg-orange-500/15 dark:ring-orange-400/20">
@@ -347,14 +325,9 @@ export default function PostLayout({
                 </div>
               </div>
             </div>
-
           </aside>
-
         </div>
       </div>
-
-
-
     </article>
   );
 }

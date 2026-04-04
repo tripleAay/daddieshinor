@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Menu, Search, Sun, Moon, Play, Pause } from "lucide-react";
-import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import MobileMenu from "@/components/mobileMenu";
 import { useAudio } from "../components/audioProvider";
@@ -33,11 +33,13 @@ function formatWATTime() {
 
 export default function Header() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [currentTime, setCurrentTime] = useState(formatWATTime());
-const [tick, setTick] = useState(false);
+  const [tick, setTick] = useState(false);
   const [q, setQ] = useState("");
 
   const { isPlaying, togglePlay } = useAudio();
@@ -67,16 +69,16 @@ const [tick, setTick] = useState(false);
     }
   }, []);
 
-useEffect(() => {
-  const id = setInterval(() => {
-    setCurrentTime(formatWATTime());
-    setTick(true);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCurrentTime(formatWATTime());
+      setTick(true);
 
-    setTimeout(() => setTick(false), 300); // subtle pulse duration
-  }, 30000);
+      setTimeout(() => setTick(false), 300);
+    }, 30000);
 
-  return () => clearInterval(id);
-}, []);
+    return () => clearInterval(id);
+  }, []);
 
   const toggleTheme = () => {
     const next = theme === "dark" ? "light" : "dark";
@@ -85,16 +87,22 @@ useEffect(() => {
     applyTheme(next);
   };
 
-  const searchHref = useMemo(
-    () => (q.trim() ? `/search?q=${encodeURIComponent(q.trim())}` : "/search"),
-    [q]
-  );
+  const handleSearchSubmit = (e?: React.FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
+    const trimmed = q.trim();
+    if (!trimmed) {
+      router.push("/search");
+      return;
+    }
+
+    router.push(`/search?q=${encodeURIComponent(trimmed)}`);
+  };
 
   return (
     <>
       <header className="sticky top-0 z-50 w-full bg-[#D9DCD6]/95 backdrop-blur-xl dark:bg-zinc-950/90">
         <div className="mx-auto flex h-12 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[52px] sm:gap-3 sm:px-4 md:px-6 lg:px-8">
-          {/* LEFT – Logo */}
           <Link
             href="/"
             className="group flex min-w-0 flex-1 items-center gap-2 transition-all sm:flex-none sm:gap-2.5"
@@ -119,7 +127,6 @@ useEffect(() => {
             </div>
           </Link>
 
-          {/* CENTER – Desktop nav */}
           <nav className="hidden items-center gap-1 lg:flex">
             {nav.map((item) => {
               const active = isActive(item.href);
@@ -155,36 +162,42 @@ useEffect(() => {
             </Link>
           </nav>
 
-          {/* RIGHT – Controls */}
           <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
-            {/* WAT time */}
             <div className="flex items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-[11px] font-medium tabular-nums dark:bg-white/5 sm:text-xs">
-  <span className="font-semibold text-[#968e68]">WAT</span>
+              <span className="font-semibold text-[#968e68]">WAT</span>
 
-  <span
-    className={`text-black/80 dark:text-white/80 transition-all duration-300 ${
-      tick ? "scale-105 opacity-100" : "scale-100 opacity-90"
-    }`}
-  >
-    {currentTime}
-  </span>
-</div>
+              <span
+                className={`text-black/80 dark:text-white/80 transition-all duration-300 ${
+                  tick ? "scale-105 opacity-100" : "scale-100 opacity-90"
+                }`}
+              >
+                {currentTime}
+              </span>
+            </div>
 
             {/* Desktop search */}
-            <div className="relative hidden md:block md:w-56 lg:w-72 xl:w-80">
+            <form
+              onSubmit={handleSearchSubmit}
+              className="relative hidden md:block md:w-56 lg:w-72 xl:w-80"
+              role="search"
+            >
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/50 dark:text-white/50" />
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search thoughts..."
-                className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-4 text-sm placeholder:text-black/40 transition-all focus:border-[#968e68]/30 focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 dark:border-white/10 dark:bg-zinc-900/70 dark:placeholder:text-white/40"
+                aria-label="Search"
+                className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-sm placeholder:text-black/40 transition-all focus:border-[#968e68]/30 focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 dark:border-white/10 dark:bg-zinc-900/70 dark:placeholder:text-white/40"
               />
-            </div>
+              <button
+                type="submit"
+                aria-label="Submit search"
+                className="absolute right-1.5 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-black/55 transition hover:bg-black/5 hover:text-black dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+              >
+                <Search className="h-3.5 w-3.5" />
+              </button>
+            </form>
 
-            {/* Mobile search */}
-           
-
-            {/* Audio toggle - visible on both mobile and desktop */}
             <button
               onClick={togglePlay}
               className={`grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all duration-200 hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9 ${
@@ -202,7 +215,6 @@ useEffect(() => {
               )}
             </button>
 
-            {/* Theme toggle */}
             <button
               onClick={toggleTheme}
               className="grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9"
@@ -216,7 +228,6 @@ useEffect(() => {
                 ))}
             </button>
 
-            {/* Hamburger */}
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
@@ -232,15 +243,23 @@ useEffect(() => {
       {/* Mobile search bar */}
       <div className="border-t border-black/5 bg-[#D9DCD6]/95 backdrop-blur-lg dark:border-white/5 dark:bg-zinc-950/85 md:hidden">
         <div className="px-3 py-2 sm:px-4 sm:py-2.5">
-          <div className="relative">
+          <form onSubmit={handleSearchSubmit} className="relative" role="search">
             <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/50 dark:text-white/50" />
             <input
               value={q}
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search Daddieshinor..."
-              className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-4 text-sm placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#968e68]/30 dark:border-white/10 dark:bg-zinc-900/60 dark:placeholder:text-white/40"
+              aria-label="Search"
+              className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-sm placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#968e68]/30 dark:border-white/10 dark:bg-zinc-900/60 dark:placeholder:text-white/40"
             />
-          </div>
+            <button
+              type="submit"
+              aria-label="Submit search"
+              className="absolute right-1.5 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-full text-black/55 transition hover:bg-black/5 hover:text-black dark:text-white/55 dark:hover:bg-white/5 dark:hover:text-white"
+            >
+              <Search className="h-3.5 w-3.5" />
+            </button>
+          </form>
         </div>
       </div>
 
