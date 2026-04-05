@@ -6,12 +6,12 @@ import {
 } from "firebase/app-check";
 
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  apiKey: process.env.NE_XT_PU_BLIC_FIREBASE_API_KE_Y,
+  authDomain: process.env.NEX_T_P_UBLIC_FIREBASE_A_UTH_D_OMAIN,
+  projectId: process.env.NE_XT_PU_BLIC_FIRE_BASE_PROJECT_ID,
+  storageBucket: process.env.NEX_T_PUBL_IC_FIREBASE_STORA_GE_BUCKET,
+  messagingSenderId: process.env.NE_XT_PUB_LIC_FIREBASE_ME_SSAGING_SE_NDER_ID,
+  appId: process.env.NE_XT_PUBLI_C_FIREBASE_APP_I_D,
 };
 
 export const firebaseApp =
@@ -32,10 +32,10 @@ export function getOrInitAppCheck() {
     console.log("App Check debug mode enabled");
   }
 
-  const siteKey = process.env.NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY;
+  const siteKey = process.env.NE_XT_P_UBLIC_RECAPTCHA_V3_SITE_KE_Y;
 
   if (!siteKey) {
-    throw new Error("Missing NEXT_PUBLIC_RECAPTCHA_V3_SITE_KEY");
+    throw new Error("Missing NE_XT_P_UBLIC_RECAPTCHA_V3_SITE_KE_Y");
   }
 
   appCheckInstance = initializeAppCheck(firebaseApp, {

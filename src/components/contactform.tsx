@@ -4,35 +4,74 @@ import { useState } from "react";
 import { Send } from "lucide-react";
 import { toast } from "react-toastify";
 
+type ContactFormState = {
+  name: string;
+  email: string;
+  message: string;
+};
+
 export default function ContactForm() {
   const [loading, setLoading] = useState(false);
 
-  const [form, setForm] = useState({
+  const [form, setForm] = useState<ContactFormState>({
     name: "",
     email: "",
     message: "",
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setForm((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
+    const payload = {
+      name: form.name.trim(),
+      email: form.email.trim().toLowerCase(),
+      message: form.message.trim(),
+    };
+
+    if (!payload.name || !payload.email || !payload.message) {
+      toast.error("Please fill in all fields.");
+      return;
+    }
+
     setLoading(true);
 
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
-        body: JSON.stringify(form),
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error();
+      const data = await res.json().catch(() => null);
 
-      toast.success("Message sent successfully");
-      setForm({ name: "", email: "", message: "" });
-    } catch {
-      toast.error("Failed to send message");
+      if (!res.ok) {
+        throw new Error(data?.message || "Failed to send message.");
+      }
+
+      toast.success(data?.message || "Message sent successfully.");
+
+      setForm({
+        name: "",
+        email: "",
+        message: "",
+      });
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : "Failed to send message."
+      );
     } finally {
       setLoading(false);
     }
@@ -40,13 +79,13 @@ export default function ContactForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-
       <input
         name="name"
+        type="text"
         placeholder="Name"
         value={form.name}
         onChange={handleChange}
-        className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent text-sm outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+        className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black dark:border-zinc-700 dark:focus:ring-white"
         required
       />
 
@@ -56,7 +95,7 @@ export default function ContactForm() {
         placeholder="Email"
         value={form.email}
         onChange={handleChange}
-        className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent text-sm outline-none focus:ring-1 focus:ring-black dark:focus:ring-white"
+        className="w-full rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black dark:border-zinc-700 dark:focus:ring-white"
         required
       />
 
@@ -66,14 +105,14 @@ export default function ContactForm() {
         rows={3}
         value={form.message}
         onChange={handleChange}
-        className="w-full px-3 py-2 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-transparent text-sm outline-none focus:ring-1 focus:ring-black dark:focus:ring-white resize-none"
+        className="w-full resize-none rounded-lg border border-zinc-300 bg-transparent px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-black dark:border-zinc-700 dark:focus:ring-white"
         required
       />
 
       <button
         type="submit"
         disabled={loading}
-        className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-black text-white dark:bg-white dark:text-black text-sm font-medium transition active:scale-95"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-black px-4 py-2 text-sm font-medium text-white transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-black"
       >
         {loading ? "Sending..." : "Send"}
         <Send size={16} />

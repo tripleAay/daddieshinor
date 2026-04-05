@@ -18,8 +18,6 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <article className="min-h-screen bg-[#D9DCD6] text-black dark:bg-black dark:text-white">
-
-      {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/70">
         <Header />
       </div>
@@ -28,35 +26,25 @@ export default function ContactPage() {
 
       <main className="px-5 py-12 md:py-24">
         <div className="mx-auto max-w-[900px]">
-
           <BackButton />
 
-          {/* Breadcrumb */}
           <nav className="mb-6 text-xs text-zinc-500">
             <Link href="/">Home</Link> / <span>Contact</span>
           </nav>
 
-          {/* Header */}
           <header className="mb-10 max-w-[520px]">
-            <h1 className="text-3xl md:text-5xl font-semibold">
-              Let’s talk.
-            </h1>
-            <p className="mt-3 text-sm md:text-base text-zinc-600 dark:text-zinc-400">
+            <h1 className="text-3xl font-semibold md:text-5xl">Let’s talk.</h1>
+            <p className="mt-3 text-sm text-zinc-600 dark:text-zinc-400 md:text-base">
               Ideas, collaborations, or something you're building.
             </p>
           </header>
 
-          {/* Content */}
-          <div className="grid md:grid-cols-2 gap-8">
-
-            {/* Form */}
-            <div className="bg-white/60 dark:bg-white/5 backdrop-blur rounded-xl border border-zinc-200 dark:border-zinc-800 p-4 md:p-6">
+          <div className="grid gap-8 md:grid-cols-2">
+            <div className="rounded-xl border border-zinc-200 bg-white/60 p-4 backdrop-blur dark:border-zinc-800 dark:bg-white/5 md:p-6">
               <ContactForm />
             </div>
 
-            {/* Info */}
             <div className="space-y-6 text-sm">
-
               <div className="flex items-center gap-2">
                 <Mail size={16} />
                 <a href="mailto:hello@daddieshinor.com">
@@ -66,25 +54,20 @@ export default function ContactPage() {
 
               <div className="flex items-center gap-2">
                 <Twitter size={16} />
-                <a
-                  href="https://x.com/daddieshinor"
-                  target="_blank"
-                >
+                <a href="https://x.com/daddieshinor" target="_blank" rel="noreferrer">
                   @daddieshinor
                 </a>
               </div>
 
-              <p className="text-xs text-zinc-500 pt-4 border-t border-zinc-200 dark:border-zinc-800">
+              <p className="border-t border-zinc-200 pt-4 text-xs text-zinc-500 dark:border-zinc-800">
                 Replies within 24–48 hours.
               </p>
             </div>
-
           </div>
         </div>
       </main>
 
       <ToastContainer position="top-right" autoClose={3000} />
-
       <Footer />
     </article>
   );
