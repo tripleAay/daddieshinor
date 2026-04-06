@@ -133,11 +133,7 @@ export default function PostFooter() {
                   Advertise
                 </Link>
               </li>
-              <li>
-                <Link href="/partnerships" className="hover:text-black dark:hover:text-white transition-colors">
-                  Partnerships
-                </Link>
-              </li>
+             
             </ul>
           </div>
 

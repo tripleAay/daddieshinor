@@ -167,14 +167,7 @@ export default function PostFooter() {
                   </Link>
                 </li>
 
-                <li>
-                  <Link
-                    href="/partnerships"
-                    className="transition-colors hover:text-black dark:hover:text-white"
-                  >
-                    Partnerships
-                  </Link>
-                </li>
+               
               </ul>
             </div>
 

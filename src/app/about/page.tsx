@@ -68,9 +68,9 @@ export default function AboutPage() {
 
       <main className="px-5 pb-20 pt-[80px] md:px-8 md:pb-28 lg:px-10 lg:pb-32">
         {/* Mobile breadcrumb */}
-        <div className="sticky top-[100px] z-40 -mx-5 mb-8 border-b border-zinc-200/80 bg-[#D9DCD6]/90 px-5 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90 md:hidden">
+        <div className="sticky   top-[100px] z-40 -mx-5 mb-8 border-b border-zinc-200/80 bg-[#D9DCD6]/90 px-5 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90 md:hidden">
           <div className="flex mt-10 min-h-[48px] items-center justify-between gap-3">
-            <div className="flex min-w-0 items-center text-sm">
+            <div className="flex  min-w-0 items-center text-sm">
               <Link
                 href="/"
                 className="flex items-center gap-1.5 font-medium text-zinc-600 transition-colors hover:text-black dark:text-zinc-400 dark:hover:text-white"
@@ -97,7 +97,7 @@ export default function AboutPage() {
 
         <div className="mx-auto max-w-6xl">
           {/* Desktop breadcrumb */}
-          <div className="mb-10 hidden md:flex md:items-center md:justify-between">
+          <div className="mb-10 mt-10 hidden md:flex md:items-center md:justify-between">
             <div className="flex items-center gap-3 text-sm text-zinc-500 dark:text-zinc-400">
               <Link
                 href="/"

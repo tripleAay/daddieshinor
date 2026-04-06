@@ -547,7 +547,7 @@ export default function Hero() {
             </div>
 
             <p className="mt-6 text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-              Built for brands that want presence with substance — not noise.
+              Built for brands that want presence with substance not noise.
             </p>
 
             <Link
