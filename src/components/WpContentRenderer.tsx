@@ -23,7 +23,8 @@ function sanitize(html: string): string {
 
 // ─── Fix image URLs: make relative URLs absolute ──────────────────────────────
 function fixImageUrls(html: string): string {
-  const base = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com";
+  const base =
+  process.env.NEXT_PUBLIC_WP_URL || "https://api.daddieshinor.com";
   // Fix src="//..." → src="https://..."
   return html
     .replace(/src="\/\/([^"]+)"/g, `src="https://$1"`)

@@ -75,7 +75,6 @@ function sanitizeWpHtml(html: string): string {
   if (!html) return "";
 
   return html
-    .replace(/https:\/\/api\.daddieshinor\.com/gi, SITE_URL)
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, "")
     .replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gi, "")
     .replace(/<object\b[^<]*(?:(?!<\/object>)<[^<]*)*<\/object>/gi, "")
@@ -83,7 +82,6 @@ function sanitizeWpHtml(html: string): string {
     .replace(/\son\w+="[^"]*"/gi, "")
     .replace(/\son\w+='[^']*'/gi, "");
 }
-
 function getFeatured(post: WPPost): { url: string; alt: string } {
   const media = post?._embedded?.["wp:featuredmedia"]?.[0];
 
