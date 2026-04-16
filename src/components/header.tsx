@@ -10,10 +10,10 @@ import MobileMenu from "@/components/mobileMenu";
 import { useAudio } from "../components/audioProvider";
 
 const nav = [
-  { label: "Tech", href: "/categories/tech" },
-  { label: "Culture", href: "/categories/culture" },
-  { label: "Branding", href: "/categories/branding" },
-  { label: "Life", href: "/categories/life" },
+  { label: "Tech", href: "/tech" },
+  { label: "Culture", href: "/culture" },
+  { label: "Branding", href: "/branding" },
+  { label: "Life", href: "/life" },
 ];
 
 type Theme = "light" | "dark";
