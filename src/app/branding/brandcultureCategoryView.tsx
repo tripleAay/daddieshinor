@@ -93,18 +93,7 @@ export default function BrandingCategoryView({
                 </Link>
               </div>
 
-              <div className="mt-6 min-w-0">
-                <h1 className="break-words text-[34px] font-black leading-[1.12] tracking-tight md:text-[44px]">
-                  Branding
-                </h1>
-                <p className="mt-3 break-words text-base text-black/70 dark:text-white/70 md:text-lg">
-                  Not just logos. Meaning. Memory. Position.
-                </p>
-              </div>
-
-              <div className="mt-6 lg:hidden">
-                <MobileAllPosts categoryId={13} />
-              </div>
+             
 
               {/* Featured */}
               {featured && (
