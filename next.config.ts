@@ -43,6 +43,7 @@ const nextConfig = {
 
   async redirects() {
     return [
+      // Existing redirects
       {
         source: "/category/life-and-real-talk",
         destination: "/life",
@@ -88,6 +89,59 @@ const nextConfig = {
         destination: "/essays/be-so-productive-until-it-feels-illegal-tips",
         permanent: true,
       },
+
+      // Search Console 404 Fixes
+      {
+        source: "/about-daddieshinor",
+        destination: "/about",
+        permanent: true,
+      },
+      {
+        source: "/how-to-write-10000-words-a-week",
+        destination: "/essays/how-to-write-10000-words-a-week",
+        permanent: true,
+      },
+      {
+        source: "/smartphone-productivity-your-phone-is-smarter-than-how-you-use-it",
+        destination:
+          "/essays/smartphone-productivity-your-phone-is-smarter-than-how-you-use-it",
+        permanent: true,
+      },
+      {
+        source: "/welcome-to-daddieshinor-the-art-of-building-failing-and-rising-again",
+        destination:
+          "/essays/welcome-to-daddieshinor-the-art-of-building-failing-and-rising-again",
+        permanent: true,
+      },
+      {
+        source: "/are-you-sabotaging-your-creativity",
+        destination: "/essays/are-you-sabotaging-your-creativity",
+        permanent: true,
+      },
+      {
+        source: "/what-ive-learned-from-road-trips",
+        destination: "/essays/what-ive-learned-from-road-trips",
+        permanent: true,
+      },
+      {
+        source: "/category/uncategorized/tech-and-creativity",
+        destination: "/tech",
+        permanent: true,
+      },
+      {
+        source: "/category/uncategorized/page/2",
+        destination: "/",
+        permanent: true,
+      },
+
+      // Fix bad imported slug
+      {
+        source: "/essays/https-daddieshinor-com-how-to-build-a-personal-brand",
+        destination: "/essays/how-to-build-a-personal-brand",
+        permanent: true,
+      },
+
+      // Existing page_id cleanup
       {
         source: "/",
         has: [

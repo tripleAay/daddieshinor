@@ -106,14 +106,13 @@ export function SubscribeModal({ isOpen, onClose }: SubscribeModalProps) {
                 <Sparkles className="h-3 w-3 text-[#968e68]" />
                 Newsletter
               </div>
-
+n
               <h2 className="mt-2 pr-8 text-[15px] font-extrabold leading-snug text-black dark:text-white">
                 Stay in the loop
               </h2>
 
-              <p className="mt-1 text-[12px] leading-[1.45] text-zinc-600 dark:text-zinc-400">
-                Get new essays, thoughts, and rare insights delivered straight to
-                your inbox.
+              <p className="mt-1 text-[12px] leading-[1.45] text-zninc-600 dark:text-zinc-400">
+               Get exclusive updates, tech insights & culture vibes straight to your inbox – no spam, promise 💌
               </p>
 
               <form onSubmit={handleSubmit} className="mt-3 space-y-2.5">
