@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { Metadata } from "next";
+import Script from "next/script";
 
 import Header from "@/components/header";
 import Hero from "@/components/hero";
@@ -21,22 +22,22 @@ import MarqueeNote from "@/components/marqueeNote";
 // --- Enhanced Metadata for Homepage ---
 export const metadata: Metadata = {
   title: {
-   default: "Daddieshinor — Tech, Culture, Life & Brand Insights",
-    template: "%s — Daddieshinor",
+    default: "Daddieshinor",
+    template: "%s | Daddieshinor",
   },
   description:
-  "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective — thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
+    "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective — thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
   keywords: [
-  "tech culture blog",
-  "technology and culture insights",
-  "branding and identity analysis",
-  "modern life essays",
-  "African tech culture",
-  "thoughtful essays",
-  "creative thinking platform",
-  "startup and branding insights",
-  "Daddieshinor blog",
-],
+    "tech culture blog",
+    "technology and culture insights",
+    "branding and identity analysis",
+    "modern life essays",
+    "African tech culture",
+    "thoughtful essays",
+    "creative thinking platform",
+    "startup and branding insights",
+    "Daddieshinor blog",
+  ],
 
   metadataBase: new URL("https://daddieshinor.com"),
 
@@ -56,7 +57,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Daddieshinor — Ideas That Shape How We Think",
     description:
-   "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective. Thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
+      "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective. Thoughtful essays, sharp analysis, and real-world insights from Africa and beyond.",
     url: "https://daddieshinor.com",
     siteName: "Daddieshinor",
     type: "website",
@@ -153,7 +154,7 @@ export default function Home() {
   return (
     <div className="relative min-h-screen bg-[#D9DCD6] font-sans antialiased dark:bg-black">
       <div className="sticky top-0 z-50 w-full">
-      
+
         <Header />
         <MarqueeNote />
       </div>
@@ -176,13 +177,51 @@ export default function Home() {
             <SubscribeModalTrigger />
           </div>
         </div>
+        <Script
+          id="organization-schema"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              name: "Daddieshinor",
+              url: "https://daddieshinor.com",
+              logo: "https://daddieshinor.com/DS.png",
+              description:
+                "A media platform exploring technology, culture, life, and brands with depth, clarity, and perspective.",
+              sameAs: [
+                "https://instagram.com/daddieshinorhq",
+                "https://facebook.com/daddieshinor",
+                "https://tiktok.com/@daddieshinorhq",
+                "https://medium.com/@daddieshinor"
+              ]
+            }),
+          }}
+        />
+
+        <Script
+          id="website-schema"
+          type="application/ld+json"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              name: "Daddieshinor",
+              url: "https://daddieshinor.com",
+              description:
+                "Technology, culture, life, and brand insights.",
+            }),
+          }}
+        />
       </main>
 
       <div className="mt-10 mb-12 md:mt-12 mx-auto w-full max-w-4xl px-4">
         <YouTubeEmbed
           urlOrId="https://youtu.be/-U5dEdWouDY?si=u1fyqkI14-SpGvNl"
           className="w-full"
-          // Optional: start={30} if you want to skip intro
+        // Optional: start={30} if you want to skip intro
         />
       </div>
       <Footer />
