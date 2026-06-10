@@ -63,9 +63,23 @@ const CATEGORY_SECTIONS = [
 
 const PER_CATEGORY = 4;
 
+function decodeHtmlEntities(input: string): string {
+  if (typeof window === "undefined") return input;
+
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = input;
+  return textarea.value;
+}
+
 function stripHtml(input: unknown) {
   if (typeof input !== "string") return "";
-  return input.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+
+  const withoutTags = input
+    .replace(/<[^>]+>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return decodeHtmlEntities(withoutTags);
 }
 
 function formatDate(dateStr: string) {
