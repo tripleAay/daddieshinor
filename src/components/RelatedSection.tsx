@@ -37,8 +37,26 @@ const WP_BASE_URL = process.env.NEXT_PUBLIC_WP_URL || "https://daddieshinor.com"
 
 const ACCENT = "#968e68";
 
+function decodeHtmlEntities(input: string): string {
+  return input
+    .replace(/&#8217;/g, "’")
+    .replace(/&#8216;/g, "‘")
+    .replace(/&#8220;/g, "“")
+    .replace(/&#8221;/g, "”")
+    .replace(/&#038;/g, "&")
+    .replace(/&amp;/g, "&")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'");
+}
+
 function stripHtml(input: string) {
-  return (input || "").replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+  const withoutTags = (input || "")
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  return decodeHtmlEntities(withoutTags);
 }
 
 function getFeaturedImage(post: WPPost): string {
