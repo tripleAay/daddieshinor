@@ -2,17 +2,51 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Instagram, Twitter, Youtube, Linkedin, Globe } from "lucide-react";
+import {
+  Instagram,
+  Twitter,
+  Linkedin,
+  Globe,
+  ExternalLink,
+} from "lucide-react";
+import { FaTiktok, FaMedium } from "react-icons/fa6";
 import LatestComponent from "@/components/latest";
+
+const socialLinks = [
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/daddieshinorhq/",
+    icon: Instagram,
+    description: "Daddieshinor on Instagram",
+  },
+  {
+    name: "X",
+    href: "https://x.com/daddieshinorhq",
+    icon: Twitter,
+    description: "Daddieshinor on X",
+  },
+  {
+    name: "TikTok",
+    href: "https://www.tiktok.com/@daddieshinorhq",
+    icon: FaTiktok,
+    description: "Daddieshinor on TikTok",
+  },
+  {
+    name: "Medium",
+    href: "https://medium.com/@daddieshinor",
+    icon: FaMedium,
+    description: "Daddieshinor on Medium",
+  },
+];
 
 export default function PostFooter() {
   const [showLatest, setShowLatest] = useState(false);
 
   return (
     <>
-      <footer className="mt-16 rounded-xl border-t border-zinc-200/70 bg-white/40 pt-12 pb-16 backdrop-blur-sm dark:border-zinc-800/70 dark:bg-zinc-950/40 md:mt-24">
+      <footer className="mt-16 rounded-xl border-t border-zinc-200/70 pt-12 pb-16 backdrop-blur-sm dark:border-zinc-800/70 dark:bg-zinc-950/40 md:mt-24">
         <div className="mx-auto max-w-4xl px-5 md:px-0">
-          {/* Brand / identity */}
+          {/* Brand identity */}
           <div className="mb-10 text-center">
             <Link href="/" className="inline-block">
               <h2 className="text-2xl font-black tracking-tight text-black dark:text-white sm:text-3xl">
@@ -26,61 +60,56 @@ export default function PostFooter() {
             </p>
           </div>
 
-          {/* Social links */}
-          <div className="mb-12 flex justify-center">
-            <div className="flex items-center gap-6 rounded-full border border-black/5 bg-white/60 px-6 py-3 shadow-sm backdrop-blur-md dark:bg-zinc-900/50">
-              <a
-                href="#"
-                aria-label="Instagram"
-                className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
-              >
-                <Instagram className="h-5 w-5" />
-              </a>
+          {/* Daddieshinor social accounts */}
+          <div className="mb-5 text-center">
+            <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-zinc-500">
+              Follow Daddieshinor
+            </p>
 
-              <a
-                href="#"
-                aria-label="X / Twitter"
-                className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
-              >
-                <Twitter className="h-5 w-5" />
-              </a>
+            <div className="flex justify-center">
+              <div className="flex items-center gap-5 rounded-full border border-black/5 bg-white/60 px-6 py-3 shadow-sm backdrop-blur-md dark:border-white/10 dark:bg-zinc-900/50">
+                {socialLinks.map((social) => {
+                  const Icon = social.icon;
 
-              <a
-                href="#"
-                aria-label="YouTube"
-                className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
-              >
-                <Youtube className="h-5 w-5" />
-              </a>
+                  return (
+                    <a
+                      key={social.name}
+                      href={social.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={social.description}
+                      title={social.description}
+                      className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
+                    >
+                      <Icon className="h-5 w-5" />
+                    </a>
+                  );
+                })}
 
-              <a
-                href="#"
-                aria-label="LinkedIn"
-                className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
-              >
-                <Linkedin className="h-5 w-5" />
-              </a>
-
-              <a
-                href="/"
-                aria-label="Website"
-                className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
-              >
-                <Globe className="h-5 w-5" />
-              </a>
+                <Link
+                  href="/"
+                  aria-label="Visit Daddieshinor website"
+                  title="Daddieshinor website"
+                  className="text-zinc-400 transition-all duration-300 hover:scale-110 hover:text-[#968e68]"
+                >
+                  <Globe className="h-5 w-5" />
+                </Link>
+              </div>
             </div>
           </div>
 
-          {/* Quick links */}
-          <div className="mb-10 grid grid-cols-2 gap-6 text-center text-sm sm:grid-cols-4">
+          
+          {/* Footer navigation */}
+          <div className="mb-10 grid grid-cols-2 gap-8 text-center text-sm sm:grid-cols-4">
             <div>
-              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-                Quick
+              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Explore
               </h4>
 
               <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                 <li>
                   <button
+                    type="button"
                     onClick={() => setShowLatest(true)}
                     className="transition-colors hover:text-black dark:hover:text-white"
                   >
@@ -118,7 +147,7 @@ export default function PostFooter() {
             </div>
 
             <div>
-              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
+              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
                 Legal
               </h4>
 
@@ -152,9 +181,9 @@ export default function PostFooter() {
               </ul>
             </div>
 
-            <div className="col-span-2 sm:col-span-1">
-              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
-                More
+            <div>
+              <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
+                Work With Us
               </h4>
 
               <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
@@ -167,13 +196,22 @@ export default function PostFooter() {
                   </Link>
                 </li>
 
-               
+                <li>
+                  <Link
+                    href="/contact"
+                    className="transition-colors hover:text-black dark:hover:text-white"
+                  >
+                    Partnerships
+                  </Link>
+                </li>
               </ul>
             </div>
 
-            <div className="col-span-2 text-center sm:col-span-1 sm:text-left">
-              <p className="mt-2 text-xs text-zinc-500 dark:text-zinc-500 sm:mt-0">
-                Built slowly. Written thoughtfully.
+            <div className="col-span-2 sm:col-span-1">
+              <p className="mt-2 text-xs leading-relaxed text-zinc-500 sm:mt-0">
+                Built slowly.
+                <br />
+                Written thoughtfully.
               </p>
 
               <Link
@@ -185,19 +223,21 @@ export default function PostFooter() {
               </Link>
             </div>
           </div>
-
-
         </div>
 
-        {/* Bottom copyright bar */}
+        {/* Copyright */}
         <div className="mt-10 border-t border-zinc-200/70 bg-white/40 py-6 dark:border-zinc-800/70 dark:bg-zinc-950/40">
           <div className="mx-auto max-w-4xl px-5 text-center text-xs text-zinc-500 dark:text-zinc-400 md:px-0">
-            <p>© {new Date().getFullYear()} Daddieshinor. All rights reserved.</p>
+            <p>
+              © {new Date().getFullYear()} Daddieshinor. All rights reserved.
+            </p>
           </div>
         </div>
       </footer>
 
-      {showLatest && <LatestComponent onClose={() => setShowLatest(false)} />}
+      {showLatest && (
+        <LatestComponent onClose={() => setShowLatest(false)} />
+      )}
     </>
   );
 }

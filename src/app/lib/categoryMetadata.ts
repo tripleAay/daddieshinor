@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 const SITE_URL = (
-  process.env.NEXT_PUBLIC_SITE_URL || "https://daddieshinor.com"
+  process.env.NEXT_PUBLIC_SITE_URL || "https://daddieshinor.com" 
 ).replace(/\/+$/, "");
 
 type CategoryMetaInput = {

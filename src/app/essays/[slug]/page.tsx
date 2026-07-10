@@ -188,9 +188,13 @@ export async function generateMetadata({
   }
 
   const title = stripHtml(post.title?.rendered || "Daddieshinor");
-  const desc =
-    stripHtml(post.excerpt?.rendered || "") ||
-    stripHtml(post.content?.rendered || "").slice(0, 160);
+const contentText = stripHtml(post.content?.rendered || "");
+const excerptText = stripHtml(post.excerpt?.rendered || "");
+
+const desc =
+  contentText.slice(0, 160) ||
+  excerptText ||
+  `${title} — an essay from Daddieshinor.`;
 
   const featured = getFeatured(post);
   const canonicalUrl = `${SITE_URL}/essays/${slug}`;
