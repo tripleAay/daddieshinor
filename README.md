@@ -1,87 +1,105 @@
 # Daddieshinor
 
-Daddieshinor is a modern African tech blog exploring systems, software, engineering discipline, and digital culture.
+Daddieshinor is a modern African technology publication exploring software, engineering, digital culture, and the systems shaping the continent.
 
-Built with precision and long-term scalability in mind, it is not just a blog — it is a structured writing platform designed to evolve into a full ecosystem.
+The platform is built as a production-oriented content system rather than a simple blog, with a Next.js frontend, headless CMS integration, a dedicated subscriber API, analytics, media support, and SEO infrastructure.
 
----
+## About
 
-## 🌍 About
+Daddieshinor combines:
 
-Daddieshinor is a technology-focused publication from Africa.
+- Technical essays and software engineering
+- Architecture and engineering discipline
+- Technology and digital culture
+- African perspectives on technology
 
-It blends:
-- Deep technical essays
-- Software architecture thinking
-- Engineering discipline
-- Cultural perspective from the continent
+The platform is designed around performance, structured content, maintainability, and a deliberate editorial experience.
 
-The platform emphasizes clarity, structure, and intentional design — both in writing and in code.
+## Key Features
 
----
+- Dynamic article routing with Next.js App Router
+- Headless CMS integration for structured content management
+- Dedicated FastAPI microservice for subscriber operations
+- PostHog event analytics
+- Dynamic category and content pages
+- Embedded YouTube video essays
+- Media-aware article experiences
+- Ambient background audio support
+- Dark mode
+- Responsive, component-driven UI
+- SEO metadata, sitemap, and robots configuration
+- Error handling and loading states across content flows
 
-## ✨ Core Features
+## Architecture
 
-- Dynamic essay routing (Next.js App Router)
-- CMS-powered content management
-- FastAPI subscriber microservice
-- PostHog analytics integration
-- Embedded YouTube essays & media
-- Ambient platform background audio support
-- Dark mode support
-- Performance-first UI
-- Component-driven architecture
-
----
-
-## 🏗 System Architecture
-
-Daddieshinor follows a decoupled architecture to maintain control, scalability, and clean separation of concerns.
+Daddieshinor uses a decoupled architecture that separates the presentation layer, content management, subscriber services, and analytics.
 
 ### Frontend
-- Next.js 16 (App Router)
+
+- Next.js 16
+- React
 - TypeScript
 - Tailwind CSS
+- Next.js App Router
 - Turbopack
 
-### Content Backend
-- Headless CMS
-- Structured content modeling
+### Content
 
-### Subscriber Service
-- Python FastAPI microservice
-- Isolated API layer
-- Extensible for segmentation & automation
+- Headless CMS
+- Structured content models
+- Dynamic content retrieval
+- Content transformation and sanitization
+
+### Subscriber API
+
+- Python
+- FastAPI
+- Dedicated API layer for subscriber operations
 
 ### Analytics
-- PostHog (event-driven tracking)
 
-This structure enables:
+- PostHog
+- Event-based product analytics
 
-- Independent scaling of services
-- Clear data boundaries
-- Controlled analytics
-- Future expansion into premium or SaaS features
+### SEO
 
----
+- Dynamic metadata
+- Sitemap generation
+- Robots configuration
+- Google Search Console integration
 
-## 🔊 Media Layer
+## Engineering Highlights
 
-Daddieshinor includes:
+### Decoupled Content Architecture
 
-- Background ambient sound support
-- Embedded YouTube video essays
-- Media-aware layout components
-- Controlled playback handling
+The frontend consumes structured content from a headless CMS rather than relying on hardcoded article data. This allows editorial content and application code to evolve independently.
 
-Media is treated as part of the writing experience — not an afterthought.
+### API Layer
 
----
+Subscriber functionality is isolated into a FastAPI service, keeping application responsibilities separated from the frontend.
 
-## 🚀 Installation (Frontend)
+### Content Processing
 
-Clone the repository:
+The application includes content cleaning and transformation logic for handling CMS-generated HTML, entities, excerpts, related content, and dynamic article rendering.
 
-```bash
-git clone [https://github.com/tripleAay/daddieshinor.git]
-cd daddieshinor
+### Performance & UX
+
+The interface uses reusable components, responsive layouts, loading states, error handling, and optimized rendering patterns to maintain a fast and consistent reading experience.
+
+### Media System
+
+Daddieshinor treats media as part of the editorial experience, supporting embedded video, article imagery, and controlled ambient audio.
+
+## Project Structure
+
+```text
+daddieshinor/
+├── src/
+│   ├── components/
+│   ├── app/
+│   └── ...
+├── public/
+├── next.config.ts
+├── tailwind.config.js
+├── next-sitemap.config.js
+└── package.json
