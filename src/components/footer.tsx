@@ -106,6 +106,9 @@ export default function PostFooter() {
                 Explore
               </h4>
 
+
+              
+
               <ul className="space-y-2 text-zinc-600 dark:text-zinc-400">
                 <li>
                   <button
