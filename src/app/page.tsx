@@ -32,7 +32,7 @@ export default function MaintenancePage() {
           </a>
 
           <a
-            href="/subscribe"
+            href="/"
             className="px-6 py-3 bg-white text-black rounded-full"
           >
             Subscribe
