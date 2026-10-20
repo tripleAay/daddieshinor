@@ -573,7 +573,7 @@ export default function Hero() {
 >
   <div className="relative aspect-[4/5] overflow-hidden">
     <Image
-      src="/images/premium_photo-1742995782977-ee4b53fecadb.jpg"
+      src="/images/premium_photo-1742995782977-ee4b53fecad.png"
       alt="Daddieshinor editorial visual"
       fill
       sizes="(max-width: 1024px) 100vw, 20vw"
