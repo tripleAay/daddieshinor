@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "../app/globals.css";
 import { AudioProvider } from "../components/audioProvider";
+import SiteMotion from "@/components/SiteMotion";
 import Toaster from "@/components/toaster";
 import { Providers } from "./providers";
 
@@ -62,8 +63,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <head>
+        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');document.documentElement.classList.toggle('dark',t!=='light');}catch(e){document.documentElement.classList.add('dark');}})();` }} />
         <link rel="icon" href="/DS.png" type="image/png" />
         <link rel="apple-touch-icon" href="/DS.png" />
         <link rel="shortcut icon" href="/DS.png" />
@@ -73,6 +75,7 @@ export default function RootLayout({
       <body className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
         <Providers>  {/* ← PostHog wrapper added here */}
           <AudioProvider>
+            <SiteMotion />
             {children}
             {/* Add the popup here – it will overlay site-wide, appear after 7s for new visitors only */}
            

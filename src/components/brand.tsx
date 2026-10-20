@@ -162,8 +162,8 @@ export default function BrandsSection() {
   if (loading || !featured) return null;
 
   return (
-    <section className="dark:bg-black py-12 md:py-16">
-      <div className="mx-auto max-w-[1320px] px-5 md:px-6 lg:px-8">
+    <section className="ds-category-section border-t border-black/20 dark:border-white/20 pt-8 pb-0 md:pt-10">
+      <div className="mx-auto w-full">
         {/* Header */}
         <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
@@ -192,7 +192,7 @@ export default function BrandsSection() {
         {/* Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8">
           {/* Featured */}
-          <article className="lg:col-span-5 group relative overflow-hidden rounded-xl border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-950 shadow-sm hover:shadow-lg hover:border-[#968e68]/30 transition-all duration-300">
+          <article className="lg:col-span-5 group relative overflow-hidden rounded-lg border border-zinc-200/70 dark:border-zinc-800/70 bg-white dark:bg-zinc-950 shadow-none hover:shadow-sm hover:border-[#968e68]/30 transition-all duration-300">
             <Link href={featured.slug}>
               <div className="relative aspect-[4/5] sm:aspect-[5/4] overflow-hidden">
                 <Image

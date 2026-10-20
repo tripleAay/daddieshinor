@@ -94,7 +94,7 @@ export default function PostLayout({
 
   useEffect(() => {
     const bar = document.getElementById("reading-progress");
-    const scroller = document.getElementById("post-scroller");
+    const scroller = document.scrollingElement;
     if (!bar || !scroller) return;
 
     const onScroll = () => {
@@ -104,25 +104,29 @@ export default function PostLayout({
       bar.style.width = `${Math.min(progress, 100)}%`;
     };
 
-    scroller.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
     onScroll();
 
-    return () => scroller.removeEventListener("scroll", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
-    <article className="h-screen flex flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white overflow-hidden">
+    <article className="ds-article-page min-h-screen flex flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white">
       <div
         id="reading-progress"
-        className="fixed top-0 left-0 h-[3px] w-0 bg-orange-600 z-50 transition-[width] duration-100"
+        className="fixed top-0 left-0 h-[3px] w-0 bg-[#968e68] z-[60] transition-[width] duration-100"
       />
 
-      <div className="flex-none z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
+      <div className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
         <Header />
       </div>
 
-      <div className="flex-1 overflow-hidden">
-        <div className="h-full mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 grid grid-cols-12 gap-0 lg:gap-6">
+      <div className="flex-1">
+        <div className="h-full mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 grid grid-cols-12 gap-0 lg:gap-6">
           <aside className="hidden md:flex md:col-span-3 lg:col-span-2 flex-col gap-5 py-8 overflow-hidden">
             <div className="rounded-xl border border-black/8 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
               <div className="flex items-center gap-2 text-xs">
@@ -134,13 +138,13 @@ export default function PostLayout({
 
               <div className="mt-4">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
-                  <Sparkles className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                  <Sparkles className="h-3.5 w-3.5 text-[#827c5b] dark:text-[#c5bc8d]" />
                   {category}
                 </span>
               </div>
 
               <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-bold text-black/70 dark:border-white/10 dark:bg-zinc-950 dark:text-white/70">
-                <Clock3 className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
+                <Clock3 className="h-3.5 w-3.5 text-[#827c5b] dark:text-[#c5bc8d]" />
                 {readingTime}
               </div>
 
@@ -192,7 +196,7 @@ export default function PostLayout({
 
           <main
             id="post-scroller"
-            className="col-span-12 md:col-span-6 lg:col-span-7 h-full overflow-y-auto overscroll-contain min-w-0
+            className="col-span-12 md:col-span-9 lg:col-span-7 min-w-0
                        px-0 md:px-4 lg:px-6
                        scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent"
           >
@@ -234,7 +238,7 @@ export default function PostLayout({
                 </div>
               </div>
 
-              <h1 className="mt-3 text-2xl leading-tight font-black tracking-tight sm:text-3xl lg:text-4xl xl:text-5xl">
+              <h1 className="mt-3 text-[clamp(2.2rem,4.2vw,4rem)] leading-[1.04] font-black tracking-[-0.045em]">
                 {title}
               </h1>
 
@@ -300,7 +304,7 @@ export default function PostLayout({
             </div>
           </main>
 
-          <aside className="hidden md:flex md:col-span-3 lg:col-span-3 flex-col gap-5 py-8 overflow-hidden">
+          <aside className="hidden lg:flex lg:col-span-3 flex-col gap-5 py-8 overflow-hidden">
             <div className="flex-none">
               <NewsletterCard
                 badgeText="Daddieshinor Letters"
@@ -312,8 +316,8 @@ export default function PostLayout({
 
             <div className="rounded-xl border border-black/8 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
               <div className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500/10 ring-1 ring-orange-500/15 dark:bg-orange-500/15 dark:ring-orange-400/20">
-                  <Handshake className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#968e68]/10 ring-1 ring-[#968e68]/15 dark:bg-[#968e68]/15 dark:ring-[#968e68]/20">
+                  <Handshake className="h-4 w-4 text-[#827c5b] dark:text-[#c5bc8d]" />
                 </span>
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.20em] text-black/60 dark:text-white/60">

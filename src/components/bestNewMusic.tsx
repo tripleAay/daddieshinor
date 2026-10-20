@@ -192,7 +192,7 @@ export default function BestNewReads() {
   if (error) {
     return (
       <section className="bg-black text-white py-12 md:py-16">
-        <div className="mx-auto max-w-[1440px] px-5 text-center">
+        <div className="mx-auto max-w-[1440px] text-center">
           <p className="text-zinc-300">{error}</p>
         </div>
       </section>
@@ -202,20 +202,20 @@ export default function BestNewReads() {
   if (!entries.length) return null;
 
   return (
-   <section className="relative overflow-hidden bg-[#151515] pt-16 pb-14 text-white md:px-10 md:pt-16 md:pb-16 lg:px-16">
-      <div className="mx-auto max-w-[1440px] px-5">
+   <section className="ds-music relative overflow-hidden rounded-lg bg-[#151515] px-5 py-9 text-white sm:px-8 md:py-12">
+      <div className="mx-auto max-w-[1440px]">
         {/* Header */}
-        <header className="mb-10 md:mb-14 text-center md:text-left">
-          <h2 className="text-4xl md:text-6xl font-black tracking-tight uppercase">
+        <header className="mb-8 md:mb-10 text-left">
+          <h2 className="text-3xl md:text-5xl font-black tracking-tight uppercase">
             Best New Reads
           </h2>
           <p
             ref={subtitleRef}
-            className="mt-3 text-lg md:text-xl text-zinc-400 font-medium"
+            className="mt-3 text-sm md:text-base text-zinc-400 font-medium"
           >
             {displayText}
           </p>
-          <div className="mt-6 h-[2px] w-24 mx-auto md:mx-0 bg-gradient-to-r from-white via-[#968e68] to-white" />
+          <div className="mt-6 h-px w-24 bg-gradient-to-r from-white via-[#968e68] to-white" />
         </header>
 
         {/* Entries Grid */}
@@ -252,7 +252,7 @@ export default function BestNewReads() {
 
               {/* Content */}
               <div className="mt-4 sm:mt-6 text-center">
-                <div className="text-4xl sm:text-5xl md:text-6xl font-black leading-none text-zinc-700 group-hover:text-[#968e68] transition-colors">
+                <div className="text-2xl sm:text-3xl md:text-4xl font-black leading-none text-zinc-700 group-hover:text-[#968e68] transition-colors">
                   {entry.rank}
                 </div>
                 <h3 className="mt-2 sm:mt-3 text-lg sm:text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">

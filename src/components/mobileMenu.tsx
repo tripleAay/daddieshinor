@@ -63,7 +63,7 @@ export default function MobileMenu({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm lg:hidden"
+            className="fixed inset-0 z-[9999] bg-black/60 backdrop-blur-sm xl:hidden"
             onClick={onClose}
           />
 
@@ -79,7 +79,7 @@ export default function MobileMenu({
             className="
               fixed top-0 left-0 z-[10000] h-[100dvh] w-4/5 max-w-xs
               bg-[#D9DCD6]/95  dark:bg-zinc-950
-              shadow-2xl lg:hidden
+              shadow-2xl xl:hidden
               flex flex-col
             "
             onClick={(e) => e.stopPropagation()}

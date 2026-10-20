@@ -1,6 +1,7 @@
 // app/providers.tsx
 'use client'
 
+import { MotionConfig } from 'framer-motion'
 import posthog from 'posthog-js'
 import { PostHogProvider } from 'posthog-js/react'
 import { ReactNode, useEffect } from 'react'  // ← add useEffect
@@ -8,7 +9,7 @@ import { ReactNode, useEffect } from 'react'  // ← add useEffect
 export function Providers({ children }: { children: ReactNode }) {
   useEffect(() => {
     // Prevent double-init in React Strict Mode / dev
-    if (typeof window !== 'undefined' && !posthog.__loaded) {
+    if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_POSTHOG_KEY && !posthog.__loaded) {
       posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
         api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST,
         defaults: '2026-01-30',
@@ -19,5 +20,5 @@ export function Providers({ children }: { children: ReactNode }) {
     }
   }, [])  // Empty array = run once on mount
 
-  return <PostHogProvider client={posthog}>{children}</PostHogProvider>
+  return <PostHogProvider client={posthog}><MotionConfig reducedMotion="user">{children}</MotionConfig></PostHogProvider>
 }

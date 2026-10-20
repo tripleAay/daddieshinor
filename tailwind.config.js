@@ -25,14 +25,14 @@ module.exports = {
             p: {
               marginTop: "0",
               marginBottom: "1.1em",
-              textAlign: "justify",           // ← JUSTIFICATION
-              hyphens: "auto",                // optional: better line breaks (especially good for longer words)
+              textAlign: "left",           // ← JUSTIFICATION
+              hyphens: "manual",                // optional: better line breaks (especially good for longer words)
               textWrap: "pretty",             // modern: avoids awkward widows/orphans
             },
 
             // Links
             a: {
-              color: "#f97316", // orange-500
+              color: "#706947", // orange-500
               fontWeight: "600",
               textDecoration: "none",
               "&:hover": { textDecoration: "underline" },
@@ -41,7 +41,7 @@ module.exports = {
             // Blockquote
             blockquote: {
               fontStyle: "italic",
-              borderLeftColor: "#f97316",
+              borderLeftColor: "#706947",
             },
 
             // Images from WP (centered + rounded + shadow)
@@ -67,7 +67,7 @@ module.exports = {
             "& > p:first-of-type": {
               marginTop: "0",
               "&::first-letter": {
-                color: "#ea580c",               // orange-600 – sync with your orange links
+                color: "#706947",               // orange-600 – sync with your orange links
                 float: "left",
                 fontWeight: "900",
                 fontSize: "4.5rem",             // big – adjust 4rem → 5rem as needed
@@ -88,12 +88,12 @@ module.exports = {
         invert: {
           css: {
             color: "#e4e4e7", // zinc-200
-            a: { color: "#fb923c" },
-            blockquote: { borderLeftColor: "#fb923c" },
+            a: { color: "#c5bc8d" },
+            blockquote: { borderLeftColor: "#c5bc8d" },
 
             // Dark mode drop cap adjustment
             "& > p:first-of-type::first-letter": {
-              color: "#fb923c",               // orange-400-ish in dark
+              color: "#c5bc8d",               // orange-400-ish in dark
             },
           },
         },

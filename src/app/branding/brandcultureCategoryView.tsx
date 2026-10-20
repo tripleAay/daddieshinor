@@ -30,20 +30,20 @@ export default function BrandingCategoryView({
   const rest = useMemo(() => (posts?.length ? posts.slice(1) : []), [posts]);
 
   return (
-    <article className="flex h-screen flex-col overflow-hidden bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white">
+    <article className="ds-category-page flex min-h-screen flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white">
       {/* Fixed Header */}
-      <div className="z-40 flex-none border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
+      <div className="sticky top-0 z-40 flex-none border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
         <Header />
       </div>
 
       {/* Locked body area */}
-      <div className="h-[calc(100vh-var(--header-height,80px))] flex-1 overflow-hidden">
+      <div className="flex-1">
         <div className="mx-auto grid h-full w-full max-w-[1320px] grid-cols-12 gap-0 px-4 sm:px-6 lg:gap-6 lg:px-8">
           {/* LEFT RAIL */}
           <aside className="hidden overflow-hidden py-8 md:col-span-3 md:flex md:flex-col md:gap-5 lg:col-span-2">
             <div className="rounded-2xl border border-black/10 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/10 dark:bg-zinc-900/50">
               <div className="inline-flex items-center gap-2 rounded-full border border-black/20 bg-white px-4 py-1.5 text-xs font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
-                <Sparkles className="h-4 w-4 text-orange-600 dark:text-orange-400" />
+                <Sparkles className="h-4 w-4 text-[#827c5b] dark:text-[#c5bc8d]" />
                 Branding
               </div>
 
@@ -71,7 +71,7 @@ export default function BrandingCategoryView({
           {/* CENTER — ONLY SCROLLING COLUMN */}
           <main
             id="branding-scroller"
-            className="scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent col-span-12 h-full min-w-0 overflow-y-auto overscroll-contain px-0 md:col-span-6 md:px-4 lg:col-span-7 lg:px-6"
+            className="scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent col-span-12 min-w-0 px-0 md:col-span-9 md:px-4 lg:col-span-7 lg:px-6"
           >
             <div className="min-w-0 py-8 pb-24">
               <div className="min-w-0 break-words">
@@ -186,7 +186,7 @@ export default function BrandingCategoryView({
           </main>
 
           {/* RIGHT RAIL */}
-          <aside className="hidden overflow-hidden py-8 md:col-span-3 md:flex md:flex-col md:gap-5 lg:col-span-3">
+          <aside className="hidden overflow-hidden py-8 lg:col-span-3 lg:flex md:flex-col md:gap-5 lg:col-span-3">
             <div className="flex-none">
               <NewsletterCard
                 badgeText="Daddieshinor Letters"

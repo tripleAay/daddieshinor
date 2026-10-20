@@ -220,7 +220,7 @@ export default function LatestComponent({ onClose }: LatestSectionProps) {
   const Wrapper = onClose ? "div" : "section";
 
   const content = (
-    <section className="mx-auto w-full max-w-[1120px] px-4 py-8 md:py-10">
+    <section className="ds-latest mx-auto w-full border-t border-black/20 py-8 dark:border-white/20 md:py-10">
       <div className="mb-6 flex items-end justify-between gap-4">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1 text-[11px] font-black uppercase tracking-widest text-black/70 dark:border-white/10 dark:bg-zinc-950 dark:text-white/70">

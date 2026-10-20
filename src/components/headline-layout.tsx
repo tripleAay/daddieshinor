@@ -136,7 +136,7 @@ export default function HeadlineLayout({
   }, [page, categoryId, hasMore]);
 
   return (
-    <section className="mx-auto max-w-[1440px] px-5 py-16 md:py-24">
+    <section className="ds-headline-index mx-auto max-w-[1440px] border-t border-black/20 py-8 dark:border-white/20 md:py-12">
       <div className="mb-12 text-center">
         <h1 className="text-4xl md:text-5xl lg:text-6xl font-black tracking-tight text-black dark:text-white">
           {title}

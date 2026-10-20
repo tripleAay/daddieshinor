@@ -38,7 +38,7 @@ export default function Header() {
   const [theme, setTheme] = useState<Theme>("light");
   const [mounted, setMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [currentTime, setCurrentTime] = useState(formatWATTime());
+  const [currentTime, setCurrentTime] = useState("--:--");
   const [tick, setTick] = useState(false);
   const [q, setQ] = useState("");
 
@@ -50,26 +50,15 @@ export default function Header() {
   useEffect(() => {
     setMounted(true);
     const stored = localStorage.getItem("theme") as Theme | null;
-    const prefers = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const initial = stored ?? (prefers ? "dark" : "light");
+    const initial: Theme = stored === "light" || stored === "dark"
+      ? stored
+      : "dark";
     setTheme(initial);
     applyTheme(initial);
   }, []);
 
   useEffect(() => {
-    if (!localStorage.getItem("theme")) {
-      const media = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = () => {
-        const next = media.matches ? "dark" : "light";
-        setTheme(next);
-        applyTheme(next);
-      };
-      media.addEventListener("change", handler);
-      return () => media.removeEventListener("change", handler);
-    }
-  }, []);
-
-  useEffect(() => {
+    setCurrentTime(formatWATTime());
     const id = setInterval(() => {
       setCurrentTime(formatWATTime());
       setTick(true);
@@ -101,8 +90,8 @@ export default function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full bg-[#D9DCD6]/95 backdrop-blur-xl dark:bg-zinc-950/90">
-        <div className="mx-auto flex h-12 max-w-7xl items-center justify-between gap-2 px-3 sm:h-[52px] sm:gap-3 sm:px-4 md:px-6 lg:px-8">
+      <header className="ds-site-header sticky top-0 z-50 w-full border-b border-black/10 text-black dark:border-white/10 dark:text-white bg-[#D9DCD6]/95 backdrop-blur-xl dark:bg-zinc-950/90">
+        <div className="mx-auto flex min-h-[64px] max-w-[1400px] items-center justify-between gap-2 px-3 sm:min-h-[72px] sm:gap-3 sm:px-4 md:px-6 lg:px-12">
           <Link
             href="/"
             className="group flex min-w-0 flex-1 items-center gap-2 transition-all sm:flex-none sm:gap-2.5"
@@ -121,20 +110,20 @@ export default function Header() {
               <span className="block truncate text-[15px] font-black tracking-tight text-black transition-colors group-hover:text-[#968e68] dark:text-white xs:text-base sm:text-xl">
                 Daddieshinor
               </span>
-              <span className="hidden text-[10px] font-medium tracking-wider text-black/50 dark:text-white/40 sm:block">
+              <span className="hidden text-[9px] font-medium tracking-wider text-black/50 dark:text-white/40 sm:block">
                 RC 8937639
               </span>
             </div>
           </Link>
 
-          <nav className="hidden items-center gap-1 lg:flex">
+          <nav className="hidden items-center gap-0 xl:flex">
             {nav.map((item) => {
               const active = isActive(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`relative rounded-full px-4 py-1.5 text-sm font-semibold tracking-tight transition-all duration-200 ${
+                  className={`relative rounded-full px-3 py-2 text-xs font-semibold tracking-tight transition-all duration-200 ${
                     active
                       ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
                       : "text-black/80 hover:bg-black/5 hover:text-black dark:text-white/80 dark:hover:bg-white/8 dark:hover:text-white"
@@ -152,7 +141,7 @@ export default function Header() {
 
             <Link
               href="/about"
-              className={`rounded-full px-4 py-1.5 text-sm font-semibold transition-all duration-200 ${
+              className={`rounded-full px-3 py-2 text-xs font-semibold transition-all duration-200 ${
                 isActive("/about")
                   ? "bg-black/6 text-black shadow-sm dark:bg-white/10 dark:text-white"
                   : "text-black/80 hover:bg-black/5 hover:text-black dark:text-white/80 dark:hover:bg-white/8 dark:hover:text-white"
@@ -163,7 +152,7 @@ export default function Header() {
           </nav>
 
           <div className="ml-2 flex shrink-0 items-center gap-1.5 sm:gap-2">
-            <div className="flex items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-[11px] font-medium tabular-nums dark:bg-white/5 sm:text-xs">
+            <div className="hidden 2xl:flex items-center gap-1.5 rounded-full bg-black/4 px-2.5 py-1 text-[11px] font-medium tabular-nums dark:bg-white/5 sm:text-xs">
               <span className="font-semibold text-[#968e68]">WAT</span>
 
               <span
@@ -178,7 +167,7 @@ export default function Header() {
             {/* Desktop search */}
             <form
               onSubmit={handleSearchSubmit}
-              className="relative hidden md:block md:w-56 lg:w-72 xl:w-80"
+              className="relative hidden md:block md:w-44 lg:w-48 xl:w-44 2xl:w-56"
               role="search"
             >
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-black/50 dark:text-white/50" />
@@ -187,7 +176,7 @@ export default function Header() {
                 onChange={(e) => setQ(e.target.value)}
                 placeholder="Search thoughts..."
                 aria-label="Search"
-                className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-sm placeholder:text-black/40 transition-all focus:border-[#968e68]/30 focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 dark:border-white/10 dark:bg-zinc-900/70 dark:placeholder:text-white/40"
+                className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-base placeholder:text-black/40 transition-all focus:border-[#968e68]/30 focus:outline-none focus:ring-2 focus:ring-[#968e68]/40 dark:border-white/10 dark:bg-zinc-900/70 dark:placeholder:text-white/40"
               />
               <button
                 type="submit"
@@ -200,7 +189,7 @@ export default function Header() {
 
             <button
               onClick={togglePlay}
-              className={`grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all duration-200 hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9 ${
+              className={`grid h-10 w-10 place-items-center rounded-full border border-black/10 transition-all duration-200 hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-11 sm:w-11 ${
                 isPlaying
                   ? "text-[#968e68] shadow-sm"
                   : "text-black/70 dark:text-white/60"
@@ -217,7 +206,7 @@ export default function Header() {
 
             <button
               onClick={toggleTheme}
-              className="grid h-8 w-8 place-items-center rounded-full border border-black/10 transition-all hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-9 sm:w-9"
+              className="grid h-10 w-10 place-items-center rounded-full border border-black/10 transition-all hover:bg-black/5 dark:border-white/10 dark:hover:bg-white/5 sm:h-11 sm:w-11"
               aria-label="Toggle theme"
             >
               {mounted &&
@@ -231,7 +220,7 @@ export default function Header() {
             <button
               type="button"
               onClick={() => setIsMenuOpen(true)}
-              className="rounded-full p-1.5 text-black/70 transition hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white lg:hidden"
+              className="grid h-10 w-10 place-items-center rounded-full text-black/70 transition hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/5 dark:hover:text-white xl:hidden"
               aria-label="Open menu"
             >
               <Menu className="h-5 w-5" />
@@ -250,7 +239,7 @@ export default function Header() {
               onChange={(e) => setQ(e.target.value)}
               placeholder="Search Daddieshinor..."
               aria-label="Search"
-              className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-sm placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#968e68]/30 dark:border-white/10 dark:bg-zinc-900/60 dark:placeholder:text-white/40"
+              className="h-9 w-full rounded-full border border-black/10 bg-white/70 pl-10 pr-10 text-base placeholder:text-black/40 focus:outline-none focus:ring-2 focus:ring-[#968e68]/30 dark:border-white/10 dark:bg-zinc-900/60 dark:placeholder:text-white/40"
             />
             <button
               type="submit"
