@@ -1,5 +1,285 @@
+
+"use client";
+
 import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 import styles from "./EditorialIntro.module.css";
+
+type WordPressPost = {
+  id: number;
+  slug: string;
+  title?: {
+    rendered?: string;
+  };
+  _embedded?: {
+    "wp:term"?: {
+      taxonomy?: string;
+      name?: string;
+    }[][];
+  };
+};
+
+type Headline = {
+  id: number;
+  number: string;
+  title: string;
+  category: string;
+  href: string;
+};
+
+function cleanWpText(value: unknown): string {
+  if (typeof value !== "string") return "";
+
+  const document = new DOMParser().parseFromString(
+    value,
+    "text/html"
+  );
+
+  document
+    .querySelectorAll("script, style, noscript")
+    .forEach((element) => element.remove());
+
+  return (document.body.textContent ?? "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function isPost(value: unknown): value is WordPressPost {
+  if (
+    !value ||
+    typeof value !== "object" ||
+    Array.isArray(value)
+  ) {
+    return false;
+  }
+
+  const post = value as Record<string, unknown>;
+
+  return (
+    typeof post.id === "number" &&
+    typeof post.slug === "string" &&
+    post.slug.trim().length > 0
+  );
+}
+
+function getCategory(post: WordPressPost): string {
+  const terms = (
+    post._embedded?.["wp:term"] ?? []
+  ).flat();
+
+  const category = terms.find(
+    (term) => term.taxonomy === "category"
+  );
+
+  return cleanWpText(category?.name) || "Journal";
+}
+
+function mapHeadline(
+  post: WordPressPost,
+  index: number
+): Headline {
+  return {
+    id: post.id,
+    number: String(index + 1).padStart(2, "0"),
+    title:
+      cleanWpText(post.title?.rendered) || "Untitled",
+    category: getCategory(post),
+    href: `/essays/${encodeURIComponent(post.slug)}`,
+  };
+}
+
+function EditorialHeadlines() {
+  const [headlines, setHeadlines] = useState<Headline[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [attempt, setAttempt] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    let cancelled = false;
+
+    const timeout = window.setTimeout(
+      () => controller.abort(),
+      20000
+    );
+
+    async function fetchHeadlines() {
+      try {
+        setLoading(true);
+        setError("");
+
+        const path =
+          "/wp-json/wp/v2/posts?per_page=7&orderby=date&order=desc&_embed=1";
+
+        const response = await fetch(
+          `/api/wp-proxy?path=${encodeURIComponent(path)}`,
+          {
+            cache: "no-store",
+            signal: controller.signal,
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(
+            `WordPress request failed: ${response.status}`
+          );
+        }
+
+        const data: unknown = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error("Invalid WordPress response.");
+        }
+
+        const posts = data.filter(isPost);
+
+        const mapped = posts
+          .slice(0, 7)
+          .map(mapHeadline);
+
+        if (cancelled) return;
+
+        setHeadlines(mapped);
+      } catch (requestError) {
+        if (cancelled) return;
+
+        console.error(
+          "[EDITORIAL HEADLINES]",
+          requestError instanceof Error
+            ? requestError.message
+            : "Unable to load headlines."
+        );
+
+        setError(
+          "Our latest stories are temporarily unavailable."
+        );
+      } finally {
+        window.clearTimeout(timeout);
+
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    void fetchHeadlines();
+
+    return () => {
+      cancelled = true;
+      controller.abort();
+      window.clearTimeout(timeout);
+    };
+  }, [attempt]);
+
+  return (
+    <aside
+      className={styles.headlines}
+      aria-label="Latest Daddieshinor stories"
+    >
+      <div className={styles.headlinesHeader}>
+        <div>
+          <span className={styles.headlinesEyebrow}>
+            The journal
+          </span>
+
+          <h2 className={styles.headlinesTitle}>
+            Worth your attention.
+          </h2>
+        </div>
+
+        <span className={styles.headlinesCount}>
+          {loading
+            ? "..."
+            : `${String(headlines.length).padStart(2, "0")} / 07`}
+        </span>
+      </div>
+
+      {loading ? (
+        <div
+          className={styles.headlinesList}
+          role="status"
+          aria-label="Loading latest stories"
+        >
+          {Array.from({ length: 7 }).map((_, index) => (
+            <div
+              className={styles.headlineSkeleton}
+              key={index}
+            >
+              <span />
+              <div>
+                <span />
+                <span />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className={styles.headlinesError}>
+          <p>{error}</p>
+
+          <button
+            type="button"
+            onClick={() => setAttempt((value) => value + 1)}
+          >
+            Try again <span aria-hidden="true">↗</span>
+          </button>
+        </div>
+      ) : headlines.length > 0 ? (
+        <>
+          <ol className={styles.headlinesList}>
+            {headlines.map((headline) => (
+              <li
+                className={styles.headlineItem}
+                key={headline.id}
+              >
+                <Link
+                  href={headline.href}
+                  className={styles.headlineLink}
+                >
+                  <span className={styles.headlineNumber}>
+                    {headline.number}
+                  </span>
+
+                  <span className={styles.headlineContent}>
+                    <span className={styles.headlineCategory}>
+                      {headline.category}
+                    </span>
+
+                    <span className={styles.headlineText}>
+                      {headline.title}
+                    </span>
+                  </span>
+
+                  <span
+                    className={styles.headlineArrow}
+                    aria-hidden="true"
+                  >
+                    ↗
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ol>
+
+          <Link
+            href="/essays"
+            className={styles.exploreJournal}
+          >
+            <span>Explore the journal</span>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        </>
+      ) : (
+        <div className={styles.headlinesEmpty}>
+          <p>New perspectives are on the way.</p>
+          <span>Published stories will appear here.</span>
+        </div>
+      )}
+    </aside>
+  );
+}
 
 export default function EditorialIntro() {
   return (
@@ -7,7 +287,10 @@ export default function EditorialIntro() {
       aria-labelledby="editorial-intro-title"
       className={styles.intro}
     >
-      <div aria-hidden="true" className={styles.background}>
+      <div
+        aria-hidden="true"
+        className={styles.background}
+      >
         <Image
           src="/images/136708882ecde7327741ae9ac1310694.jpg"
           alt=""
@@ -29,35 +312,41 @@ export default function EditorialIntro() {
           <span>Tech. Culture. Branding. Life.</span>
         </div>
 
-        <div className={styles.statement}>
-          <p className={styles.eyebrow}>
-            A different point of view
-          </p>
+        <div className={styles.heroContent}>
+          <div className={styles.statement}>
+            <p className={styles.eyebrow}>
+              A different point of view
+            </p>
 
-          <h1
-            id="editorial-intro-title"
-            className={styles.title}
-          >
-            <span className={styles.line}>
-              <span>LOOK CLOSER.</span>
-            </span>
-
-            <span className={styles.line}>
-              <span className={styles.outline}>
-                THINK DEEPER.
+            <h1
+              id="editorial-intro-title"
+              className={styles.title}
+            >
+              <span className={styles.line}>
+                <span>LOOK CLOSER.</span>
               </span>
-            </span>
-          </h1>
 
-          <p className={styles.description}>
-            Technology, culture, brands, and the lives we build
-            around them. Stories with something to say.
-          </p>
+              <span className={styles.line}>
+                <span className={styles.outline}>
+                  THINK DEEPER.
+                </span>
+              </span>
+            </h1>
+
+            <p className={styles.description}>
+              Technology, culture, brands, and the lives we build
+              around them. Stories with something to say.
+            </p>
+          </div>
+
+          <EditorialHeadlines />
         </div>
 
         <a href="#journal" className={styles.invitation}>
           <span className={styles.invitationText}>
-            <span className={styles.read}>Start reading</span>
+            <span className={styles.read}>
+              Start reading
+            </span>
 
             <span className={styles.scroll}>
               Scroll down. Find your perspective.
