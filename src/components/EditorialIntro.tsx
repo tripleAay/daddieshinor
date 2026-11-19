@@ -1,10 +1,17 @@
-
 "use client";
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import {
+  Fragment,
+  useEffect,
+  useState,
+  type CSSProperties,
+} from "react";
 import styles from "./EditorialIntro.module.css";
+
+/* One place to control how many stories the panel shows. */
+const MAX_POSTS = 5;
 
 type WordPressPost = {
   id: number;
@@ -27,6 +34,8 @@ type Headline = {
   category: string;
   href: string;
 };
+
+const pad = (value: number) => String(value).padStart(2, "0");
 
 function cleanWpText(value: unknown): string {
   if (typeof value !== "string") return "";
@@ -81,12 +90,44 @@ function mapHeadline(
 ): Headline {
   return {
     id: post.id,
-    number: String(index + 1).padStart(2, "0"),
+    number: pad(index + 1),
     title:
       cleanWpText(post.title?.rendered) || "Untitled",
     category: getCategory(post),
     href: `/essays/${encodeURIComponent(post.slug)}`,
   };
+}
+
+/* Splits text into words > characters so CSS can stagger each letter.
+   Words stay unbroken, so the title still wraps naturally. */
+function Chars({ text }: { text: string }) {
+  const words = text.split(" ");
+  let index = 0;
+
+  return (
+    <>
+      {words.map((word, wordIndex) => (
+        <Fragment key={`${word}-${wordIndex}`}>
+          <span className={styles.word} aria-hidden="true">
+            {Array.from(word).map((char) => {
+              const i = index++;
+
+              return (
+                <span
+                  key={i}
+                  className={styles.char}
+                  style={{ "--i": i } as CSSProperties}
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </span>
+          {wordIndex < words.length - 1 ? " " : null}
+        </Fragment>
+      ))}
+    </>
+  );
 }
 
 function EditorialHeadlines() {
@@ -110,8 +151,7 @@ function EditorialHeadlines() {
         setLoading(true);
         setError("");
 
-        const path =
-          "/wp-json/wp/v2/posts?per_page=7&orderby=date&order=desc&_embed=1";
+        const path = `/wp-json/wp/v2/posts?per_page=${MAX_POSTS}&orderby=date&order=desc&_embed=1`;
 
         const response = await fetch(
           `/api/wp-proxy?path=${encodeURIComponent(path)}`,
@@ -133,10 +173,9 @@ function EditorialHeadlines() {
           throw new Error("Invalid WordPress response.");
         }
 
-        const posts = data.filter(isPost);
-
-        const mapped = posts
-          .slice(0, 7)
+        const mapped = data
+          .filter(isPost)
+          .slice(0, MAX_POSTS)
           .map(mapHeadline);
 
         if (cancelled) return;
@@ -192,7 +231,7 @@ function EditorialHeadlines() {
         <span className={styles.headlinesCount}>
           {loading
             ? "..."
-            : `${String(headlines.length).padStart(2, "0")} / 07`}
+            : `${pad(headlines.length)} / ${pad(MAX_POSTS)}`}
         </span>
       </div>
 
@@ -202,7 +241,7 @@ function EditorialHeadlines() {
           role="status"
           aria-label="Loading latest stories"
         >
-          {Array.from({ length: 7 }).map((_, index) => (
+          {Array.from({ length: MAX_POSTS }).map((_, index) => (
             <div
               className={styles.headlineSkeleton}
               key={index}
@@ -229,10 +268,11 @@ function EditorialHeadlines() {
       ) : headlines.length > 0 ? (
         <>
           <ol className={styles.headlinesList}>
-            {headlines.map((headline) => (
+            {headlines.map((headline, index) => (
               <li
                 className={styles.headlineItem}
                 key={headline.id}
+                style={{ "--i": index } as CSSProperties}
               >
                 <Link
                   href={headline.href}
@@ -321,14 +361,21 @@ export default function EditorialIntro() {
             <h1
               id="editorial-intro-title"
               className={styles.title}
+              aria-label="Look closer. Think deeper."
             >
               <span className={styles.line}>
-                <span>LOOK CLOSER.</span>
+                <span className={styles.lookCloser}>
+                  <Chars text="LOOK CLOSER." />
+                </span>
               </span>
 
               <span className={styles.line}>
                 <span className={styles.outline}>
-                  THINK DEEPER.
+                  <Chars text="THINK DEEPER." />
+                  <span
+                    className={styles.caret}
+                    aria-hidden="true"
+                  />
                 </span>
               </span>
             </h1>
