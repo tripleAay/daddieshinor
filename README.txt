@@ -1,0 +1,1 @@
+Replace the two files at the paths shown in this ZIP. Back up originals first. Run npx tsc --noEmit and npm run dev. The existing proxy route is unchanged. Three total attempts with 2s and 5s delays; 25s timeout per attempt.
