@@ -260,6 +260,10 @@ export default function Home() {
         </div>
 
         <div className="mx-auto mb-12 mt-14 w-full max-w-[1040px] px-5 sm:px-8 md:mt-20 lg:px-12">
+          <div className="mb-7 text-center">
+            <p className="text-xs font-bold uppercase tracking-[0.22em] text-[#827c5b]">Read • Think • Grow</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-[#191b19] dark:text-white sm:text-3xl">Beyond the written word.</h2>
+          </div>
           <YouTubeEmbed
             urlOrId="https://youtu.be/-U5dEdWouDY?si=u1fyqkI14-SpGvNl"
             title="A different frequency."

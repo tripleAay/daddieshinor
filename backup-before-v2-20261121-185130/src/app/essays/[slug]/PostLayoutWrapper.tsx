@@ -1,0 +1,337 @@
+"use client";
+
+import { useEffect, useMemo, useState, ReactNode } from "react";
+import Image from "next/image";
+import { Breadcrumb } from "@/components/bedcrumb";
+import NewsletterCard from "@/components/newsletterCard";
+import Header from "@/components/header";
+
+import {
+  Facebook,
+  Twitter,
+  Linkedin,
+  Mail,
+  Link2,
+  Sparkles,
+  Handshake,
+  Clock3,
+} from "lucide-react";
+
+type PostLayoutProps = {
+  title: string;
+  category: string;
+  author: string;
+  dateLabel: string;
+  heroImage: string;
+  heroAlt?: string;
+  readingTime?: string;
+  children: ReactNode;
+  /** kept for compatibility if you still want to use it elsewhere */
+  footer?: ReactNode;
+  newsletterTitle?: string;
+  newsletterSubtitle?: string;
+};
+
+type ShareIconProps = {
+  href: string;
+  label: string;
+  children: ReactNode;
+};
+
+function ShareIcon({ href, label, children }: ShareIconProps) {
+  return (
+    <a
+      href={href}
+      aria-label={label}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-white text-black shadow-sm hover:bg-zinc-50 hover:shadow-md transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+    >
+      {children}
+    </a>
+  );
+}
+
+export default function PostLayout({
+  title,
+  category,
+  author,
+  dateLabel,
+  heroImage,
+  heroAlt = "",
+  readingTime = "5 min read",
+  children,
+  footer,
+  newsletterTitle = "Stay Close",
+  newsletterSubtitle = "A short note when something is worth thinking about. No spam. No noise.",
+}: PostLayoutProps) {
+  const [shareUrl, setShareUrl] = useState<string>("");
+  const [shareText, setShareText] = useState<string>("");
+  const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setShareUrl(encodeURIComponent(window.location.href));
+      setShareText(encodeURIComponent(title));
+    }
+  }, [title]);
+
+  const rawUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  }, []);
+
+  const copyLink = async () => {
+    try {
+      if (!rawUrl) return;
+      await navigator.clipboard.writeText(rawUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    } catch {
+      setCopied(false);
+    }
+  };
+
+  useEffect(() => {
+    const bar = document.getElementById("reading-progress");
+    const scroller = document.scrollingElement;
+    if (!bar || !scroller) return;
+
+    const onScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = scroller;
+      const maxScroll = scrollHeight - clientHeight;
+      const progress = maxScroll > 0 ? (scrollTop / maxScroll) * 100 : 0;
+      bar.style.width = `${Math.min(progress, 100)}%`;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    onScroll();
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
+
+  return (
+    <article className="ds-article-page min-h-screen flex flex-col bg-[#D9DCD6] text-black dark:bg-zinc-950 dark:text-white">
+      <div
+        id="reading-progress"
+        className="fixed top-0 left-0 h-[3px] w-0 bg-[#968e68] z-[60] transition-[width] duration-100"
+      />
+
+      <div className="sticky top-0 z-40 border-b border-zinc-200/80 bg-white/90 backdrop-blur-md dark:border-zinc-800/80 dark:bg-zinc-950/90">
+        <Header />
+      </div>
+
+      <div className="flex-1">
+        <div className="h-full mx-auto max-w-[1400px] px-4 sm:px-6 lg:px-8 grid grid-cols-12 gap-0 lg:gap-6">
+          <aside className="hidden md:flex md:col-span-3 lg:col-span-2 flex-col gap-5 py-8 overflow-hidden">
+            <div className="rounded-xl border border-black/8 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
+              <div className="flex items-center gap-2 text-xs">
+                <span className="text-black/60 dark:text-white/60">By</span>
+                <span className="inline-flex items-center rounded-full border border-black/15 bg-white px-2.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider dark:border-white/15 dark:bg-zinc-950">
+                  {author}
+                </span>
+              </div>
+
+              <div className="mt-4">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-widest dark:border-white/15 dark:bg-zinc-950">
+                  <Sparkles className="h-3.5 w-3.5 text-[#827c5b] dark:text-[#c5bc8d]" />
+                  {category}
+                </span>
+              </div>
+
+              <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-black/10 bg-white px-3 py-1.5 text-[11px] font-bold text-black/70 dark:border-white/10 dark:bg-zinc-950 dark:text-white/70">
+                <Clock3 className="h-3.5 w-3.5 text-[#827c5b] dark:text-[#c5bc8d]" />
+                {readingTime}
+              </div>
+
+              <p className="mt-4 text-xs leading-relaxed text-black/60 dark:text-white/60">
+                Daddieshinor is where tech moves become thought moves.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-black/8 bg-white/80 p-4 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
+              <p className="text-xs font-black tracking-[0.20em] uppercase text-black/60 dark:text-white/60">
+                Share
+              </p>
+              <div className="mt-3 flex flex-wrap items-center gap-2.5">
+                <ShareIcon
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                  label="Share on Facebook"
+                >
+                  <Facebook className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
+                  label="Share on X"
+                >
+                  <Twitter className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}&title=${shareText}`}
+                  label="Share on LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`mailto:?subject=${shareText}&body=Check out this article: ${shareUrl}`}
+                  label="Share by Email"
+                >
+                  <Mail className="h-4 w-4" />
+                </ShareIcon>
+                <button
+                  type="button"
+                  onClick={copyLink}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 text-xs font-extrabold uppercase tracking-wider text-black shadow-sm hover:bg-zinc-50 transition dark:border-white/10 dark:bg-zinc-900 dark:text-white dark:hover:bg-zinc-800"
+                >
+                  <Link2 className="h-3.5 w-3.5" />
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </div>
+            </div>
+          </aside>
+
+          <main
+            id="post-scroller"
+            className="col-span-12 md:col-span-9 lg:col-span-7 min-w-0
+                       px-0 md:px-4 lg:px-6
+                       scrollbar-thin scrollbar-thumb-zinc-300 dark:scrollbar-thumb-zinc-700 scrollbar-track-transparent"
+          >
+            <div className="py-8 pb-24">
+              <Breadcrumb category={category} title={title} />
+
+              <div className="flex items-center gap-4 mb-4">
+                <button
+                  type="button"
+                  onClick={() => window.history.back()}
+                  className="group inline-flex items-center gap-2 text-sm font-medium text-zinc-600 hover:text-black dark:text-zinc-400 dark:hover:text-white transition-colors"
+                  aria-label="Go back to previous page"
+                >
+                  <svg
+                    className="h-5 w-5 transition-transform group-hover:-translate-x-0.5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 19l-7-7m0 0l7-7m-7 7h18"
+                    />
+                  </svg>
+                  Back
+                </button>
+
+                <div className="flex-1" />
+
+                <div className="flex items-center gap-3 text-sm font-medium text-black/60 dark:text-white/60">
+                  <time>{dateLabel}</time>
+                  <span className="text-black/30 dark:text-white/30">•</span>
+                  <span className="inline-flex items-center gap-1.5">
+                    <Clock3 className="h-4 w-4" />
+                    {readingTime}
+                  </span>
+                </div>
+              </div>
+
+              <h1 className="mt-3 text-[clamp(2.2rem,4.2vw,4rem)] leading-[1.04] font-black tracking-[-0.045em]">
+                {title}
+              </h1>
+
+              <p className="mt-3 text-sm sm:text-base text-black/60 dark:text-white/60">
+                Not just news. Meaning. Pattern. Perspective.
+              </p>
+
+              <div className="mt-6">
+                <div className="relative aspect-[16/9] w-full overflow-hidden rounded-xl bg-zinc-100 ring-1 ring-black/8 shadow-md dark:bg-zinc-800 dark:ring-white/8">
+                  <Image
+                    src={heroImage}
+                    alt={heroAlt}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, (max-width: 1024px) 60vw, 680px"
+                    className="object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/8 to-transparent" />
+                </div>
+              </div>
+
+              <div className="flex md:hidden items-center gap-2.5 mt-5 flex-wrap">
+                <span className="text-xs font-black tracking-widest uppercase text-black/50 dark:text-white/50 mr-1">
+                  Share
+                </span>
+                <ShareIcon
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}`}
+                  label="Share on Facebook"
+                >
+                  <Facebook className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`https://twitter.com/intent/tweet?url=${shareUrl}&text=${shareText}`}
+                  label="Share on X"
+                >
+                  <Twitter className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`https://www.linkedin.com/shareArticle?mini=true&url=${shareUrl}&title=${shareText}`}
+                  label="Share on LinkedIn"
+                >
+                  <Linkedin className="h-4 w-4" />
+                </ShareIcon>
+                <ShareIcon
+                  href={`mailto:?subject=${shareText}&body=Check out this article: ${shareUrl}`}
+                  label="Share by Email"
+                >
+                  <Mail className="h-4 w-4" />
+                </ShareIcon>
+                <button
+                  type="button"
+                  onClick={copyLink}
+                  className="inline-flex h-8 items-center gap-1.5 rounded-full border border-black/10 bg-white px-3 text-xs font-extrabold uppercase tracking-wider text-black shadow-sm dark:border-white/10 dark:bg-zinc-900 dark:text-white"
+                >
+                  <Link2 className="h-3.5 w-3.5" />
+                  {copied ? "Copied" : "Copy"}
+                </button>
+              </div>
+
+              <div className="mt-8">{children}</div>
+
+              {footer && <div className="mt-16">{footer}</div>}
+            </div>
+          </main>
+
+          <aside className="hidden lg:flex lg:col-span-3 flex-col gap-5 py-8 overflow-hidden">
+            <div className="flex-none">
+              <NewsletterCard
+                badgeText="Daddieshinor Letters"
+                title={newsletterTitle}
+                subtitle={newsletterSubtitle}
+                buttonText="Subscribe"
+              />
+            </div>
+
+            <div className="rounded-xl border border-black/8 bg-white/80 p-5 shadow-sm backdrop-blur-sm dark:border-white/8 dark:bg-zinc-900/50 flex-none">
+              <div className="flex items-start gap-3">
+                <span className="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-[#968e68]/10 ring-1 ring-[#968e68]/15 dark:bg-[#968e68]/15 dark:ring-[#968e68]/20">
+                  <Handshake className="h-4 w-4 text-[#827c5b] dark:text-[#c5bc8d]" />
+                </span>
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.20em] text-black/60 dark:text-white/60">
+                    Partner with Daddieshinor
+                  </p>
+                  <p className="mt-1.5 text-sm leading-relaxed text-black/70 dark:text-white/70">
+                    Thoughtful brands supporting thoughtful readers.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </article>
+  );
+}

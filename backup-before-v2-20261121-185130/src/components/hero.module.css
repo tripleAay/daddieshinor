@@ -1,0 +1,178 @@
+/* Hero.module.css
+   Motion for the journal section. Kept in one place so Tailwind
+   config doesn't need to change. All loops respect reduced motion
+   and pause while the person hovers or focuses the card. */
+
+/* ---------- Slide change: soft settle, not a jump ---------- */
+
+.settle {
+  animation: settle 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes settle {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ---------- Partnership card: "attention, without shouting" ----------
+   One 6s rhythm shared by every part, so it reads as one gesture:
+   1. the hairline on top sweeps across
+   2. the words of the headline light up one after another
+   3. the arrow nudges toward the link
+   The beacon dot pings on its own, slower, 3s beat.                    */
+
+.partner {
+  --base: #191b19;
+  --accent: #6b6547;
+}
+
+:global(.dark) .partner {
+  --base: #e7e9df;
+  --accent: #c3bb61;
+}
+
+.sweep {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent) 45%,
+    var(--accent) 55%,
+    transparent 100%
+  );
+  background-size: 220% 100%;
+  background-position: 130% 0;
+  animation: sweep 6s ease-in-out infinite;
+}
+
+@keyframes sweep {
+  0% {
+    background-position: 130% 0;
+    opacity: 0;
+  }
+
+  8% {
+    opacity: 1;
+  }
+
+  35% {
+    background-position: -30% 0;
+    opacity: 1;
+  }
+
+  45%,
+  100% {
+    background-position: -30% 0;
+    opacity: 0;
+  }
+}
+
+.beacon {
+  position: relative;
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 9999px;
+  background: var(--accent);
+}
+
+.beacon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: var(--accent);
+  animation: beacon 3s ease-out infinite;
+}
+
+@keyframes beacon {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+
+  60%,
+  100% {
+    transform: scale(3.6);
+    opacity: 0;
+  }
+}
+
+.word {
+  display: inline-block;
+  color: var(--base);
+  animation: cadence 6s ease-in-out infinite;
+  animation-delay: calc(var(--w) * 0.45s);
+}
+
+@keyframes cadence {
+  0%,
+  26%,
+  100% {
+    color: var(--base);
+    transform: translateY(0);
+  }
+
+  9%,
+  16% {
+    color: var(--accent);
+    transform: translateY(-2px);
+  }
+}
+
+.nudge {
+  display: inline-flex;
+  animation: nudge 6s ease-in-out infinite;
+}
+
+@keyframes nudge {
+  0%,
+  66%,
+  100% {
+    transform: translateX(0);
+  }
+
+  74% {
+    transform: translateX(5px);
+  }
+
+  84% {
+    transform: translateX(0);
+  }
+}
+
+/* Pause the loops while the card is being read or used */
+.partner:hover .sweep,
+.partner:hover .word,
+.partner:hover .nudge,
+.partner:hover .beacon::after,
+.partner:focus-within .sweep,
+.partner:focus-within .word,
+.partner:focus-within .nudge,
+.partner:focus-within .beacon::after {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settle,
+  .sweep,
+  .beacon::after,
+  .word,
+  .nudge {
+    animation: none !important;
+  }
+
+  .sweep,
+  .beacon::after {
+    opacity: 0;
+  }
+}

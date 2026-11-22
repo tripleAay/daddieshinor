@@ -1,4 +1,5 @@
 "use client";
+import { fetchPostsReliably } from "@/lib/reliablePosts";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -141,10 +142,6 @@ function EditorialHeadlines() {
 
     let cancelled = false;
 
-    const timeout = window.setTimeout(
-      () => controller.abort(),
-      20000
-    );
 
     async function fetchHeadlines() {
       try {
@@ -153,21 +150,7 @@ function EditorialHeadlines() {
 
         const path = `/wp-json/wp/v2/posts?per_page=${MAX_POSTS}&orderby=date&order=desc&_embed=1`;
 
-        const response = await fetch(
-          `/api/wp-proxy?path=${encodeURIComponent(path)}`,
-          {
-            cache: "no-store",
-            signal: controller.signal,
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `WordPress request failed: ${response.status}`
-          );
-        }
-
-        const data: unknown = await response.json();
+        const data: unknown = await fetchPostsReliably(path, controller.signal);
 
         if (!Array.isArray(data)) {
           throw new Error("Invalid WordPress response.");
@@ -182,7 +165,7 @@ function EditorialHeadlines() {
 
         setHeadlines(mapped);
       } catch (requestError) {
-        if (cancelled) return;
+        if (cancelled || controller.signal.aborted) return;
 
         console.error(
           "[EDITORIAL HEADLINES]",
@@ -195,7 +178,6 @@ function EditorialHeadlines() {
           "Our latest stories are temporarily unavailable."
         );
       } finally {
-        window.clearTimeout(timeout);
 
         if (!cancelled) {
           setLoading(false);
@@ -208,7 +190,6 @@ function EditorialHeadlines() {
     return () => {
       cancelled = true;
       controller.abort();
-      window.clearTimeout(timeout);
     };
   }, [attempt]);
 
@@ -262,7 +243,7 @@ function EditorialHeadlines() {
             type="button"
             onClick={() => setAttempt((value) => value + 1)}
           >
-            Try again <span aria-hidden="true">↗</span>
+            ↻ Retry stories <span aria-hidden="true">↗</span>
           </button>
         </div>
       ) : headlines.length > 0 ? (
@@ -382,7 +363,7 @@ export default function EditorialIntro() {
 
             <p className={styles.description}>
               Technology, culture, brands, and the lives we build
-              around them. Stories with something to say.
+              around them. Stories with something to say. Read • Think • Grow.
             </p>
           </div>
 

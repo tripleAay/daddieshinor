@@ -1026,3 +1026,13 @@
   }
 }
  
+
+@media (max-width: 639px) {
+  .statement { text-align: center; margin-inline: auto; }
+  .title { text-align: center; }
+  .line { justify-content: center; }
+  .eyebrow, .description { text-align: center; }
+}
+.headlinesError button { background: #c3bb61; color: #171913; border-radius: 999px; padding: 12px 22px; font-weight: 800; box-shadow: 0 0 0 4px rgba(195,187,97,.17); animation: ds-attention 2.8s ease-in-out infinite; }
+@keyframes ds-attention { 0%,100% { box-shadow: 0 0 0 4px rgba(195,187,97,.17); } 50% { box-shadow: 0 0 0 10px rgba(195,187,97,.04); } }
+@media (prefers-reduced-motion: reduce) { .headlinesError button { animation: none; } }

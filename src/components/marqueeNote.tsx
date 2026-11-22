@@ -1,13 +1,12 @@
 "use client";
 
 const ITEMS = [
-  "Not here to be loud — here to leave something that stays with you.",
-  "Some words are not meant to impress you; they are meant to return you to yourself.",
-  "Small moves. Deep thoughts. Quiet fire. That is how real things are built.",
-  "Daddieshinor Letters — for the ones who still believe meaning matters.",
-  "This is a place for culture, hustle, memory, travel, and the truths we carry quietly.",
-  "If something here touched your heart, stay with it a little longer — that is how perspective begins.",
-  "Grateful for every soul who passes through these words; in a fast world, your attention means everything.",
+  "Read • Think • Grow.",
+  "Technology changes the tools. Perspective changes the conversation.",
+  "Culture is more than what we inherit. It is what we shape.",
+  "Good brands communicate. Great brands mean something.",
+  "Ideas worth questioning. Stories worth returning to.",
+  "Look closer. Think deeper.",
 ];
 
 export default function MarqueeNote() {
@@ -45,7 +44,7 @@ export default function MarqueeNote() {
               {loop.map((text, i) => (
                 <span
                   key={i}
-                  className="text-[13px] font-medium tracking-tight text-zinc-800 dark:text-zinc-200 md:text-base"
+                  className="text-[13px] font-semibold tracking-[0.01em] text-zinc-800 dark:text-zinc-200 md:text-base"
                 >
                   <span className="mx-2 inline-block h-1.5 w-1.5 rounded-full bg-[#968e68] align-middle md:mx-2.5" />
                   {text}

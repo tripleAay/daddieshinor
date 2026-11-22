@@ -1,4 +1,5 @@
 "use client";
+import { fetchPostsReliably } from "@/lib/reliablePosts";
 
 import Link from "next/link";
 import React, { useEffect, useRef, useState } from "react";
@@ -43,6 +44,7 @@ export default function MobileAllPosts() {
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
+  const [retry, setRetry] = useState(0);
   const [error, setError] = useState<string | null>(null);
 
   const PER_PAGE = 15;
@@ -58,6 +60,7 @@ export default function MobileAllPosts() {
     firstLoadRef.current = true;
 
     let cancelled = false;
+    const controller = new AbortController();
 
     async function fetchPosts() {
       try {
@@ -70,27 +73,9 @@ export default function MobileAllPosts() {
         const wpPath = `/wp-json/wp/v2/posts?per_page=${PER_PAGE}&page=${page}&orderby=date&order=desc&status=publish`;
 
         // Fetch through proxy to avoid CORS
-        const res = await fetch(`/api/wp-proxy?path=${encodeURIComponent(wpPath)}`, {
-          method: "GET",
-          cache: "no-store",
-        });
-
-        if (!res.ok) {
-          if (res.status === 400 || res.status === 404) {
-            setHasMore(false);
-            return;
-          }
-          const text = await res.text().catch(() => "No response");
-          console.error("[MobileAllPosts] Proxy error:", res.status, text);
-          throw new Error(`Proxy error: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          setHasMore(false);
-          return;
-        }
+        const data = await fetchPostsReliably(wpPath, controller.signal);
+        if (!Array.isArray(data)) throw new Error("Invalid articles response");
+        if (data.length === 0) { if (!cancelled) setHasMore(false); return; }
 
         const newPosts: HeadlinePost[] = data.map((post: any) => ({
           title: cleanWpText(post?.title?.rendered) || "Untitled",
@@ -125,8 +110,9 @@ export default function MobileAllPosts() {
 
     return () => {
       cancelled = true;
+      controller.abort();
     };
-  }, [page, hasMore, start, stop]);
+  }, [page, retry]);
 
   return (
     <section className="lg:hidden mx-auto max-w-[1400px] px-5 py-12 md:py-16">
@@ -134,6 +120,7 @@ export default function MobileAllPosts() {
       {error && (
         <div className="mb-8 rounded-xl border border-red-200/50 bg-red-50/60 p-5 text-center text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-300">
           {error}
+          <button type="button" onClick={() => { firstLoadRef.current = false; setPage(1); setRetry(v => v + 1); }} className="mt-3 block mx-auto rounded-full bg-[#827c5b] px-5 py-2 font-semibold text-white">↻ Retry stories</button>
         </div>
       )}
 
@@ -147,7 +134,7 @@ export default function MobileAllPosts() {
                 className="h-16 rounded-lg bg-zinc-100 animate-pulse dark:bg-zinc-800"
               />
             ))
-          ) : (
+          ) : error ? null : (
             <div className="py-20 text-center text-zinc-500 dark:text-zinc-400">
               No essays found yet.
             </div>

@@ -1,4 +1,5 @@
 "use client";
+import { fetchPostsReliably } from "@/lib/reliablePosts";
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
@@ -48,92 +49,41 @@ export default function HeadlineLayout({
   const [error, setError] = useState<string | null>(null);
 
   const { start, stop } = useGlobalLoader();
-  const loaderStartedRef = useRef(false);
+  const [retry, setRetry] = useState(0);
 
   useEffect(() => {
-    if (!hasMore) return;
-
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 12000);
-
-    async function fetchPosts() {
+    let active = true;
+    async function load() {
+      setLoading(true);
+      setError(null);
+      if (page === 1) start();
       try {
-        setLoading(true);
-        setError(null);
-
-        if (page === 1 && !loaderStartedRef.current) {
-          start();
-          loaderStartedRef.current = true;
-        }
-
-        let wpPath = `/wp-json/wp/v2/posts?_fields=id,slug,title&per_page=${PER_PAGE}&page=${page}&status=publish&orderby=date&order=desc`;
-
-        if (categoryId && categoryId > 0) {
-          wpPath += `&categories=${categoryId}`;
-        }
-
-        const res = await fetch(
-          `/api/wp-proxy?path=${encodeURIComponent(wpPath)}`,
-          {
-            signal: controller.signal,
-            cache: "no-store",
-          }
-        );
-
-        if (!res.ok) {
-          if (res.status === 400 || res.status === 404) {
-            setHasMore(false);
-            return;
-          }
-
-          throw new Error(`WP API error: ${res.status}`);
-        }
-
-        const data = await res.json();
-
-        if (!Array.isArray(data) || data.length === 0) {
-          setHasMore(false);
-          return;
-        }
-
-        const newPosts: HeadlinePost[] = data.map((post: any) => ({
+        let path = `/wp-json/wp/v2/posts?_fields=id,slug,title&per_page=${PER_PAGE}&page=${page}&status=publish&orderby=date&order=desc`;
+        if (categoryId && categoryId > 0) path += `&categories=${categoryId}`;
+        const data = await fetchPostsReliably(path, controller.signal);
+        if (!active) return;
+        if (!Array.isArray(data)) throw new Error("Unexpected articles response");
+        const items: HeadlinePost[] = data.filter((post: any) => typeof post?.slug === "string").map((post: any) => ({
           title: cleanText(post?.title?.rendered) || "Untitled",
-          href: `/essays/${post.slug}`,
+          href: `/essays/${encodeURIComponent(post.slug)}`,
         }));
-
-        setPosts((prev) => {
-          const seen = new Set(prev.map((p) => p.href));
-          const unique = newPosts.filter((p) => !seen.has(p.href));
-          return [...prev, ...unique];
+        setPosts(prev => {
+          const existing = page === 1 ? [] : prev;
+          const seen = new Set(existing.map(item => item.href));
+          return [...existing, ...items.filter(item => !seen.has(item.href) && !!seen.add(item.href))];
         });
-
-        if (newPosts.length < PER_PAGE) {
-          setHasMore(false);
-        }
-      } catch (err: any) {
-        if (err?.name === "AbortError") {
-          setError("Loading took too long. Please refresh.");
-        } else {
-          setError("Failed to load essays. Please try again later.");
-        }
+        setHasMore(items.length === PER_PAGE);
+      } catch (err) {
+        if (!active || controller.signal.aborted) return;
+        setError("Stories are taking longer than expected. Please try again.");
       } finally {
-        clearTimeout(timeout);
-        setLoading(false);
-
-        if (page === 1 && loaderStartedRef.current) {
-          stop();
-          loaderStartedRef.current = false;
-        }
+        if (active) { setLoading(false); if (page === 1) stop(); }
       }
     }
-
-    fetchPosts();
-
-    return () => {
-      clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [page, categoryId, hasMore]);
+    void load();
+    return () => { active = false; controller.abort(); if (page === 1) stop(); };
+  }, [page, categoryId, retry]);
 
   return (
     <section className="ds-headline-index mx-auto max-w-[1440px] border-t border-black/20 py-8 dark:border-white/20 md:py-12">
@@ -153,7 +103,8 @@ export default function HeadlineLayout({
 
       {error && (
         <div className="mb-10 rounded-xl border border-red-200/50 bg-red-50/60 p-6 text-center text-red-700 dark:border-red-800/40 dark:bg-red-950/30 dark:text-red-300 max-w-3xl mx-auto">
-          {error}
+          <p>{error}</p>
+          <button type="button" onClick={() => setRetry(value => value + 1)} className="mt-4 rounded-full bg-[#827c5b] px-6 py-3 font-semibold text-white shadow-lg transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2">↻ Retry stories</button>
         </div>
       )}
 
@@ -166,7 +117,7 @@ export default function HeadlineLayout({
                 className="h-20 rounded-xl bg-zinc-100 animate-pulse dark:bg-zinc-800"
               />
             ))
-          ) : (
+          ) : error ? null : (
             <div className="py-20 text-center text-xl text-zinc-500 dark:text-zinc-400">
               No essays found yet.
             </div>

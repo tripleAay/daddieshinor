@@ -1,0 +1,404 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ================================
+   THEME VARIABLES (LIGHT DEFAULT)
+   ================================ */
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+
+  /* 🎯 BRAND ACCENT (CHANGE THIS ONLY) */
+  --accent: 220 90% 56%;        /* example — you can keep or change */
+
+  color-scheme: light;
+}
+
+/* ================================
+   DARK MODE OVERRIDES
+   ================================ */
+html.dark {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+
+  /* Slightly brighter accent for dark UI */
+  --accent: 220 90% 60%;
+
+  color-scheme: dark;
+}
+
+/* ================================
+   BASE LAYOUT & RESET
+   ================================ */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Prevent overscroll bounce (mobile) */
+html,
+body {
+  overscroll-behavior-y: contain;
+  overscroll-behavior-x: none;
+}
+
+/* ================================
+   MEDIA NORMALIZATION
+   ================================ */
+img,
+video,
+iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* ================================
+   SCROLLBAR HIDE UTILITY
+   ================================ */
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+/* ================================
+   LOADER ANIMATION (OPTIONAL)
+   ================================ */
+@keyframes loader-slide {
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(150%); }
+  100% { transform: translateX(300%); }
+}
+
+.animate-loader-slide {
+  animation: loader-slide 1.6s ease-in-out infinite;
+}
+
+/* ================================
+   MARQUEE (ds-marquee) – FIXED & MOBILE-FRIENDLY
+   ================================ */
+@keyframes ds-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.marquee {
+  display: flex;
+  animation: ds-marquee 70s linear infinite;
+  will-change: transform;
+}
+
+.marquee:hover,
+.marquee:active {
+  animation-play-state: paused;
+}
+
+@media (max-width: 640px) {
+  .marquee {
+    animation-duration: 100s;
+  }
+}
+
+.marquee {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ================================
+   SLIDE-UP ANIMATION
+   ================================ */
+@keyframes slide-up {
+  from {
+    transform: translateY(80px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ================================
+   WORDPRESS CONTENT STYLES
+   (applied via .wp-post-body wrapper in WpContentRenderer)
+   ================================ */
+@layer components {
+  /* ── Drop Cap ── First paragraph only ── */
+  .wp-post-body > p:first-of-type::first-letter {
+    font-weight: 900;
+    font-size: 3.5rem;
+    line-height: 0.85;
+    float: left;
+    margin-right: 0.1em;
+    margin-top: 0.05em;
+    color: #ea580c; /* orange-600 */
+  }
+
+  html.dark .wp-post-body > p:first-of-type::first-letter {
+    color: #fb923c; /* orange-400 */
+  }
+
+  /* ── YouTube / Embed Blocks ── */
+  .wp-post-body .wp-block-embed,
+  .wp-post-body .wp-block-embed__wrapper {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+  }
+
+  .wp-post-body .wp-block-embed iframe,
+  .wp-post-body .wp-block-embed__wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Bare iframes fallback */
+  .wp-post-body iframe {
+    max-width: 100%;
+    border-radius: 0.75rem;
+    margin: 1.5rem 0;
+    display: block;
+  }
+
+  /* ── Images (general WP images) ── */
+  .wp-post-body .wp-block-image img,
+  .wp-post-body img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .wp-post-body .wp-block-image figcaption,
+  .wp-post-body figure figcaption {
+    text-align: center;
+    font-size: 0.8rem;
+    color: rgba(0,0,0,0.5);
+    margin-top: 0.5rem;
+  }
+
+  html.dark .wp-post-body .wp-block-image figcaption,
+  html.dark .wp-post-body figure figcaption {
+    color: rgba(255,255,255,0.45);
+  }
+
+  /* ── Alignments ── */
+  .wp-post-body .alignleft  { float: left;  margin: 0.5rem 1.5rem 1rem 0; }
+  .wp-post-body .alignright { float: right; margin: 0.5rem 0 1rem 1.5rem; }
+  .wp-post-body .aligncenter,
+  .wp-post-body .alignfull,
+  .wp-post-body .alignwide  { float: none; margin-left: auto; margin-right: auto; }
+
+  @media (max-width: 640px) {
+    .wp-post-body .alignleft,
+    .wp-post-body .alignright {
+      float: none;
+      margin-left: auto;
+      margin-right: auto;
+    }
+  }
+
+  /* ── Video ── */
+  .wp-post-body video {
+    max-width: 100%;
+    border-radius: 0.75rem;
+    display: block;
+    margin: 1.5rem auto;
+  }
+
+  /* ── Pullquotes & Blockquotes ── */
+  .wp-post-body .wp-block-pullquote,
+  .wp-post-body blockquote {
+    border-left: 4px solid #ea580c;
+    padding: 0.75rem 1.25rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: rgba(0,0,0,0.7);
+    background: rgba(234,88,12,0.04);
+    border-radius: 0 0.5rem 0.5rem 0;
+  }
+
+  html.dark .wp-post-body .wp-block-pullquote,
+  html.dark .wp-post-body blockquote {
+    color: rgba(255,255,255,0.65);
+    background: rgba(234,88,12,0.06);
+  }
+
+  /* ── Code / Pre ── */
+  .wp-post-body pre,
+  .wp-post-body code {
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+  }
+
+  /* ── Clearfix helper after floated content ── */
+  .wp-post-body p:has(+ p) {
+    overflow: hidden;
+  }
+
+  /* Prose fallback alignments */
+  .prose .aligncenter,
+  .prose .alignwide,
+  .prose .alignfull {
+    @apply mx-auto;
+  }
+
+  .prose .alignleft {
+    @apply float-left mr-6 mb-4;
+  }
+
+  .prose .alignright {
+    @apply float-right ml-6 mb-4;
+  }
+
+  .prose img.size-full,
+  .prose img.size-large {
+    @apply w-full max-w-3xl;
+  }
+
+  /* ── Custom image wrapper (from WpContentRenderer) ── */
+  .wp-image-wrapper {
+    @apply my-8 md:my-10;
+  }
+
+  .wp-image-wrapper > div:last-child {
+    @apply mt-3 text-center text-sm text-zinc-500 dark:text-zinc-400;
+  }
+}
+
+.marquee-track {
+  animation: marquee-scroll 48s linear infinite;
+}
+
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+/* Shared editorial rhythm. Keep these after the existing utilities. */
+:root { --ds-paper: #d9dcd6; --ds-ink: #191b19; --ds-accent: #827c5b; }
+html { scroll-padding-top: 140px; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+::selection { background: #968e68; color: #fff; }
+a, button, input, textarea { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible { outline: 2px solid #968e68; outline-offset: 4px; }
+h1, h2, h3, h4 { text-wrap: balance; }
+img[data-nimg="fill"] { height: 100%; }
+.ds-home-content > section { padding-inline: 0; }
+.ds-home-sections > section { width: 100%; }
+.ds-home-sections h2 { letter-spacing: -.04em; }
+.ds-category-section > div { min-width: 0; }
+.ds-category-section article { box-shadow: none; }
+.ds-category-page main, .ds-article-page main { min-width: 0; }
+.ds-category-page > div > div > aside,
+.ds-article-page > div > div > aside { align-self: start; position: sticky; top: 88px; }
+.ds-article-page #post-scroller { padding-top: 12px; }
+.ds-article-page .wp-post-body { max-width: 68ch; margin-inline: auto; font-size: 18px; line-height: 1.85; }
+.wp-post-body p { text-align: left; overflow: visible; }
+.wp-post-body h2 { margin-top: 2.2em; line-height: 1.2; letter-spacing: -.035em; }
+.wp-post-body h3 { line-height: 1.3; }
+.wp-post-body > p:first-of-type::first-letter,
+html.dark .wp-post-body > p:first-of-type::first-letter { color: var(--ds-accent); }
+.wp-post-body blockquote { border-left-color: var(--ds-accent); background: rgb(150 142 104 / .06); }
+.wp-post-body img { box-shadow: none; border-radius: 4px; }
+/* Only the actual embed wrapper reserves the video ratio, avoiding double padding. */
+.wp-post-body .wp-block-embed { height: auto; padding-bottom: 0; overflow: visible; }
+.wp-post-body .wp-block-embed__wrapper iframe { margin: 0; }
+@media (max-width: 639px) {
+  .ds-article-page .wp-post-body { font-size: 17px; line-height: 1.8; }
+  .ds-article-page #post-scroller > div > .flex { flex-wrap: wrap; row-gap: 12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee, .marquee-track, .animate-slide-up, .animate-loader-slide { animation: none; }
+}
+
+/* Editorial atmosphere — shared across every route. */
+:root { --background: #d9dcd6; --foreground: #191b19; --ds-surface: #e4e6df; --ds-muted: #62685f; --ds-line: rgb(25 27 25 / .18); --ds-accent: #827c5b; }
+html.dark { --background: #090a09; --foreground: #eeefe8; --ds-surface: #101210; --ds-muted: #a0a69a; --ds-line: rgb(238 239 232 / .14); --ds-accent: #b3a97a; }
+/* Existing component surfaces share the intro's palette. */
+html.dark .dark\:bg-black { background-color: #090a09; }
+html.dark .dark\:bg-zinc-950 { background-color: #101210; }
+html.dark .dark\:bg-zinc-900 { background-color: #171a17; }
+html.dark .dark\:bg-zinc-800 { background-color: #232723; }
+html.dark .dark\:bg-zinc-950\/90 { background-color: rgb(16 18 16 / .9); }
+html.dark .dark\:bg-zinc-950\/95 { background-color: rgb(16 18 16 / .95); }
+html.dark .dark\:bg-zinc-950\/80 { background-color: rgb(16 18 16 / .8); }
+html.dark .dark\:bg-zinc-950\/40 { background-color: rgb(16 18 16 / .4); }
+html.dark .dark\:bg-zinc-900\/50 { background-color: rgb(23 26 23 / .5); }
+html.dark .dark\:text-white { color: #eeefe8; }
+html.dark .dark\:text-zinc-300 { color: #c4c9bd; }
+html.dark .dark\:text-zinc-400 { color: #a0a69a; }
+html.dark .dark\:border-zinc-800,
+html.dark .dark\:border-zinc-800\/70 { border-color: var(--ds-line); }
+html.dark .dark\:border-zinc-700 { border-color: rgb(238 239 232 / .2); }
+html.dark .dark\:text-orange-400 { color: var(--ds-accent); }
+html.dark .dark\:bg-orange-500\/15 { background-color: rgb(179 169 122 / .1); }
+html.dark .dark\:ring-orange-400\/20 { --tw-ring-color: rgb(179 169 122 / .2); }
+html.dark .dark\:border-orange-400 { border-color: var(--ds-accent); }
+html.dark body { background: var(--background); color: var(--foreground); }
+.ds-music { background: #101210; border: 1px solid var(--ds-line); }
+.ds-home-sections > section > div > div > h2,
+.ds-home-sections > section > div > div > div > h2,
+.ds-headline-index h1 { text-transform: uppercase; }
+.ds-site-header { transition: background-color .35s, border-color .35s; }
+.ds-home article { transition: border-color .35s, box-shadow .35s; }
+.ds-home article:hover { border-color: rgb(150 142 104 / .45); }
+.ds-home a, .ds-category-page a, .ds-article-page a { text-underline-offset: .25em; }
+.ds-category-page main h1 { text-transform: uppercase; letter-spacing: -.055em; }
+.ds-category-page main article,
+.ds-category-page main > div > div > a { transition: border-color .35s, background-color .35s; }
+.ds-category-page main article:hover { border-color: var(--ds-accent); }
+.wp-post-body a { text-decoration-color: rgb(150 142 104 / .6); text-underline-offset: .2em; }
+html.dark .wp-post-body blockquote { background: rgb(179 169 122 / .05); border-color: var(--ds-accent); color: #c4c9bd; }
+html.dark .wp-post-body > p:first-of-type::first-letter { color: var(--ds-accent); }
+/* Progressive section reveals; content is visible without JavaScript. */
+.ds-reveal { opacity: 0; transform: translate3d(0, 18px, 0); transition: opacity .8s ease, transform 1s cubic-bezier(.16,1,.3,1); }
+.ds-reveal.ds-revealed { opacity: 1; transform: translate3d(0, 0, 0); }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto !important; }
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .ds-reveal { opacity: 1; transform: none; }
+}
+html.dark .dark\:bg-zinc-950\/85 { background-color: rgb(16 18 16 / .85); }
+html.dark .dark\:bg-zinc-900\/70 { background-color: rgb(23 26 23 / .7); }
+html.dark .dark\:bg-zinc-900\/40 { background-color: rgb(23 26 23 / .4); }
+html.dark .dark\:border-zinc-800\/80 { border-color: var(--ds-line); }
+@media print { .ds-reveal { opacity: 1 !important; transform: none !important; } }

@@ -184,7 +184,7 @@ export default function PostFooter() {
               </ul>
             </div>
 
-            <div>
+            <div className="text-center sm:text-left">
               <h4 className="mb-3 text-xs font-bold uppercase tracking-wider text-zinc-500">
                 Work With Us
               </h4>

@@ -218,71 +218,31 @@ export default function BestNewReads() {
           <div className="mt-6 h-px w-24 bg-gradient-to-r from-white via-[#968e68] to-white" />
         </header>
 
-        {/* Entries Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
-          {entries.map((entry, idx) => (
-            <Link
-              key={entry.rank}
-              href={entry.link}
-              ref={(el) => setCardRef(el, idx)}
-              style={cardStyles[idx]}
-              className="group flex flex-col transition-transform hover:scale-[1.02] duration-300"
-            >
-              {/* Circular Image */}
-              <div
-                className="
-    relative mx-auto
-    h-[110px] w-[110px] sm:h-[140px] sm:w-[140px] md:h-[160px] md:w-[160px]
-    overflow-hidden rounded-full
-    border border-white/10
-    bg-zinc-900/40
-    transition-all duration-300
-    group-hover:border-[#968e68]/40
-    group-hover:shadow-[0_0_18px_rgba(150,142,104,0.18)]
-  "
-              >
-                <Image
-                  src={entry.image}
-                  alt={entry.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-105"
-                  sizes="(max-width: 640px) 110px, (max-width: 1024px) 140px, 160px"
-                />
+        {/* Two continuously moving editorial rows; duplicates create a seamless loop. */}
+        <div className="space-y-5 overflow-hidden" aria-label="Browse Best New Reads">
+          {[entries.filter((_, i) => i % 2 === 0), entries.filter((_, i) => i % 2 === 1)].map((row, rowIndex) => (
+            <div key={rowIndex} className="ds-read-viewport overflow-hidden">
+              <div className={`ds-read-track ${rowIndex === 0 ? "ds-read-left" : "ds-read-right"}`}>
+                {[0, 1].map(copy => (
+                  <div key={copy} className="ds-read-group flex shrink-0 gap-4" aria-hidden={copy === 1 ? true : undefined}>
+                    {row.map(entry => (
+                      <Link key={`${copy}-${entry.rank}`} href={entry.link} tabIndex={copy === 1 ? -1 : undefined} className="group flex w-[260px] shrink-0 items-center gap-4 rounded-xl border border-white/10 bg-white/[0.045] p-4 transition-colors hover:border-[#c3bb61]/50 hover:bg-white/10 sm:w-[350px]">
+                        <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-zinc-800">
+                          <Image src={entry.image} alt="" fill className="object-cover" sizes="64px" />
+                        </div>
+                        <div className="min-w-0">
+                          <span className="text-[11px] font-bold uppercase tracking-widest text-[#c3bb61]">{String(entry.rank).padStart(2, "0")} / Editorial pick</span>
+                          <h3 className="mt-1 line-clamp-2 text-sm font-semibold leading-snug text-white group-hover:text-[#c3bb61] sm:text-base">{entry.title}</h3>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                ))}
               </div>
-
-              {/* Content */}
-              <div className="mt-4 sm:mt-6 text-center">
-                <div className="text-2xl sm:text-3xl md:text-4xl font-black leading-none text-zinc-700 group-hover:text-[#968e68] transition-colors">
-                  {entry.rank}
-                </div>
-                <h3 className="mt-2 sm:mt-3 text-lg sm:text-xl md:text-2xl font-bold leading-tight line-clamp-2 group-hover:text-[#968e68] transition-colors">
-                  {entry.title}
-                </h3>
-                <p className="mt-1 text-sm sm:text-base text-zinc-400 group-hover:text-[#968e68]/80 transition-colors">
-                  {entry.subtitle}
-                </p>
-              </div>
-            </Link>
+            </div>
           ))}
         </div>
-
-        {/* Angular Navigation (placeholder – add real logic if needed) */}
-        <div className="mt-10 flex justify-center gap-6">
-          <button
-            disabled
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed"
-          >
-            <ChevronLeft className="h-5 w-5" />
-            Previous
-          </button>
-          <button
-            disabled
-            className="flex items-center gap-2 px-5 py-2.5 rounded-full border border-zinc-700 text-zinc-500 cursor-not-allowed"
-          >
-            Next
-            <ChevronRight className="h-5 w-5" />
-          </button>
-        </div>
+        <p className="mt-7 text-center text-xs uppercase tracking-[0.2em] text-zinc-400">Read • Think • Grow</p>
       </div>
     </section>
   );

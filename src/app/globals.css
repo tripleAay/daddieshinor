@@ -402,3 +402,11 @@ html.dark .dark\:bg-zinc-900\/70 { background-color: rgb(23 26 23 / .7); }
 html.dark .dark\:bg-zinc-900\/40 { background-color: rgb(23 26 23 / .4); }
 html.dark .dark\:border-zinc-800\/80 { border-color: var(--ds-line); }
 @media print { .ds-reveal { opacity: 1 !important; transform: none !important; } }
+
+/* Daddieshinor continuous editorial discovery */
+.ds-read-track { display:flex; width:max-content; gap:1rem; animation: ds-reads-left 52s linear infinite; will-change:transform; }
+.ds-read-right { animation-name:ds-reads-right; animation-duration:60s; }
+.ds-read-viewport:hover .ds-read-track, .ds-read-viewport:focus-within .ds-read-track { animation-play-state:paused; }
+@keyframes ds-reads-left { from { transform:translateX(0); } to { transform:translateX(calc(-50% - .5rem)); } }
+@keyframes ds-reads-right { from { transform:translateX(calc(-50% - .5rem)); } to { transform:translateX(0); } }
+@media (prefers-reduced-motion:reduce) { .ds-read-track { animation:none; } .ds-read-viewport { overflow-x:auto; } }

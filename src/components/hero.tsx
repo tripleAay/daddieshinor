@@ -1237,7 +1237,7 @@
 //                   }
 //                   className="w-fit shrink-0 font-semibold text-[#766c43] underline underline-offset-4 dark:text-[#c2b68a]"
 //                 >
-//                   Try again
+//                   ↻ Retry stories
 //                 </button>
 //               </div>
 //             )}
@@ -1507,6 +1507,7 @@
 
 
 "use client";
+import { fetchPostsReliably } from "@/lib/reliablePosts";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -1843,10 +1844,6 @@ export default function Hero() {
       stop();
     }
 
-    const timeout = window.setTimeout(
-      () => controller.abort(),
-      20_000,
-    );
 
     start();
     setLoading(true);
@@ -1857,21 +1854,7 @@ export default function Hero() {
         const path =
           "/wp-json/wp/v2/posts?per_page=10&orderby=date&order=desc&_embed=1";
 
-        const response = await fetch(
-          `/api/wp-proxy?path=${encodeURIComponent(path)}`,
-          {
-            cache: "no-store",
-            signal: controller.signal,
-          },
-        );
-
-        if (!response.ok) {
-          throw new Error(
-            `WordPress request failed: ${response.status}`,
-          );
-        }
-
-        const data: unknown = await response.json();
+        const data: unknown = await fetchPostsReliably(path, controller.signal);
 
         if (!Array.isArray(data)) {
           throw new Error("Invalid WordPress response.");
@@ -1924,7 +1907,7 @@ export default function Hero() {
         setThoughts(mappedThoughts);
         setIndex(0);
       } catch (requestError) {
-        if (cancelled) return;
+        if (cancelled || controller.signal.aborted) return;
 
         console.error(
           "[HERO]",
@@ -1941,7 +1924,6 @@ export default function Hero() {
         setThoughts(fallbackThoughts);
         setIndex(0);
       } finally {
-        window.clearTimeout(timeout);
         releaseLoader();
 
         if (!cancelled) setLoading(false);
@@ -1953,7 +1935,6 @@ export default function Hero() {
     return () => {
       cancelled = true;
       controller.abort();
-      window.clearTimeout(timeout);
       releaseLoader();
     };
   }, [attempt]);
@@ -2035,7 +2016,7 @@ export default function Hero() {
                   onClick={() =>
                     setAttempt((current) => current + 1)
                   }
-                  className={`w-fit shrink-0 rounded-sm font-semibold underline underline-offset-4 ${ACCENT_TEXT} ${FOCUS}`}
+                  className={`w-fit shrink-0 rounded-full bg-[#c3bb61] px-5 py-2.5 font-bold text-[#171913] shadow-lg transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 ${FOCUS}`}
                 >
                   Try again
                 </button>
