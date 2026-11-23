@@ -363,7 +363,8 @@ export default function EditorialIntro() {
 
             <p className={styles.description}>
               Technology, culture, brands, and the lives we build
-              around them. Stories with something to say. Read • Think • Grow.
+              around them. Stories with something to say.
+              <span className={styles.brandMantra}>Read <span aria-hidden="true">•</span> Think <span aria-hidden="true">•</span> Grow</span>
             </p>
           </div>
 
