@@ -483,30 +483,15 @@ export default function Hero() {
     setPlaying(false);
   }
 
-  const controlClass = `flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/15 bg-white/70 text-[#191b19] transition hover:border-[#827c5b] hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/15 dark:bg-[#101210]/60 dark:text-[#e7e9df] dark:hover:bg-[#1b1e1a] ${FOCUS}`;
+  const controlClass = `flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-black/15 bg-white/70 text-[#191b19] transition hover:border-[#827c5b] hover:bg-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/15 dark:bg-[#101210]/60 dark:text-[#e7e9df] dark:hover:bg-[#1b1e1a] ${FOCUS}`;
 
   return (
     <section
       id="journal"
-      aria-labelledby="journal-heading"
-      className="relative isolate scroll-mt-20 overflow-hidden bg-[#eeeee7] text-[#191b19] dark:bg-[#101210] dark:text-[#e7e9df]"
+      aria-labelledby="featured-heading"
+      className="relative isolate scroll-mt-20 overflow-hidden bg-[#d9dcd6] text-[#191b19] dark:bg-[#101210] dark:text-[#e7e9df]"
     >
-      <div className="mx-auto max-w-[1440px] px-5 py-8 sm:px-8 md:py-12 lg:px-12 lg:py-16">
-        <header className="mb-9 grid min-w-0 gap-5 border-b border-black/15 pb-7 dark:border-white/15 lg:grid-cols-[minmax(0,1fr)_minmax(0,320px)] lg:items-end lg:pb-10">
-          <div className="min-w-0">
-            <p className={`mb-4 text-[10px] font-semibold uppercase tracking-[0.22em] ${ACCENT_TEXT}`}>
-              Daddieshinor Journal
-            </p>
-            <h2 id="journal-heading" className="text-[clamp(2rem,9vw,5rem)] font-semibold leading-[1.06] tracking-[-0.055em]">
-              <span className="block sm:inline">Read. Think.</span>{" "}
-              <span className={`block sm:inline ${ACCENT_TEXT}`}>Grow.</span>
-            </h2>
-          </div>
-          <p className="max-w-[36ch] text-sm leading-7 text-black/65 dark:text-white/65 sm:text-base">
-            Independent perspectives on technology, culture, branding and life.
-          </p>
-        </header>
-
+      <div className="mx-auto max-w-[1400px] px-5 py-10 sm:px-8 md:py-14 lg:px-12 lg:py-16">
         {loading ? (
           <HeroSkeleton />
         ) : (
@@ -523,7 +508,7 @@ export default function Hero() {
                   onClick={() =>
                     setAttempt((current) => current + 1)
                   }
-                  className={`w-fit shrink-0 rounded-full bg-[#c3bb61] px-5 py-2.5 font-bold text-[#171913] shadow-lg transition hover:scale-105 focus-visible:outline-2 focus-visible:outline-offset-2 ${FOCUS}`}
+                  className={`w-fit shrink-0 rounded-sm font-semibold underline underline-offset-4 ${ACCENT_TEXT} ${FOCUS}`}
                 >
                   Try again
                 </button>
@@ -602,7 +587,7 @@ export default function Hero() {
                   >
                     <h2
                       id="featured-heading"
-                      className="text-[clamp(1.85rem,7.6vw,2.8rem)] font-semibold leading-[1.1] tracking-[-0.045em] [overflow-wrap:anywhere] transition-colors group-hover:text-[#827c5b] dark:group-hover:text-[#c3bb61] sm:text-[2.8rem] lg:text-[3rem] xl:text-[3.65rem]"
+                      className="text-[2rem] font-black leading-[1.03] tracking-[-0.04em] transition-colors group-hover:text-[#827c5b] dark:group-hover:text-[#c3bb61] sm:text-[2.8rem] lg:text-[3rem] xl:text-[3.65rem]"
                     >
                       {active.title}
                     </h2>
@@ -636,7 +621,7 @@ export default function Hero() {
                       className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/5 to-transparent"
                     />
 
-                    <div className={`absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 p-4 text-white sm:p-6 ${ordered.length > 1 ? "pb-24 sm:pb-24" : ""}`}>
+                    <div className="absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-3 p-5 pb-20 text-white sm:p-6 sm:pb-20">
                       <span className="rounded-full border border-white/20 bg-black/25 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] backdrop-blur-sm">
                         {active.tag}
                       </span>
@@ -663,7 +648,7 @@ export default function Hero() {
                             onClick={() => chooseSlide(position)}
                             aria-label={`Show ${slide.title}`}
                             aria-pressed={position === index}
-                            className="flex h-11 min-w-8 items-center justify-center rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                            className="flex h-9 min-w-9 items-center justify-center rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
                           >
                             <span
                               aria-hidden="true"
@@ -687,7 +672,7 @@ export default function Hero() {
                             ? "Pause featured story rotation"
                             : "Play featured story rotation"
                         }
-                        className="min-h-11 shrink-0 rounded-lg px-2 text-[11px] font-medium text-white/85 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
+                        className="min-h-9 shrink-0 rounded-lg px-2 text-[11px] font-medium text-white/85 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-white"
                       >
                         {playing ? "Pause" : "Play"}
                       </button>
@@ -706,7 +691,7 @@ export default function Hero() {
                       Fresh reading
                     </p>
 
-                    <h2 className="mt-2 text-[27px] font-semibold leading-tight tracking-[-0.035em] xl:text-[30px]">
+                    <h2 className="mt-2 text-[27px] font-black leading-tight tracking-[-0.035em] xl:text-[30px]">
                       Recent thoughts
                     </h2>
                   </div>
@@ -717,12 +702,12 @@ export default function Hero() {
                   />
                 </div>
 
-                <div className="border-y border-black/10 py-2 dark:border-white/10 lg:py-3">
+                <div className="rounded-[20px] border border-black/[0.08] bg-white/60 p-4 backdrop-blur-sm dark:border-white/10 dark:bg-[#101210]/60 sm:p-5 lg:rounded-[24px] lg:p-4 xl:p-5">
                   <div
                     role="region"
                     aria-label="Recent thoughts"
                     tabIndex={0}
-                    className={`outline-none lg:overflow-y-auto lg:overscroll-y-contain lg:pr-2 [scrollbar-color:#827c5b80_transparent] [scrollbar-width:thin] lg:max-h-[640px] ${FOCUS}`}
+                    className={`max-h-[560px] overflow-y-auto overscroll-y-contain pr-2 outline-none [scrollbar-color:#827c5b80_transparent] [scrollbar-width:thin] lg:max-h-[640px] ${FOCUS}`}
                   >
                     {thoughts.length ? (
                       <div className="divide-y divide-black/10 dark:divide-white/10">
